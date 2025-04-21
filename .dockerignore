@@ -56,7 +56,3 @@ sonar-project.properties
 
 # EditorConfig
 .editorconfig
-
-# ESBuild
-
-esbuild.config.js
