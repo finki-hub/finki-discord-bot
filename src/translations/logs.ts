@@ -52,6 +52,8 @@ export const logMessageFunctions = {
 
   noRefreshNeeded: (property: string) => `No refresh needed for ${property}`,
 
+  promptAnswered: (answer: string) => `Prompt answered: ${answer}`,
+
   specialPollOverriden: (type: string, userId: string, decision: string) =>
     `Special poll ${type} for ${userId} overriden with decision ${decision}`,
 
