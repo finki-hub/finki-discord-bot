@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { getChatbotUrl } from '../configuration/environment.js';
+import { getConfigProperty } from '../configuration/main.js';
 import { logger } from '../logger.js';
 import { logMessageFunctions } from '../translations/logs.js';
 
@@ -11,9 +12,11 @@ export const sendPrompt = async (query: string) => {
     return null;
   }
 
+  const model = getConfigProperty('chatBotModel');
+
   const result = await fetch(`${chatbotUrl}/chat`, {
     body: JSON.stringify({
-      model: 'llama3.3:70b',
+      model,
       question: query,
     }),
     headers: {

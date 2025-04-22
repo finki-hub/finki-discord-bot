@@ -2,10 +2,12 @@ import {
   type BotConfig,
   type BotConfigKeys,
 } from '../lib/schemas/BotConfig.js';
+import { Model } from '../lib/schemas/Model.js';
 
 export const DEFAULT_CONFIGURATION = {
   ads: undefined,
   channels: undefined,
+  chatBotModel: Model.LLAMA_3_3_70B,
   crossposting: {
     channels: [],
     enabled: false,

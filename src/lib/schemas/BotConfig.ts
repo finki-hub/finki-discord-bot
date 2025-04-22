@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { ChannelSchema, TemporaryChannelSchema } from './Channel.js';
+import { ModelSchema } from './Model.js';
 import { RoleSchema } from './Role.js';
 import { TicketSchema } from './Ticket.js';
 
@@ -26,6 +27,7 @@ export const RequiredBotConfigSchema = z
       )
       .optional(),
     channels: z.record(ChannelSchema, z.string().optional()).optional(),
+    chatBotModel: ModelSchema.optional(),
     crossposting: z
       .object({
         channels: z.array(z.string()).optional(),
