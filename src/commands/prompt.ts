@@ -24,7 +24,21 @@ export const data = new SlashCommandBuilder()
 export const execute = async (interaction: ChatInputCommandInteraction) => {
   const prompt = interaction.options.getString('prompt', true);
 
-  const response = await sendPrompt(prompt);
+  let answer = '';
+  let lastEdit = Date.now();
 
-  await interaction.editReply(response ?? commandErrors.promptFailed);
+  const maybeEditReply = async () => {
+    const now = Date.now();
+    if (now - lastEdit > 1_000) {
+      lastEdit = now;
+      await interaction.editReply(answer);
+    }
+  };
+
+  await sendPrompt(prompt, async (chunk) => {
+    answer += chunk;
+    await maybeEditReply();
+  });
+
+  await interaction.editReply(answer || commandErrors.promptFailed);
 };

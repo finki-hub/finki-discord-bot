@@ -1,5 +1,3 @@
-import { z } from 'zod';
-
 import { getChatbotUrl } from '../configuration/environment.js';
 import { getConfigProperty } from '../configuration/main.js';
 import { logger } from '../logger.js';
@@ -8,7 +6,10 @@ import {
   logMessageFunctions,
 } from '../translations/logs.js';
 
-export const sendPrompt = async (query: string) => {
+export const sendPrompt = async (
+  query: string,
+  onChunk?: (chunk: string) => void,
+) => {
   const chatbotUrl = getChatbotUrl();
 
   if (chatbotUrl === null) {
@@ -18,7 +19,7 @@ export const sendPrompt = async (query: string) => {
   const model = getConfigProperty('chatBotModel');
 
   try {
-    const result = await fetch(`${chatbotUrl}/chat`, {
+    const result = await fetch(`${chatbotUrl}/chat/`, {
       body: JSON.stringify({
         model,
         question: query,
@@ -29,23 +30,32 @@ export const sendPrompt = async (query: string) => {
       method: 'POST',
     });
 
-    if (!result.ok) {
+    if (!result.ok || !result.body) {
       return null;
     }
 
-    const data: unknown = await result.json();
-    const { answer } = z
-      .object({
-        answer: z.string(),
-      })
-      .parse(data);
+    const reader: ReadableStreamDefaultReader<Uint8Array> =
+      result.body.getReader();
+    const decoder = new TextDecoder();
+    let answer = '';
+    let done = false;
+
+    while (!done) {
+      const { done: doneReading, value } = await reader.read();
+      done = doneReading;
+      if (value) {
+        const chunk = decoder.decode(value, { stream: true });
+        answer += chunk;
+        if (onChunk) {
+          onChunk(chunk);
+        }
+      }
+    }
 
     logger.info(logMessageFunctions.promptAnswered(answer));
-
     return answer;
   } catch (error) {
     logger.error(logErrorFunctions.promptError(error));
-
     return null;
   }
 };
