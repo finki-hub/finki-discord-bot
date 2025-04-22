@@ -212,6 +212,8 @@ export const logErrorFunctions = {
   pollNotExecutedError: (pollType: string, userId: string) =>
     `Poll ${pollType} for ${userId} could not be executed`,
 
+  promptError: (error: unknown) => `Failed sending prompt\n${error}`,
+
   reminderLoadError: (error: unknown) => `Failed loading reminders\n${error}`,
 
   removeReactionError: (error: unknown) => `Failed removing reaction\n${error}`,
