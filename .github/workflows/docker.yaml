@@ -6,14 +6,14 @@ on:
       - "main"
       - "dev"
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   docker:
     name: Docker Image
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      packages: write
 
     steps:
       - name: Set up QEMU
