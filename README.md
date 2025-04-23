@@ -89,4 +89,4 @@ Please set the `CHATBOT_URL` env. variable to the URL of the chat bot.
 
 ## License
 
-This project is licensed under the MIT license.
+This project is licensed under the terms of the MIT license.
