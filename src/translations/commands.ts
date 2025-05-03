@@ -8,6 +8,8 @@ import {
   userMention,
 } from 'discord.js';
 
+import type { PollCategory } from '../lib/schemas/PollCategory.js';
+
 import { type Role } from '../lib/schemas/Role.js';
 
 export const commandDescriptions = {
@@ -392,6 +394,9 @@ export const commandErrorFunctions = {
   invalidConfiguration: (error: unknown) =>
     // @ts-expect-error error is unknown
     `Дадената конфигурација не е валидна: ${codeBlock('json', error)}`,
+
+  pollNotOfCategory: (category: PollCategory) =>
+    `Анкетата не е од категоријата ${inlineCode(category)}.`,
 
   pollNoVotePermission: (roleIds: string[]) =>
     `Немате дозвола да гласате на анкетата. Потребна ви е барем една од улогите: ${roleIds

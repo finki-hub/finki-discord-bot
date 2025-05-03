@@ -9,7 +9,7 @@ import {
   getRolesProperty,
 } from '../configuration/main.js';
 import { Channel } from '../lib/schemas/Channel.js';
-import { PollType } from '../lib/schemas/PollType.js';
+import { SpecialPollType } from '../lib/schemas/PollType.js';
 import { Role } from '../lib/schemas/Role.js';
 import {
   commandDescriptions,
@@ -23,7 +23,10 @@ import {
   isMemberInRegulars,
   isMemberInVip,
 } from '../utils/members.js';
-import { createPoll, isPollDuplicate } from '../utils/polls/core/special.js';
+import {
+  createSpecialPoll,
+  isSpecialPollDuplicate,
+} from '../utils/polls/core/special.js';
 
 const name = 'irregulars';
 
@@ -120,7 +123,10 @@ const handleIrregularsAdd = async (
     return;
   }
 
-  const isDuplicate = await isPollDuplicate(PollType.IRREGULARS_ADD, user.id);
+  const isDuplicate = await isSpecialPollDuplicate(
+    SpecialPollType.IRREGULARS_ADD,
+    user.id,
+  );
 
   if (isDuplicate) {
     await interaction.editReply(commandErrors.userSpecialPending);
@@ -128,7 +134,7 @@ const handleIrregularsAdd = async (
     return;
   }
 
-  const poll = createPoll(PollType.IRREGULARS_ADD, user);
+  const poll = createSpecialPoll(SpecialPollType.IRREGULARS_ADD, user);
   const councilRoleId = getRolesProperty(Role.Council);
 
   if (notify && councilRoleId !== undefined) {
@@ -193,8 +199,8 @@ const handleIrregularsRemove = async (
     return;
   }
 
-  const isDuplicate = await isPollDuplicate(
-    PollType.IRREGULARS_REMOVE,
+  const isDuplicate = await isSpecialPollDuplicate(
+    SpecialPollType.IRREGULARS_REMOVE,
     user.id,
   );
 
@@ -204,7 +210,7 @@ const handleIrregularsRemove = async (
     return;
   }
 
-  const poll = createPoll(PollType.IRREGULARS_REMOVE, user);
+  const poll = createSpecialPoll(SpecialPollType.IRREGULARS_REMOVE, user);
   const councilRoleId = getRolesProperty(Role.Council);
 
   if (notify && councilRoleId !== undefined) {
