@@ -5,22 +5,22 @@ import {
   type User,
 } from 'discord.js';
 
-import { getRolesProperty } from '../../configuration/main.js';
-import { Channel } from '../../lib/schemas/Channel.js';
-import { PollType, PollTypeSchema } from '../../lib/schemas/PollType.js';
-import { Role } from '../../lib/schemas/Role.js';
-import { type PartialUser } from '../../lib/types/PartialUser.js';
-import { logger } from '../../logger.js';
-import { labels } from '../../translations/labels.js';
-import { logMessages } from '../../translations/logs.js';
-import { specialStringFunctions } from '../../translations/special.js';
-import { getChannel } from '../channels.js';
-import { getGuild, getMemberFromGuild } from '../guild.js';
-import { ADMIN_OVERRIDE_LEVEL } from '../levels.js';
-import { isMemberLevel } from '../members.js';
-import { POLL_IDENTIFIER_REGEX } from '../regex.js';
-import { getMembersByRoleIds } from '../roles.js';
-import { executePollAction } from './actions.js';
+import { getRolesProperty } from '../../../configuration/main.js';
+import { Channel } from '../../../lib/schemas/Channel.js';
+import { PollType, PollTypeSchema } from '../../../lib/schemas/PollType.js';
+import { Role } from '../../../lib/schemas/Role.js';
+import { type PartialUser } from '../../../lib/types/PartialUser.js';
+import { logger } from '../../../logger.js';
+import { labels } from '../../../translations/labels.js';
+import { logMessages } from '../../../translations/logs.js';
+import { specialStringFunctions } from '../../../translations/special.js';
+import { getChannel } from '../../channels.js';
+import { getGuild, getMemberFromGuild } from '../../guild.js';
+import { ADMIN_OVERRIDE_LEVEL } from '../../levels.js';
+import { isMemberLevel } from '../../members.js';
+import { POLL_IDENTIFIER_REGEX } from '../../regex.js';
+import { getMembersByRoleIds } from '../../roles.js';
+import { executePollAction } from '../actions/special.js';
 
 export const initializePolls = async () => {
   const councilChannel = getChannel(Channel.Council);

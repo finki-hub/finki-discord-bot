@@ -23,7 +23,7 @@ import {
   isMemberInVip,
   isMemberLevel,
 } from '../utils/members.js';
-import { createPoll, isPollDuplicate } from '../utils/polls/main.js';
+import { createPoll, isPollDuplicate } from '../utils/polls/core/special.js';
 
 const name = 'admin';
 

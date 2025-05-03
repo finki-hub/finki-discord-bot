@@ -7,20 +7,20 @@ import {
   getVipAcknowledgeComponents,
   getVipConfirmComponents,
   getVipConfirmEmbed,
-} from '../../components/scripts.js';
-import { getRolesProperty } from '../../configuration/main.js';
-import { createBar, deleteBar } from '../../data/database/Bar.js';
-import { Channel } from '../../lib/schemas/Channel.js';
-import { PollType } from '../../lib/schemas/PollType.js';
-import { Role } from '../../lib/schemas/Role.js';
-import { logger } from '../../logger.js';
-import { commandErrorFunctions } from '../../translations/commands.js';
-import { labels } from '../../translations/labels.js';
-import { logErrorFunctions } from '../../translations/logs.js';
-import { specialStringFunctions } from '../../translations/special.js';
-import { getChannel } from '../channels.js';
-import { getMemberFromGuild } from '../guild.js';
-import { getPollInformation } from './main.js';
+} from '../../../components/scripts.js';
+import { getRolesProperty } from '../../../configuration/main.js';
+import { createBar, deleteBar } from '../../../data/database/Bar.js';
+import { Channel } from '../../../lib/schemas/Channel.js';
+import { PollType } from '../../../lib/schemas/PollType.js';
+import { Role } from '../../../lib/schemas/Role.js';
+import { logger } from '../../../logger.js';
+import { commandErrorFunctions } from '../../../translations/commands.js';
+import { labels } from '../../../translations/labels.js';
+import { logErrorFunctions } from '../../../translations/logs.js';
+import { specialStringFunctions } from '../../../translations/special.js';
+import { getChannel } from '../../channels.js';
+import { getMemberFromGuild } from '../../guild.js';
+import { getPollInformation } from '../core/special.js';
 
 const executeVipRequestPollAction = async (
   member: GuildMember,
