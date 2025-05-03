@@ -1,6 +1,6 @@
 import { type ClientEvents, Events } from 'discord.js';
 
-import { decidePoll } from '../utils/polls/main.js';
+import { decidePoll } from '../utils/polls/core/special.js';
 
 export const name = Events.MessageUpdate;
 export const once = true;
