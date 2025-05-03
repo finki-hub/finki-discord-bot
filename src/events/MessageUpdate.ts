@@ -10,5 +10,9 @@ export const execute = async (...[message]: ClientEvents[typeof name]) => {
     return;
   }
 
+  if (message.poll.message.author.id !== message.client.user.id) {
+    return;
+  }
+
   await handlePoll(message.poll, true);
 };
