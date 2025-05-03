@@ -44,7 +44,7 @@ import {
   isMemberInVip,
   isMemberLevel,
 } from '../utils/members.js';
-import { createPoll, isPollDuplicate } from '../utils/polls/main.js';
+import { createPoll, isPollDuplicate } from '../utils/polls/core/special.js';
 import { USER_ID_REGEX } from '../utils/regex.js';
 import {
   getCourseRolesBySemester,

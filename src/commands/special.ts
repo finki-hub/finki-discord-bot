@@ -34,7 +34,7 @@ import {
   getPollInformation,
   getVoters,
   isPollDuplicate,
-} from '../utils/polls/main.js';
+} from '../utils/polls/core/special.js';
 import { getMembersByRoleIds } from '../utils/roles.js';
 
 const name = 'special';
