@@ -9,7 +9,7 @@ import {
   getRolesProperty,
 } from '../configuration/main.js';
 import { Channel } from '../lib/schemas/Channel.js';
-import { PollType } from '../lib/schemas/PollType.js';
+import { SpecialPollType } from '../lib/schemas/PollType.js';
 import { Role } from '../lib/schemas/Role.js';
 import {
   commandDescriptions,
@@ -23,7 +23,10 @@ import {
   isMemberInVip,
   isMemberLevel,
 } from '../utils/members.js';
-import { createPoll, isPollDuplicate } from '../utils/polls/core/special.js';
+import {
+  createSpecialPoll,
+  isSpecialPollDuplicate,
+} from '../utils/polls/core/special.js';
 
 const name = 'admin';
 
@@ -117,7 +120,10 @@ const handleAdminAdd = async (interaction: ChatInputCommandInteraction) => {
     return;
   }
 
-  const isDuplicate = await isPollDuplicate(PollType.ADMIN_ADD, user.id);
+  const isDuplicate = await isSpecialPollDuplicate(
+    SpecialPollType.ADMIN_ADD,
+    user.id,
+  );
 
   if (isDuplicate) {
     await interaction.editReply(commandErrors.userSpecialPending);
@@ -125,7 +131,7 @@ const handleAdminAdd = async (interaction: ChatInputCommandInteraction) => {
     return;
   }
 
-  const poll = createPoll(PollType.ADMIN_ADD, user);
+  const poll = createSpecialPoll(SpecialPollType.ADMIN_ADD, user);
   const councilRoleId = getRolesProperty(Role.Council);
 
   if (notify && councilRoleId !== undefined) {
@@ -169,7 +175,10 @@ const handleAdminRemove = async (interaction: ChatInputCommandInteraction) => {
     return;
   }
 
-  const isDuplicate = await isPollDuplicate(PollType.ADMIN_REMOVE, user.id);
+  const isDuplicate = await isSpecialPollDuplicate(
+    SpecialPollType.ADMIN_REMOVE,
+    user.id,
+  );
 
   if (isDuplicate) {
     await interaction.editReply(commandErrors.userSpecialPending);
@@ -177,7 +186,7 @@ const handleAdminRemove = async (interaction: ChatInputCommandInteraction) => {
     return;
   }
 
-  const poll = createPoll(PollType.ADMIN_REMOVE, user);
+  const poll = createSpecialPoll(SpecialPollType.ADMIN_REMOVE, user);
   const councilRoleId = getRolesProperty(Role.Council);
 
   if (notify && councilRoleId !== undefined) {

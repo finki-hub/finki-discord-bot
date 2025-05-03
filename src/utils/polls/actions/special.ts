@@ -1,4 +1,4 @@
-import { type GuildMember, type Poll } from 'discord.js';
+import type { GuildMember, Poll } from 'discord.js';
 
 import {
   getIrregularsAcknowledgeComponents,
@@ -11,7 +11,7 @@ import {
 import { getRolesProperty } from '../../../configuration/main.js';
 import { createBar, deleteBar } from '../../../data/database/Bar.js';
 import { Channel } from '../../../lib/schemas/Channel.js';
-import { PollType } from '../../../lib/schemas/PollType.js';
+import { SpecialPollType } from '../../../lib/schemas/PollType.js';
 import { Role } from '../../../lib/schemas/Role.js';
 import { logger } from '../../../logger.js';
 import { commandErrorFunctions } from '../../../translations/commands.js';
@@ -20,8 +20,7 @@ import { logErrorFunctions } from '../../../translations/logs.js';
 import { specialStringFunctions } from '../../../translations/special.js';
 import { getChannel } from '../../channels.js';
 import { getMemberFromGuild } from '../../guild.js';
-import { getPollInformation } from '../core/special.js';
-
+import { getSpecialPollInformation } from '../core/special.js';
 const executeVipRequestPollAction = async (
   member: GuildMember,
   decision: string,
@@ -349,6 +348,8 @@ const executeIrregularsAddPollAction = async (
   const irregularsChannel = getChannel(Channel.Irregulars);
   const oathChannel = getChannel(Channel.Oath);
 
+  logger.info(`Decision: ${decision}`);
+
   if (decision !== labels.yes) {
     await irregularsChannel?.send(
       specialStringFunctions.irregularsAddRejected(member.user.id),
@@ -403,26 +404,29 @@ const executeIrregularsRemovePollAction = async (
 };
 
 export const POLL_ACTIONS: Record<
-  PollType,
+  SpecialPollType,
   (member: GuildMember, decision: string) => Promise<void>
 > = {
-  [PollType.ADMIN_ADD]: executeAdminAddPollAction,
-  [PollType.ADMIN_REMOVE]: executeAdminRemovePollAction,
-  [PollType.BAR]: executeBarPollAction,
-  [PollType.COUNCIL_ADD]: executeCouncilAddPollAction,
-  [PollType.COUNCIL_REMOVE]: executeCouncilRemovePollAction,
-  [PollType.IRREGULARS_ADD]: executeIrregularsAddPollAction,
-  [PollType.IRREGULARS_REMOVE]: executeIrregularsRemovePollAction,
-  [PollType.IRREGULARS_REQUEST]: executeIrregularsRequestPollAction,
-  [PollType.UNBAR]: executeUnbarPollAction,
-  [PollType.VIP_ADD]: executeVipAddPollAction,
-  [PollType.VIP_REMOVE]: executeVipRemovePollAction,
-  [PollType.VIP_REQUEST]: executeVipRequestPollAction,
+  [SpecialPollType.ADMIN_ADD]: executeAdminAddPollAction,
+  [SpecialPollType.ADMIN_REMOVE]: executeAdminRemovePollAction,
+  [SpecialPollType.BAR]: executeBarPollAction,
+  [SpecialPollType.COUNCIL_ADD]: executeCouncilAddPollAction,
+  [SpecialPollType.COUNCIL_REMOVE]: executeCouncilRemovePollAction,
+  [SpecialPollType.IRREGULARS_ADD]: executeIrregularsAddPollAction,
+  [SpecialPollType.IRREGULARS_REMOVE]: executeIrregularsRemovePollAction,
+  [SpecialPollType.IRREGULARS_REQUEST]: executeIrregularsRequestPollAction,
+  [SpecialPollType.UNBAR]: executeUnbarPollAction,
+  [SpecialPollType.VIP_ADD]: executeVipAddPollAction,
+  [SpecialPollType.VIP_REMOVE]: executeVipRemovePollAction,
+  [SpecialPollType.VIP_REQUEST]: executeVipRequestPollAction,
 } as const;
 
-export const executePollAction = async (poll: Poll, decision: string) => {
+export const executeSpecialPollAction = async (
+  poll: Poll,
+  decision: string,
+) => {
   const { content } = await poll.message.fetch();
-  const { pollType, userId } = getPollInformation(content);
+  const { pollType, userId } = getSpecialPollInformation(content);
 
   if (pollType === null || userId === null) {
     logger.warn(

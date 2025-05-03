@@ -10,10 +10,12 @@ import {
   getRolesProperty,
 } from '../configuration/main.js';
 import { Channel } from '../lib/schemas/Channel.js';
-import { PollType } from '../lib/schemas/PollType.js';
+import { PollCategory } from '../lib/schemas/PollCategory.js';
+import { SpecialPollType } from '../lib/schemas/PollType.js';
 import { Role } from '../lib/schemas/Role.js';
 import {
   commandDescriptions,
+  commandErrorFunctions,
   commandErrors,
   commandResponseFunctions,
   commandResponses,
@@ -28,12 +30,12 @@ import { isMemberAdmin, isMemberBarred } from '../utils/members.js';
 import { safeReplyToInteraction } from '../utils/messages.js';
 import { POLL_OPTIONS } from '../utils/polls/constants.js';
 import {
-  createPoll,
-  decidePollForcefully,
-  getActivePolls,
-  getPollInformation,
+  createSpecialPoll,
+  decideSpecialPollForcefully,
+  getActiveSpecialPolls,
+  getSpecialPollInformation,
   getVoters,
-  isPollDuplicate,
+  isSpecialPollDuplicate,
 } from '../utils/polls/core/special.js';
 import { getMembersByRoleIds } from '../utils/roles.js';
 
@@ -106,9 +108,9 @@ export const data = new SlashCommandBuilder()
   );
 
 const handleSpecialList = async (interaction: ChatInputCommandInteraction) => {
-  const polls = await getActivePolls();
+  const polls = await getActiveSpecialPolls();
   const pollsInfo = polls.map((poll) =>
-    getPollInformation(poll.message.content),
+    getSpecialPollInformation(poll.message.content),
   );
 
   const output = pollsInfo.map(({ pollType, userId }, index) => {
@@ -161,7 +163,17 @@ const handleSpecialOverride = async (
     return;
   }
 
-  await decidePollForcefully(message.poll, decision);
+  const { pollType } = getSpecialPollInformation(message.content);
+
+  if (pollType === null) {
+    await interaction.editReply(
+      commandErrorFunctions.pollNotOfCategory(PollCategory.SPECIAL),
+    );
+
+    return;
+  }
+
+  await decideSpecialPollForcefully(message.poll, decision);
 
   await interaction.editReply(
     decision
@@ -195,6 +207,16 @@ const handleSpecialRemaining = async (
 
   if (poll === null) {
     await interaction.editReply(commandErrors.pollNotFound);
+
+    return;
+  }
+
+  const { pollType } = getSpecialPollInformation(message.content);
+
+  if (pollType === null) {
+    await interaction.editReply(
+      commandErrorFunctions.pollNotOfCategory(PollCategory.SPECIAL),
+    );
 
     return;
   }
@@ -268,7 +290,10 @@ const handleSpecialBar = async (interaction: ChatInputCommandInteraction) => {
     return;
   }
 
-  const isDuplicate = await isPollDuplicate(PollType.BAR, user.id);
+  const isDuplicate = await isSpecialPollDuplicate(
+    SpecialPollType.BAR,
+    user.id,
+  );
 
   if (isDuplicate) {
     await interaction.editReply(commandErrors.userSpecialPending);
@@ -276,7 +301,7 @@ const handleSpecialBar = async (interaction: ChatInputCommandInteraction) => {
     return;
   }
 
-  const poll = createPoll(PollType.BAR, user);
+  const poll = createSpecialPoll(SpecialPollType.BAR, user);
   const councilRoleId = getRolesProperty(Role.Council);
 
   if (notify && councilRoleId !== undefined) {
@@ -313,7 +338,10 @@ const handleSpecialUnbar = async (interaction: ChatInputCommandInteraction) => {
     return;
   }
 
-  const isDuplicate = await isPollDuplicate(PollType.UNBAR, user.id);
+  const isDuplicate = await isSpecialPollDuplicate(
+    SpecialPollType.UNBAR,
+    user.id,
+  );
 
   if (isDuplicate) {
     await interaction.editReply(commandErrors.userSpecialPending);
@@ -321,7 +349,7 @@ const handleSpecialUnbar = async (interaction: ChatInputCommandInteraction) => {
     return;
   }
 
-  const poll = createPoll(PollType.UNBAR, user);
+  const poll = createSpecialPoll(SpecialPollType.UNBAR, user);
   const councilRoleId = getRolesProperty(Role.Council);
 
   if (notify && councilRoleId !== undefined) {

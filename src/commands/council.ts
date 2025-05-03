@@ -10,7 +10,7 @@ import {
   getRolesProperty,
 } from '../configuration/main.js';
 import { Channel } from '../lib/schemas/Channel.js';
-import { PollType } from '../lib/schemas/PollType.js';
+import { SpecialPollType } from '../lib/schemas/PollType.js';
 import { Role } from '../lib/schemas/Role.js';
 import {
   commandDescriptions,
@@ -25,7 +25,10 @@ import {
   isMemberInVip,
   isMemberLevel,
 } from '../utils/members.js';
-import { createPoll, isPollDuplicate } from '../utils/polls/core/special.js';
+import {
+  createSpecialPoll,
+  isSpecialPollDuplicate,
+} from '../utils/polls/core/special.js';
 
 const name = 'council';
 
@@ -125,7 +128,10 @@ const handleCouncilAdd = async (interaction: ChatInputCommandInteraction) => {
     return;
   }
 
-  const isDuplicate = await isPollDuplicate(PollType.COUNCIL_ADD, user.id);
+  const isDuplicate = await isSpecialPollDuplicate(
+    SpecialPollType.COUNCIL_ADD,
+    user.id,
+  );
 
   if (isDuplicate) {
     await interaction.editReply(commandErrors.userSpecialPending);
@@ -133,7 +139,7 @@ const handleCouncilAdd = async (interaction: ChatInputCommandInteraction) => {
     return;
   }
 
-  const poll = createPoll(PollType.COUNCIL_ADD, user);
+  const poll = createSpecialPoll(SpecialPollType.COUNCIL_ADD, user);
   const councilRoleId = getRolesProperty(Role.Council);
 
   if (notify && councilRoleId !== undefined) {
@@ -186,7 +192,10 @@ const handleCouncilRemove = async (
     return;
   }
 
-  const isDuplicate = await isPollDuplicate(PollType.COUNCIL_REMOVE, user.id);
+  const isDuplicate = await isSpecialPollDuplicate(
+    SpecialPollType.COUNCIL_REMOVE,
+    user.id,
+  );
 
   if (isDuplicate) {
     await interaction.editReply(commandErrors.userSpecialPending);
@@ -194,7 +203,7 @@ const handleCouncilRemove = async (
     return;
   }
 
-  const poll = createPoll(PollType.COUNCIL_REMOVE, user);
+  const poll = createSpecialPoll(SpecialPollType.COUNCIL_REMOVE, user);
   const councilRoleId = getRolesProperty(Role.Council);
 
   if (notify && councilRoleId !== undefined) {

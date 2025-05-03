@@ -5,11 +5,15 @@ import {
   type User,
 } from 'discord.js';
 
+import type { PartialUser } from '../../../lib/types/PartialUser.js';
+
 import { getRolesProperty } from '../../../configuration/main.js';
 import { Channel } from '../../../lib/schemas/Channel.js';
-import { PollType, PollTypeSchema } from '../../../lib/schemas/PollType.js';
+import {
+  SpecialPollType,
+  SpecialPollTypeSchema,
+} from '../../../lib/schemas/PollType.js';
 import { Role } from '../../../lib/schemas/Role.js';
-import { type PartialUser } from '../../../lib/types/PartialUser.js';
 import { logger } from '../../../logger.js';
 import { labels } from '../../../translations/labels.js';
 import { logMessages } from '../../../translations/logs.js';
@@ -18,11 +22,11 @@ import { getChannel } from '../../channels.js';
 import { getGuild, getMemberFromGuild } from '../../guild.js';
 import { ADMIN_OVERRIDE_LEVEL } from '../../levels.js';
 import { isMemberLevel } from '../../members.js';
-import { POLL_IDENTIFIER_REGEX } from '../../regex.js';
 import { getMembersByRoleIds } from '../../roles.js';
-import { executePollAction } from '../actions/special.js';
+import { executeSpecialPollAction } from '../actions/special.js';
+import { getPollArguments } from '../utils.js';
 
-export const initializePolls = async () => {
+export const initializeSpecialPolls = async () => {
   const councilChannel = getChannel(Channel.Council);
 
   if (councilChannel === undefined) {
@@ -34,16 +38,16 @@ export const initializePolls = async () => {
   logger.info(logMessages.pollsInitialized);
 };
 
-const getPollIdentifier = (
-  pollType: PollType,
+const getSpecialPollIdentifier = (
+  pollType: SpecialPollType,
   userId: string,
-): `[${PollType}-${string}]` => `[${pollType}-${userId}]`;
+): `[${SpecialPollType}-${string}]` => `[${pollType}-${userId}]`;
 
-const getPollTypeThreshold = (pollType: PollType) => {
+const getSpecialPollTypeThreshold = (pollType: SpecialPollType) => {
   switch (pollType) {
-    case PollType.VIP_ADD:
-    case PollType.VIP_REMOVE:
-    case PollType.VIP_REQUEST:
+    case SpecialPollType.VIP_ADD:
+    case SpecialPollType.VIP_REMOVE:
+    case SpecialPollType.VIP_REQUEST:
       return 0.67;
 
     default:
@@ -51,18 +55,10 @@ const getPollTypeThreshold = (pollType: PollType) => {
   }
 };
 
-export const getPollInformation = (pollText: string) => {
-  const results = POLL_IDENTIFIER_REGEX.exec(pollText);
+export const getSpecialPollInformation = (pollText: string) => {
+  const [pollType, userId] = getPollArguments(pollText);
 
-  if (results === null) {
-    return {
-      pollType: null,
-      userId: null,
-    };
-  }
-
-  const [pollType, userId] = results[0].slice(1, -1).split('-');
-  const parsedPollType = PollTypeSchema.safeParse(pollType);
+  const parsedPollType = SpecialPollTypeSchema.safeParse(pollType);
 
   return {
     pollType: parsedPollType.data ?? null,
@@ -70,8 +66,8 @@ export const getPollInformation = (pollText: string) => {
   };
 };
 
-export const getPollText = (
-  pollType: PollType,
+export const getSpecialPollText = (
+  pollType: SpecialPollType,
   partialUser: PartialUser,
 ): {
   description: string;
@@ -80,63 +76,63 @@ export const getPollText = (
   const { tag: userTag } = partialUser;
 
   switch (pollType) {
-    case PollType.ADMIN_ADD:
+    case SpecialPollType.ADMIN_ADD:
       return {
         description: specialStringFunctions.adminAddDescription(userTag),
         title: specialStringFunctions.adminAddTitle(partialUser),
       };
-    case PollType.ADMIN_REMOVE:
+    case SpecialPollType.ADMIN_REMOVE:
       return {
         description: specialStringFunctions.adminRemoveDescription(userTag),
         title: specialStringFunctions.adminRemoveTitle(partialUser),
       };
 
-    case PollType.BAR:
+    case SpecialPollType.BAR:
       return {
         description: specialStringFunctions.barDescription(userTag),
         title: specialStringFunctions.barTitle(partialUser),
       };
 
-    case PollType.COUNCIL_ADD:
+    case SpecialPollType.COUNCIL_ADD:
       return {
         description: specialStringFunctions.councilAddDescription(userTag),
         title: specialStringFunctions.councilAddTitle(partialUser),
       };
 
-    case PollType.COUNCIL_REMOVE:
+    case SpecialPollType.COUNCIL_REMOVE:
       return {
         description: specialStringFunctions.councilRemoveDescription(userTag),
         title: specialStringFunctions.councilRemoveTitle(partialUser),
       };
 
-    case PollType.IRREGULARS_ADD:
-    case PollType.IRREGULARS_REQUEST:
+    case SpecialPollType.IRREGULARS_ADD:
+    case SpecialPollType.IRREGULARS_REQUEST:
       return {
         description: specialStringFunctions.irregularsAddDescription(userTag),
         title: specialStringFunctions.irregularsAddTitle(partialUser),
       };
 
-    case PollType.IRREGULARS_REMOVE:
+    case SpecialPollType.IRREGULARS_REMOVE:
       return {
         description:
           specialStringFunctions.irregularsRemoveDescription(userTag),
         title: specialStringFunctions.irregularsRemoveTitle(partialUser),
       };
 
-    case PollType.UNBAR:
+    case SpecialPollType.UNBAR:
       return {
         description: specialStringFunctions.unbarDescription(userTag),
         title: specialStringFunctions.unbarTitle(partialUser),
       };
 
-    case PollType.VIP_ADD:
-    case PollType.VIP_REQUEST:
+    case SpecialPollType.VIP_ADD:
+    case SpecialPollType.VIP_REQUEST:
       return {
         description: specialStringFunctions.vipAddDescription(userTag),
         title: specialStringFunctions.vipAddTitle(partialUser),
       };
 
-    case PollType.VIP_REMOVE:
+    case SpecialPollType.VIP_REMOVE:
       return {
         description: specialStringFunctions.vipRemoveDescription(userTag),
         title: specialStringFunctions.vipRemoveTitle(partialUser),
@@ -150,7 +146,7 @@ export const getPollText = (
   }
 };
 
-export const getActivePolls = async () => {
+export const getActiveSpecialPolls = async () => {
   const channel = getChannel(Channel.Council);
 
   if (channel === undefined) {
@@ -166,21 +162,27 @@ export const getActivePolls = async () => {
   return polls;
 };
 
-export const isPollDuplicate = async (pollType: PollType, userId: string) => {
-  const polls = await getActivePolls();
-  const identifier = getPollIdentifier(pollType, userId);
+export const isSpecialPollDuplicate = async (
+  pollType: SpecialPollType,
+  userId: string,
+) => {
+  const polls = await getActiveSpecialPolls();
+  const identifier = getSpecialPollIdentifier(pollType, userId);
 
   return polls.some((poll) => poll.message.content.includes(identifier));
 };
 
-export const createPoll = (pollType: PollType, targetUser: User) => {
+export const createSpecialPoll = (
+  pollType: SpecialPollType,
+  targetUser: User,
+) => {
   const partialUser = {
     id: targetUser.id,
     tag: targetUser.tag,
   };
 
-  const { description, title } = getPollText(pollType, partialUser);
-  const identifier = getPollIdentifier(pollType, targetUser.id);
+  const { description, title } = getSpecialPollText(pollType, partialUser);
+  const identifier = getSpecialPollIdentifier(pollType, targetUser.id);
 
   return {
     content: `${title}\n-# ${identifier}`,
@@ -220,7 +222,7 @@ export const getVoters = async (poll: Poll) => {
   return voters;
 };
 
-export const getMissingVoters = async (poll: Poll) => {
+const getMissingVoters = async (poll: Poll) => {
   const guild = poll.message.guild ?? (await getGuild());
 
   if (guild === null) {
@@ -239,19 +241,19 @@ export const getMissingVoters = async (poll: Poll) => {
   return councilMembers.filter((member) => !voters.includes(member));
 };
 
-const getPollThreshold = async (
+const getSpecialPollThreshold = async (
   poll: Poll,
   roleId: string,
   abstainMissingVotes: boolean,
 ) => {
   const guild = poll.message.guild ?? (await getGuild());
-  const { pollType } = getPollInformation(poll.message.content);
+  const { pollType } = getSpecialPollInformation(poll.message.content);
 
   if (guild === null || pollType === null) {
     return null;
   }
 
-  const pollTypeThreshold = getPollTypeThreshold(pollType);
+  const pollTypeThreshold = getSpecialPollTypeThreshold(pollType);
   const totalVoters = await getMembersByRoleIds(guild, [roleId]);
 
   const abstainOption = poll.answers.find(
@@ -314,10 +316,10 @@ export const getAdminVotes = async (poll: Poll) => {
   return new Set(adminVotes);
 };
 
-const getPollSpecialDecision = async (poll: Poll) => {
+const getSpecialPollAdminDecision = async (poll: Poll) => {
   const adminVotes = await getAdminVotes(poll);
 
-  const { pollType, userId } = getPollInformation(poll.message.content);
+  const { pollType, userId } = getSpecialPollInformation(poll.message.content);
 
   if (pollType === null || userId === null) {
     return null;
@@ -330,12 +332,12 @@ const getPollSpecialDecision = async (poll: Poll) => {
   }
 
   switch (pollType) {
-    case PollType.ADMIN_ADD:
-    case PollType.COUNCIL_ADD:
-    case PollType.IRREGULARS_ADD:
-    case PollType.IRREGULARS_REQUEST:
-    case PollType.VIP_ADD:
-    case PollType.VIP_REQUEST:
+    case SpecialPollType.ADMIN_ADD:
+    case SpecialPollType.COUNCIL_ADD:
+    case SpecialPollType.IRREGULARS_ADD:
+    case SpecialPollType.IRREGULARS_REQUEST:
+    case SpecialPollType.VIP_ADD:
+    case SpecialPollType.VIP_REQUEST:
       if (!(await isMemberLevel(member, ADMIN_OVERRIDE_LEVEL))) {
         return null;
       }
@@ -355,14 +357,21 @@ const getPollSpecialDecision = async (poll: Poll) => {
   }
 };
 
-export const getPollDecision = async (poll: Poll, pollExpired: boolean) => {
+export const getSpecialPollDecision = async (
+  poll: Poll,
+  pollExpired: boolean,
+) => {
   const councilRoleId = getRolesProperty(Role.Council);
 
   if (councilRoleId === undefined) {
     return null;
   }
 
-  const threshold = await getPollThreshold(poll, councilRoleId, pollExpired);
+  const threshold = await getSpecialPollThreshold(
+    poll,
+    councilRoleId,
+    pollExpired,
+  );
 
   if (threshold === null) {
     return null;
@@ -381,11 +390,11 @@ export const getPollDecision = async (poll: Poll, pollExpired: boolean) => {
   return decision.text;
 };
 
-export const decidePoll = async (poll: Poll, expired = false) => {
-  const specialDecision = await getPollSpecialDecision(poll);
+export const decideSpecialPoll = async (poll: Poll, expired = false) => {
+  const adminDecision = await getSpecialPollAdminDecision(poll);
 
-  if (specialDecision !== null) {
-    await executePollAction(poll, specialDecision);
+  if (adminDecision !== null) {
+    await executeSpecialPollAction(poll, adminDecision);
 
     if (!poll.resultsFinalized) {
       await poll.end();
@@ -394,20 +403,20 @@ export const decidePoll = async (poll: Poll, expired = false) => {
     return;
   }
 
-  const decision = await getPollDecision(poll, expired);
+  const decision = await getSpecialPollDecision(poll, expired);
 
   if (decision === null) {
     return;
   }
 
-  await executePollAction(poll, decision);
+  await executeSpecialPollAction(poll, decision);
 
   if (!poll.resultsFinalized && !expired) {
     await poll.end();
   }
 };
 
-export const decidePollForcefully = async (
+export const decideSpecialPollForcefully = async (
   poll: Poll,
   decision: null | string,
 ) => {
@@ -415,12 +424,12 @@ export const decidePollForcefully = async (
     return;
   }
 
-  const chosenDecision = decision ?? (await getPollDecision(poll, true));
+  const chosenDecision = decision ?? (await getSpecialPollDecision(poll, true));
 
   if (chosenDecision === null) {
     return;
   }
 
   await poll.end();
-  await executePollAction(poll, chosenDecision);
+  await executeSpecialPollAction(poll, chosenDecision);
 };

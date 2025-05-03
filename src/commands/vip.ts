@@ -9,7 +9,7 @@ import {
   getRolesProperty,
 } from '../configuration/main.js';
 import { Channel } from '../lib/schemas/Channel.js';
-import { PollType } from '../lib/schemas/PollType.js';
+import { SpecialPollType } from '../lib/schemas/PollType.js';
 import { Role } from '../lib/schemas/Role.js';
 import {
   commandDescriptions,
@@ -24,7 +24,10 @@ import {
   isMemberInIrregulars,
   isMemberInVip,
 } from '../utils/members.js';
-import { createPoll, isPollDuplicate } from '../utils/polls/core/special.js';
+import {
+  createSpecialPoll,
+  isSpecialPollDuplicate,
+} from '../utils/polls/core/special.js';
 
 const name = 'vip';
 
@@ -121,7 +124,10 @@ const handleVipAdd = async (interaction: ChatInputCommandInteraction) => {
     return;
   }
 
-  const isDuplicate = await isPollDuplicate(PollType.VIP_ADD, user.id);
+  const isDuplicate = await isSpecialPollDuplicate(
+    SpecialPollType.VIP_ADD,
+    user.id,
+  );
 
   if (isDuplicate) {
     await interaction.editReply(commandErrors.userSpecialPending);
@@ -129,7 +135,7 @@ const handleVipAdd = async (interaction: ChatInputCommandInteraction) => {
     return;
   }
 
-  const poll = createPoll(PollType.VIP_ADD, user);
+  const poll = createSpecialPoll(SpecialPollType.VIP_ADD, user);
   const councilRoleId = getRolesProperty(Role.Council);
 
   if (notify && councilRoleId !== undefined) {
@@ -186,7 +192,10 @@ const handleVipRemove = async (interaction: ChatInputCommandInteraction) => {
     return;
   }
 
-  const isDuplicate = await isPollDuplicate(PollType.VIP_REMOVE, user.id);
+  const isDuplicate = await isSpecialPollDuplicate(
+    SpecialPollType.VIP_REMOVE,
+    user.id,
+  );
 
   if (isDuplicate) {
     await interaction.editReply(commandErrors.userSpecialPending);
@@ -194,7 +203,7 @@ const handleVipRemove = async (interaction: ChatInputCommandInteraction) => {
     return;
   }
 
-  const poll = createPoll(PollType.VIP_REMOVE, user);
+  const poll = createSpecialPoll(SpecialPollType.VIP_REMOVE, user);
   const councilRoleId = getRolesProperty(Role.Council);
 
   if (notify && councilRoleId !== undefined) {
