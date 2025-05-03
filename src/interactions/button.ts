@@ -20,7 +20,7 @@ import {
   getRemindersByUserId,
 } from '../data/database/Reminder.js';
 import { Channel } from '../lib/schemas/Channel.js';
-import { PollType } from '../lib/schemas/PollType.js';
+import { SpecialPollType } from '../lib/schemas/PollType.js';
 import { Role } from '../lib/schemas/Role.js';
 import { logger } from '../logger.js';
 import {
@@ -44,7 +44,10 @@ import {
   isMemberInVip,
   isMemberLevel,
 } from '../utils/members.js';
-import { createPoll, isPollDuplicate } from '../utils/polls/core/special.js';
+import {
+  createSpecialPoll,
+  isSpecialPollDuplicate,
+} from '../utils/polls/core/special.js';
 import { USER_ID_REGEX } from '../utils/regex.js';
 import {
   getCourseRolesBySemester,
@@ -556,8 +559,8 @@ export const handleVipButton = async (
     return;
   }
 
-  const isDuplicate = await isPollDuplicate(
-    PollType.VIP_REQUEST,
+  const isDuplicate = await isSpecialPollDuplicate(
+    SpecialPollType.VIP_REQUEST,
     interaction.user.id,
   );
 
@@ -571,7 +574,7 @@ export const handleVipButton = async (
     return;
   }
 
-  const poll = createPoll(PollType.VIP_REQUEST, interaction.user);
+  const poll = createSpecialPoll(SpecialPollType.VIP_REQUEST, interaction.user);
 
   const councilChannel = getChannel(Channel.Council);
   await councilChannel?.send(poll);
@@ -701,8 +704,8 @@ export const handleIrregularsButton = async (
     return;
   }
 
-  const isDuplicate = await isPollDuplicate(
-    PollType.IRREGULARS_REQUEST,
+  const isDuplicate = await isSpecialPollDuplicate(
+    SpecialPollType.IRREGULARS_REQUEST,
     interaction.user.id,
   );
 
@@ -716,7 +719,10 @@ export const handleIrregularsButton = async (
     return;
   }
 
-  const poll = createPoll(PollType.IRREGULARS_REQUEST, interaction.user);
+  const poll = createSpecialPoll(
+    SpecialPollType.IRREGULARS_REQUEST,
+    interaction.user,
+  );
 
   const councilChannel = getChannel(Channel.Council);
   await councilChannel?.send(poll);

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export enum PollType {
+export enum SpecialPollType {
   ADMIN_ADD = 'adminAdd',
   ADMIN_REMOVE = 'adminRemove',
   BAR = 'bar',
@@ -15,4 +15,7 @@ export enum PollType {
   VIP_REQUEST = 'vipRequest',
 }
 
-export const PollTypeSchema = z.nativeEnum(PollType);
+export type PollType = SpecialPollType;
+
+export const SpecialPollTypeSchema = z.nativeEnum(SpecialPollType);
+export const PollTypeSchema = SpecialPollTypeSchema;
