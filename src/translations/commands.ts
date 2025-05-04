@@ -1,5 +1,6 @@
 import {
   bold,
+  channelMention,
   codeBlock,
   type GuildPremiumTier,
   inlineCode,
@@ -50,6 +51,7 @@ export const commandDescriptions = {
   link: 'Преземи најчесто баран линк',
   'list links': 'Преземи листа од сите линкови',
   'list questions': 'Преземи листа од сите прашања',
+  'lottery end': 'Заврши лотарија предвремено',
   'manage anto-add': 'Додади Анто факт',
   'manage anto-delete': 'Избриши Анто факт',
   'manage anto-dump': 'Извлечи ги сите Анто факти од базата на податоци',
@@ -102,6 +104,7 @@ export const commandDescriptions = {
   question: 'Преземи најчесто поставувано прашање',
   register: 'Регистрирај команди',
   'regulars add': 'Додади нов редовен член',
+  'regulars lottery': 'Спроведи лотарија за влез во редовните',
   'regulars recreate': 'Рекреирај го привремениот канал за редовни',
   'regulars remove': 'Отстрани редовен член',
   'reminder create': 'Креирај потсетник',
@@ -164,6 +167,7 @@ export const commandResponses = {
   infoDeleted: 'Ја избришавте информативната порака.',
   infoUpdated: 'Информативната порака е ажурирана.',
   linkDeleted: 'Го избришавте линкот.',
+  lotteryEnded: 'Лотаријата е завршена.',
   messageCreated: 'Испративте порака.',
   noBarred: 'Нема членови со забрана.',
   noReminders: 'Нема потсетници.',
@@ -227,6 +231,9 @@ export const commandResponseFunctions = {
     `Ги поставивте поените за активност на корисникот ${userMention(
       userId,
     )} на ${experience}.`,
+
+  lotteryPollCreated: (channelId: string) =>
+    `Креиравте лотарија во ${channelMention(channelId)}.`,
 
   messageStarred: (messageUrl: string) => `Пораката ${messageUrl} е обележана!`,
 

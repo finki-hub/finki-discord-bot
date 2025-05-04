@@ -52,6 +52,10 @@ const commandPermissions: Record<
     permissions: [],
     roles: [Role.Council],
   },
+  lottery: {
+    permissions: [],
+    roles: [Role.Administrators, Role.Moderators],
+  },
   manage: {
     permissions: [],
     roles: [Role.Administrators],

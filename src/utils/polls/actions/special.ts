@@ -403,7 +403,7 @@ const executeIrregularsRemovePollAction = async (
   );
 };
 
-export const POLL_ACTIONS: Record<
+export const SPECIAL_POLL_ACTIONS: Record<
   SpecialPollType,
   (member: GuildMember, decision: string) => Promise<void>
 > = {
@@ -430,7 +430,7 @@ export const executeSpecialPollAction = async (
 
   if (pollType === null || userId === null) {
     logger.warn(
-      logErrorFunctions.pollNotExecutedError(
+      logErrorFunctions.specialPollNotExecutedError(
         pollType ?? labels.unknown,
         userId ?? labels.unknown,
       ),
@@ -446,5 +446,5 @@ export const executeSpecialPollAction = async (
     return;
   }
 
-  await POLL_ACTIONS[pollType](member, decision);
+  await SPECIAL_POLL_ACTIONS[pollType](member, decision);
 };

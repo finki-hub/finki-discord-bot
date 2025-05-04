@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 export enum PollCategory {
+  LOTTERY = 'lottery',
   SPECIAL = 'special',
 }
 

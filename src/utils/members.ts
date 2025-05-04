@@ -18,6 +18,16 @@ export const memberHasRole = (member: GuildMember, role: Role) => {
   return roleId !== undefined && member.roles.cache.has(roleId);
 };
 
+export const excludeMembersWithRole = (members: GuildMember[], role: Role) => {
+  const roleId = getRolesProperty(role);
+
+  if (roleId === undefined) {
+    return members;
+  }
+
+  return members.filter((member) => !member.roles.cache.has(roleId));
+};
+
 export const isMemberAdministrator = (member: GuildMember) =>
   member.permissions.has(PermissionsBitField.Flags.Administrator);
 
@@ -71,4 +81,14 @@ export const isMemberBarred = async (userId: string) => {
   const bar = await getBarByUserId(userId);
 
   return bar !== null;
+};
+
+export const excludeBarredMembers = async (userIds: string[]) => {
+  const nonBarredMembers = await Promise.all(
+    userIds.map(async (userId) =>
+      (await isMemberBarred(userId)) ? null : userId,
+    ),
+  );
+
+  return nonBarredMembers.filter((userId) => userId !== null);
 };

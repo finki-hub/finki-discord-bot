@@ -1,6 +1,12 @@
-import { type PollType, SpecialPollType } from '../lib/schemas/PollType.js';
+import {
+  LotteryPollType,
+  type PollType,
+  SpecialPollType,
+} from '../lib/schemas/PollType.js';
 
 export const POLL_TYPE_LABELS: Record<PollType, string> = {
+  [LotteryPollType.REGULARS_LOTTERY]: 'REGULARS LOTTERY',
+
   [SpecialPollType.ADMIN_ADD]: 'ADMIN ADD',
   [SpecialPollType.ADMIN_REMOVE]: 'ADMIN REMOVE',
   [SpecialPollType.BAR]: 'BAR',

@@ -24,7 +24,7 @@ import { ADMIN_OVERRIDE_LEVEL } from '../../levels.js';
 import { isMemberLevel } from '../../members.js';
 import { getMembersByRoleIds } from '../../roles.js';
 import { executeSpecialPollAction } from '../actions/special.js';
-import { getPollArguments } from '../utils.js';
+import { getPollArguments, getVoters } from '../utils.js';
 
 export const initializeSpecialPolls = async () => {
   const councilChannel = getChannel(Channel.Council);
@@ -140,8 +140,9 @@ export const getSpecialPollText = (
 
     default:
       return {
-        description: specialStringFunctions.unknownPollDescription(userTag),
-        title: specialStringFunctions.unknownPollTitle(partialUser),
+        description:
+          specialStringFunctions.unknownSpecialPollDescription(userTag),
+        title: specialStringFunctions.unknownSpecialPollTitle(partialUser),
       };
   }
 };
@@ -209,17 +210,6 @@ export const createSpecialPoll = (
       },
     },
   } satisfies InteractionEditReplyOptions;
-};
-
-export const getVoters = async (poll: Poll) => {
-  const votes = await Promise.all(
-    poll.answers.map(async (answer) => await answer.fetchVoters()),
-  );
-  const voters = votes
-    .flatMap((vote) => vote.values().toArray())
-    .map((voter) => voter.id);
-
-  return voters;
 };
 
 const getMissingVoters = async (poll: Poll) => {
