@@ -28,15 +28,15 @@ import { createCommandChoices } from '../utils/commands.js';
 import { getGuild, getMemberFromGuild } from '../utils/guild.js';
 import { isMemberAdmin, isMemberBarred } from '../utils/members.js';
 import { safeReplyToInteraction } from '../utils/messages.js';
-import { POLL_OPTIONS } from '../utils/polls/constants.js';
+import { SPECIAL_POLL_OPTIONS } from '../utils/polls/constants.js';
 import {
   createSpecialPoll,
   decideSpecialPollForcefully,
   getActiveSpecialPolls,
   getSpecialPollInformation,
-  getVoters,
   isSpecialPollDuplicate,
 } from '../utils/polls/core/special.js';
+import { getVoters } from '../utils/polls/utils.js';
 import { getMembersByRoleIds } from '../utils/roles.js';
 
 const name = 'special';
@@ -67,7 +67,7 @@ export const data = new SlashCommandBuilder()
           .setName('decision')
           .setDescription('Одлука')
           .setRequired(false)
-          .addChoices(...createCommandChoices(POLL_OPTIONS)),
+          .addChoices(...createCommandChoices(SPECIAL_POLL_OPTIONS)),
       ),
   )
   .addSubcommand((command) =>

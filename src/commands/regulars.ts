@@ -1,13 +1,17 @@
 import {
+  ChannelType,
   type ChatInputCommandInteraction,
+  type GuildTextBasedChannel,
   SlashCommandBuilder,
 } from 'discord.js';
 
 import { getRolesProperty } from '../configuration/main.js';
+import { LotteryPollType } from '../lib/schemas/PollType.js';
 import { Role } from '../lib/schemas/Role.js';
 import {
   commandDescriptions,
   commandErrors,
+  commandResponseFunctions,
   commandResponses,
 } from '../translations/commands.js';
 import { recreateRegularsTemporaryChannel } from '../utils/channels.js';
@@ -17,6 +21,7 @@ import {
   isMemberInRegulars,
   isMemberInVip,
 } from '../utils/members.js';
+import { createLotteryPoll } from '../utils/polls/core/lottery.js';
 
 const name = 'regulars';
 
@@ -32,6 +37,38 @@ export const data = new SlashCommandBuilder()
           .setName('user')
           .setDescription('Предлог корисник за член на редовните')
           .setRequired(true),
+      ),
+  )
+  .addSubcommand((command) =>
+    command
+      .setName('lottery')
+      .setDescription(commandDescriptions['regulars lottery'])
+      .addChannelOption((option) =>
+        option
+          .setName('channel')
+          .setDescription('Канал во кој ќе се спроведе лотаријата')
+          .setRequired(true)
+          .addChannelTypes(ChannelType.GuildText),
+      )
+      .addIntegerOption((option) =>
+        option
+          .setName('duration')
+          .setDescription('Времетраење на лотаријата во часови')
+          .setRequired(true)
+          .setMinValue(1),
+      )
+      .addBooleanOption((option) =>
+        option
+          .setName('weighted')
+          .setDescription(
+            'Дали учесниците со повеќе поени за активност да имаат поголема шанса',
+          ),
+      )
+      .addIntegerOption((option) =>
+        option
+          .setName('winners')
+          .setDescription('Број на извлечени победници')
+          .setMinValue(1),
       ),
   )
   .addSubcommand((command) =>
@@ -92,6 +129,39 @@ const handleRegularsAdd = async (interaction: ChatInputCommandInteraction) => {
   await interaction.editReply(commandResponses.userGivenRegular);
 };
 
+const handleRegularsLottery = async (
+  interaction: ChatInputCommandInteraction,
+) => {
+  if (!interaction.channel?.isSendable()) {
+    await interaction.editReply({
+      content: commandErrors.unsupportedChannelType,
+    });
+
+    return;
+  }
+
+  const channel = interaction.options.getChannel(
+    'channel',
+    true,
+  ) as GuildTextBasedChannel;
+  const duration = interaction.options.getInteger('duration', true);
+  const weighted = interaction.options.getBoolean('weighted') ?? false;
+  const winnerCount = interaction.options.getInteger('winners') ?? 1;
+
+  const poll = createLotteryPoll(
+    LotteryPollType.REGULARS_LOTTERY,
+    weighted,
+    winnerCount,
+    duration,
+  );
+
+  await channel.send(poll);
+
+  await interaction.editReply(
+    commandResponseFunctions.lotteryPollCreated(channel.id),
+  );
+};
+
 const handleRegularsRemove = async (
   interaction: ChatInputCommandInteraction,
 ) => {
@@ -133,6 +203,7 @@ const handleRegularsRecreate = async (
 
 const regularsHandlers = {
   add: handleRegularsAdd,
+  lottery: handleRegularsLottery,
   recreate: handleRegularsRecreate,
   remove: handleRegularsRemove,
 };

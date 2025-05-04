@@ -1,5 +1,9 @@
 import { z } from 'zod';
 
+export enum LotteryPollType {
+  REGULARS_LOTTERY = 'regularsLottery',
+}
+
 export enum SpecialPollType {
   ADMIN_ADD = 'adminAdd',
   ADMIN_REMOVE = 'adminRemove',
@@ -15,7 +19,11 @@ export enum SpecialPollType {
   VIP_REQUEST = 'vipRequest',
 }
 
-export type PollType = SpecialPollType;
+export type PollType = LotteryPollType | SpecialPollType;
 
+export const LotteryPollTypeSchema = z.nativeEnum(LotteryPollType);
 export const SpecialPollTypeSchema = z.nativeEnum(SpecialPollType);
-export const PollTypeSchema = SpecialPollTypeSchema;
+export const PollTypeSchema = z.union([
+  LotteryPollTypeSchema,
+  SpecialPollTypeSchema,
+]);
