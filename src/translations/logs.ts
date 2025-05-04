@@ -189,6 +189,12 @@ export const logErrorFunctions = {
 
   loginFailed: (error: unknown) => `Failed logging in\n${error}`,
 
+  lotteryPollNotExecutedError: (
+    pollType: string,
+    winnerCount: number | string,
+  ) =>
+    `Lottery poll ${pollType} with ${winnerCount} winners could not be executed`,
+
   memberNotFound: (userId: string) => `Member for ${userId} not found`,
 
   messageContextMenuInteractionDeferError: (
@@ -209,9 +215,6 @@ export const logErrorFunctions = {
   messageUrlFetchError: (interactionId: string, error: unknown) =>
     `Failed fetching message URL for ${interactionId}\n${error}`,
 
-  pollNotExecutedError: (pollType: string, userId: string) =>
-    `Poll ${pollType} for ${userId} could not be executed`,
-
   promptError: (error: unknown) => `Failed sending prompt\n${error}`,
 
   reminderLoadError: (error: unknown) => `Failed loading reminders\n${error}`,
@@ -229,6 +232,9 @@ export const logErrorFunctions = {
   scriptExecutionError: (error: unknown) => `Failed executing script\n${error}`,
 
   sendAdsError: (error: unknown) => `Failed sending ads\n${error}`,
+
+  specialPollNotExecutedError: (pollType: string, userId: string) =>
+    `Special poll ${pollType} for ${userId} could not be executed`,
 
   unknownInteractionError: (userId: string) =>
     `Unknown interaction from ${userId}`,
