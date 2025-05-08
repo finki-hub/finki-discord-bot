@@ -12,6 +12,22 @@ export const getUsername = async (userId: string) => {
   return user.tag;
 };
 
+export const memberHasRole = (member: GuildMember, role: Role) => {
+  const roleId = getRolesProperty(role);
+
+  return roleId !== undefined && member.roles.cache.has(roleId);
+};
+
+export const excludeMembersWithRole = (members: GuildMember[], role: Role) => {
+  const roleId = getRolesProperty(role);
+
+  if (roleId === undefined) {
+    return members;
+  }
+
+  return members.filter((member) => !member.roles.cache.has(roleId));
+};
+
 export const isMemberAdministrator = (member: GuildMember) =>
   member.permissions.has(PermissionsBitField.Flags.Administrator);
 
@@ -20,49 +36,30 @@ export const isMemberInVip = (member: GuildMember) => {
     return true;
   }
 
-  const vipRoleId = getRolesProperty(Role.VIP);
-  const moderatorRoleId = getRolesProperty(Role.Moderators);
-  const adminRoleId = getRolesProperty(Role.Administrators);
-
   return (
-    (vipRoleId !== undefined && member.roles.cache.has(vipRoleId)) ||
-    (moderatorRoleId !== undefined &&
-      member.roles.cache.has(moderatorRoleId)) ||
-    (adminRoleId !== undefined && member.roles.cache.has(adminRoleId))
+    memberHasRole(member, Role.VIP) ||
+    memberHasRole(member, Role.Moderators) ||
+    memberHasRole(member, Role.Administrators)
   );
 };
 
-export const isMemberInCouncil = (member: GuildMember) => {
-  const councilRoleId = getRolesProperty(Role.Council);
+export const isMemberInCouncil = (member: GuildMember) =>
+  memberHasRole(member, Role.Council);
 
-  return councilRoleId !== undefined && member.roles.cache.has(councilRoleId);
-};
+export const isMemberInIrregulars = (member: GuildMember) =>
+  memberHasRole(member, Role.Irregulars);
 
-export const isMemberInIrregulars = (member: GuildMember) => {
-  const irregularRoleId = getRolesProperty(Role.Irregulars);
-
-  return (
-    irregularRoleId !== undefined && member.roles.cache.has(irregularRoleId)
-  );
-};
-
-export const isMemberInRegulars = (member: GuildMember) => {
-  const regularRoleId = getRolesProperty(Role.Regulars);
-
-  return regularRoleId !== undefined && member.roles.cache.has(regularRoleId);
-};
+export const isMemberInRegulars = (member: GuildMember) =>
+  memberHasRole(member, Role.Regulars);
 
 export const isMemberAdmin = (member: GuildMember) => {
   if (isMemberAdministrator(member)) {
     return true;
   }
 
-  const adminRoleId = getRolesProperty(Role.Administrators);
-  const moderatorRoleId = getRolesProperty(Role.Moderators);
-
   return (
-    (adminRoleId !== undefined && member.roles.cache.has(adminRoleId)) ||
-    (moderatorRoleId !== undefined && member.roles.cache.has(moderatorRoleId))
+    memberHasRole(member, Role.Administrators) ||
+    memberHasRole(member, Role.Moderators)
   );
 };
 
@@ -84,4 +81,14 @@ export const isMemberBarred = async (userId: string) => {
   const bar = await getBarByUserId(userId);
 
   return bar !== null;
+};
+
+export const excludeBarredMembers = async (userIds: string[]) => {
+  const nonBarredMembers = await Promise.all(
+    userIds.map(async (userId) =>
+      (await isMemberBarred(userId)) ? null : userId,
+    ),
+  );
+
+  return nonBarredMembers.filter((userId) => userId !== null);
 };

@@ -1,6 +1,6 @@
 import { type ClientEvents, Events } from 'discord.js';
 
-import { decidePoll } from '../utils/polls/main.js';
+import { handlePoll } from '../utils/polls/main.js';
 
 export const name = Events.MessageUpdate;
 export const once = true;
@@ -10,5 +10,9 @@ export const execute = async (...[message]: ClientEvents[typeof name]) => {
     return;
   }
 
-  await decidePoll(message.poll, true);
+  if (message.poll.message.author.id !== message.client.user.id) {
+    return;
+  }
+
+  await handlePoll(message.poll, true);
 };

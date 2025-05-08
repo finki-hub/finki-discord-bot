@@ -1,10 +1,14 @@
 import { type ClientEvents, Events } from 'discord.js';
 
-import { decidePoll } from '../utils/polls/main.js';
+import { handlePoll } from '../utils/polls/main.js';
 
 export const name = Events.MessagePollVoteRemove;
 export const once = true;
 
 export const execute = async (...[answer]: ClientEvents[typeof name]) => {
-  await decidePoll(answer.poll);
+  if (answer.poll.message.author.id !== answer.client.user.id) {
+    return;
+  }
+
+  await handlePoll(answer.poll);
 };
