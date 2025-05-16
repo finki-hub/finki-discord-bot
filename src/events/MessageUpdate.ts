@@ -3,7 +3,6 @@ import { type ClientEvents, Events } from 'discord.js';
 import { handlePoll } from '../utils/polls/main.js';
 
 export const name = Events.MessageUpdate;
-export const once = true;
 
 export const execute = async (...[message]: ClientEvents[typeof name]) => {
   if (message.poll === null) {
