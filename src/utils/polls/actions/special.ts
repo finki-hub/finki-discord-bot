@@ -348,8 +348,6 @@ const executeIrregularsAddPollAction = async (
   const irregularsChannel = getChannel(Channel.Irregulars);
   const oathChannel = getChannel(Channel.Oath);
 
-  logger.info(`Decision: ${decision}`);
-
   if (decision !== labels.yes) {
     await irregularsChannel?.send(
       specialStringFunctions.irregularsAddRejected(member.user.id),
@@ -425,8 +423,7 @@ export const executeSpecialPollAction = async (
   poll: Poll,
   decision: string,
 ) => {
-  const { content } = await poll.message.fetch();
-  const { pollType, userId } = getSpecialPollInformation(content);
+  const { pollType, userId } = getSpecialPollInformation(poll.message.content);
 
   if (pollType === null || userId === null) {
     logger.warn(

@@ -11,33 +11,39 @@ import {
   LotteryPollType,
   LotteryPollTypeSchema,
 } from '../../../lib/schemas/PollType.js';
+import { logger } from '../../../logger.js';
 import { labels } from '../../../translations/labels.js';
+import { logErrorFunctions } from '../../../translations/logs.js';
 import { specialStrings } from '../../../translations/special.js';
 import { executeLotteryPollAction } from '../actions/lottery.js';
-import { getPollArguments } from '../utils.js';
+import { getPollArguments, getPollContent } from '../utils.js';
 
-export const getLotteryPollIdentifier = (
+const getLotteryPollIdentifier = (
   pollType: LotteryPollType,
   weighted: boolean,
   winnerCount: number,
-): `[${LotteryPollType}-${string}-${number}]` =>
-  `[${pollType}-${weighted ? 'true' : 'false'}-${winnerCount}]`;
+  forcefullyEnded = false,
+): `[${LotteryPollType}-${string}-${number}-${string}]` =>
+  `[${pollType}-${weighted ? 'true' : 'false'}-${winnerCount}-${forcefullyEnded ? 'true' : 'false'}]`;
 
 export const getLotteryPollInformation = (pollText: string) => {
-  const [pollType, weighted, winnerCount] = getPollArguments(pollText);
+  const [pollType, weighted, winnerCount, forcefullyEnded] =
+    getPollArguments(pollText);
 
   const parsedPollType = LotteryPollTypeSchema.safeParse(pollType);
   const isWeighted = weighted === 'true';
   const parsedWinnerCount = Number.parseInt(winnerCount ?? '');
+  const isForcefullyEnded = forcefullyEnded === 'true';
 
   return {
+    forcefullyEnded: isForcefullyEnded,
     pollType: parsedPollType.success ? parsedPollType.data : null,
     weighted: isWeighted,
     winnerCount: Number.isNaN(parsedWinnerCount) ? null : parsedWinnerCount,
   };
 };
 
-export const getLotteryPollText = (
+const getLotteryPollText = (
   pollType: LotteryPollType,
 ): {
   description: string;
@@ -68,12 +74,12 @@ export const createLotteryPoll = (
   const identifier = getLotteryPollIdentifier(pollType, weighted, winnerCount);
 
   return {
-    content: `${title}\n-# ${identifier}`,
+    content: getPollContent(title, identifier),
     poll: {
       allowMultiselect: false,
       answers: [
         {
-          emoji: '✅',
+          emoji: '💎',
           text: labels.yes,
         },
       ],
@@ -114,7 +120,7 @@ export const selectRandomWinners = (
   return winners;
 };
 
-export const generateRandomBigInt = (max: bigint) => {
+const generateRandomBigInt = (max: bigint) => {
   if (max <= 0n) {
     return 0n;
   }
@@ -122,14 +128,17 @@ export const generateRandomBigInt = (max: bigint) => {
   const range = max + 1n;
 
   const rangeBits = range.toString(2).length;
-  const rangeBytes = Math.max(1, Math.ceil(rangeBits / 8));
+  const rangeBytes = Math.ceil(rangeBits / 8);
 
   const maxPossibleValue = 2n ** BigInt(rangeBytes * 8);
   const maxUsableValue = maxPossibleValue - (maxPossibleValue % range);
 
   let randomValue: bigint;
   do {
-    randomValue = randomBytes(rangeBytes).readBigUInt64BE();
+    randomValue = randomBytes(rangeBytes).reduce(
+      (acc, byte) => acc * 256n + BigInt(byte),
+      0n,
+    );
   } while (randomValue >= maxUsableValue);
 
   return randomValue % range;
@@ -170,10 +179,10 @@ export const selectRandomWinnersWeighted = async (
     let cumulativeWeight = 0n;
     let selectedIndex = 0;
 
-    for (const [j, element] of pool.entries()) {
-      cumulativeWeight += element.weight;
+    for (const [index, participant] of pool.entries()) {
+      cumulativeWeight += participant.weight;
       if (randomTarget <= cumulativeWeight) {
-        selectedIndex = j;
+        selectedIndex = index;
         break;
       }
     }
@@ -190,18 +199,53 @@ export const selectRandomWinnersWeighted = async (
   return winners;
 };
 
+const markLotteryPollAsEnded = async (poll: Poll) => {
+  const { content } = poll.message;
+  const { forcefullyEnded, pollType, weighted, winnerCount } =
+    getLotteryPollInformation(content);
+
+  if (forcefullyEnded) {
+    return;
+  }
+
+  if (pollType === null || winnerCount === null) {
+    logger.warn(
+      logErrorFunctions.lotteryPollNotExecutedError(
+        pollType ?? labels.unknown,
+        winnerCount ?? labels.unknown,
+      ),
+    );
+
+    return;
+  }
+
+  await poll.message.edit(
+    getPollContent(
+      getLotteryPollText(pollType).title,
+      getLotteryPollIdentifier(pollType, weighted, winnerCount, true),
+    ),
+  );
+};
+
 export const endLotteryPoll = async (poll: Poll, drawWinners: boolean) => {
   if (poll.resultsFinalized) {
     return;
   }
 
-  await poll.end();
-
   if (drawWinners) {
     await executeLotteryPollAction(poll);
   }
+
+  await markLotteryPollAsEnded(poll);
+  await poll.end();
 };
 
 export const decideLotteryPoll = async (poll: Poll) => {
+  const { forcefullyEnded } = getLotteryPollInformation(poll.message.content);
+
+  if (forcefullyEnded) {
+    return;
+  }
+
   await executeLotteryPollAction(poll);
 };
