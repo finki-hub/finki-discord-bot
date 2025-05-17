@@ -57,7 +57,7 @@ const executeRegularsLotteryPoll = async (
   );
 };
 
-export const LOTTERY_POLL_OPTIONS: Record<
+const LOTTERY_POLL_OPTIONS: Record<
   LotteryPollType,
   (
     members: GuildMember[],
@@ -69,9 +69,9 @@ export const LOTTERY_POLL_OPTIONS: Record<
 };
 
 export const executeLotteryPollAction = async (poll: Poll) => {
-  const { content } = await poll.message.fetch();
-  const { pollType, weighted, winnerCount } =
-    getLotteryPollInformation(content);
+  const { pollType, weighted, winnerCount } = getLotteryPollInformation(
+    poll.message.content,
+  );
 
   if (pollType === null || winnerCount === null) {
     logger.warn(

@@ -4,7 +4,7 @@ import { handlePoll } from '../utils/polls/main.js';
 
 export const name = Events.MessageUpdate;
 
-export const execute = async (...[message]: ClientEvents[typeof name]) => {
+export const execute = async (...[, message]: ClientEvents[typeof name]) => {
   if (message.poll === null) {
     return;
   }
@@ -13,5 +13,5 @@ export const execute = async (...[message]: ClientEvents[typeof name]) => {
     return;
   }
 
-  await handlePoll(message.poll, true);
+  await handlePoll(message.poll);
 };

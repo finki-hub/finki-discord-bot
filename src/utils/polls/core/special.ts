@@ -16,7 +16,7 @@ import {
 import { Role } from '../../../lib/schemas/Role.js';
 import { logger } from '../../../logger.js';
 import { labels } from '../../../translations/labels.js';
-import { logMessages } from '../../../translations/logs.js';
+import { logErrorFunctions, logMessages } from '../../../translations/logs.js';
 import { specialStringFunctions } from '../../../translations/special.js';
 import { getChannel } from '../../channels.js';
 import { getGuild, getMemberFromGuild } from '../../guild.js';
@@ -24,7 +24,7 @@ import { ADMIN_OVERRIDE_LEVEL } from '../../levels.js';
 import { isMemberLevel } from '../../members.js';
 import { getMembersByRoleIds } from '../../roles.js';
 import { executeSpecialPollAction } from '../actions/special.js';
-import { getPollArguments, getVoters } from '../utils.js';
+import { getPollArguments, getPollContent, getVoters } from '../utils.js';
 
 export const initializeSpecialPolls = async () => {
   const councilChannel = getChannel(Channel.Council);
@@ -41,7 +41,9 @@ export const initializeSpecialPolls = async () => {
 const getSpecialPollIdentifier = (
   pollType: SpecialPollType,
   userId: string,
-): `[${SpecialPollType}-${string}]` => `[${pollType}-${userId}]`;
+  forcefullyEnded = false,
+): `[${SpecialPollType}-${string}-${string}]` =>
+  `[${pollType}-${userId}-${forcefullyEnded ? 'true' : 'false'}]`;
 
 const getSpecialPollTypeThreshold = (pollType: SpecialPollType) => {
   switch (pollType) {
@@ -56,17 +58,19 @@ const getSpecialPollTypeThreshold = (pollType: SpecialPollType) => {
 };
 
 export const getSpecialPollInformation = (pollText: string) => {
-  const [pollType, userId] = getPollArguments(pollText);
+  const [pollType, userId, forcefullyEnded] = getPollArguments(pollText);
 
   const parsedPollType = SpecialPollTypeSchema.safeParse(pollType);
+  const isForcefullyEnded = forcefullyEnded === 'true';
 
   return {
+    forcefullyEnded: isForcefullyEnded,
     pollType: parsedPollType.data ?? null,
     userId: userId ?? null,
   };
 };
 
-export const getSpecialPollText = (
+const getSpecialPollText = (
   pollType: SpecialPollType,
   partialUser: PartialUser,
 ): {
@@ -186,7 +190,7 @@ export const createSpecialPoll = (
   const identifier = getSpecialPollIdentifier(pollType, targetUser.id);
 
   return {
-    content: `${title}\n-# ${identifier}`,
+    content: getPollContent(title, identifier),
     poll: {
       allowMultiselect: false,
       answers: [
@@ -269,7 +273,7 @@ const getSpecialPollThreshold = async (
   return normalizedThreshold;
 };
 
-export const getAdminVotes = async (poll: Poll) => {
+const getAdminVotes = async (poll: Poll) => {
   const guild = poll.message.guild ?? (await getGuild());
 
   if (guild === null) {
@@ -347,10 +351,7 @@ const getSpecialPollAdminDecision = async (poll: Poll) => {
   }
 };
 
-export const getSpecialPollDecision = async (
-  poll: Poll,
-  pollExpired: boolean,
-) => {
+const getSpecialPollDecision = async (poll: Poll, pollExpired: boolean) => {
   const councilRoleId = getRolesProperty(Role.Council);
 
   if (councilRoleId === undefined) {
@@ -380,20 +381,57 @@ export const getSpecialPollDecision = async (
   return decision.text;
 };
 
-export const decideSpecialPoll = async (poll: Poll, expired = false) => {
-  const adminDecision = await getSpecialPollAdminDecision(poll);
+const markSpecialPollAsEnded = async (poll: Poll) => {
+  const { content, guild } = poll.message;
+  const { forcefullyEnded, pollType, userId } =
+    getSpecialPollInformation(content);
 
-  if (adminDecision !== null) {
-    await executeSpecialPollAction(poll, adminDecision);
+  if (forcefullyEnded) {
+    return;
+  }
 
-    if (!poll.resultsFinalized) {
-      await poll.end();
-    }
+  if (pollType === null || userId === null) {
+    logger.warn(
+      logErrorFunctions.specialPollNotExecutedError(
+        pollType ?? labels.unknown,
+        userId ?? labels.unknown,
+      ),
+    );
 
     return;
   }
 
-  const decision = await getSpecialPollDecision(poll, expired);
+  const member = await getMemberFromGuild(userId, guild);
+
+  if (member === null) {
+    logger.warn(logErrorFunctions.memberNotFound(userId));
+
+    return;
+  }
+
+  const partialUser: PartialUser = {
+    id: userId,
+    tag: member.user.tag,
+  };
+
+  await poll.message.edit(
+    getPollContent(
+      getSpecialPollText(pollType, partialUser).title,
+      getSpecialPollIdentifier(pollType, userId, true),
+    ),
+  );
+};
+
+export const decideSpecialPoll = async (poll: Poll) => {
+  const { forcefullyEnded } = getSpecialPollInformation(poll.message.content);
+
+  if (forcefullyEnded) {
+    return;
+  }
+
+  const decision =
+    (await getSpecialPollAdminDecision(poll)) ??
+    (await getSpecialPollDecision(poll, poll.resultsFinalized));
 
   if (decision === null) {
     return;
@@ -401,7 +439,8 @@ export const decideSpecialPoll = async (poll: Poll, expired = false) => {
 
   await executeSpecialPollAction(poll, decision);
 
-  if (!poll.resultsFinalized && !expired) {
+  if (!poll.resultsFinalized) {
+    await markSpecialPollAsEnded(poll);
     await poll.end();
   }
 };
@@ -420,6 +459,8 @@ export const decideSpecialPollForcefully = async (
     return;
   }
 
-  await poll.end();
   await executeSpecialPollAction(poll, chosenDecision);
+
+  await markSpecialPollAsEnded(poll);
+  await poll.end();
 };

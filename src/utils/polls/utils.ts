@@ -12,6 +12,9 @@ export const getPollArguments = (text: string) => {
   return match.groups['content'].split('-');
 };
 
+export const getPollContent = (title: string, identifier: string) =>
+  `${title}\n-# ${identifier}`;
+
 export const getVoters = async (poll: Poll) => {
   const votes = await Promise.all(
     poll.answers.map(async (answer) => await answer.fetchVoters()),

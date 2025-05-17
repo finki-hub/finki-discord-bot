@@ -43,19 +43,18 @@ export const data = new SlashCommandBuilder()
     command
       .setName('lottery')
       .setDescription(commandDescriptions['regulars lottery'])
-      .addChannelOption((option) =>
-        option
-          .setName('channel')
-          .setDescription('Канал во кој ќе се спроведе лотаријата')
-          .setRequired(true)
-          .addChannelTypes(ChannelType.GuildText),
-      )
       .addIntegerOption((option) =>
         option
           .setName('duration')
           .setDescription('Времетраење на лотаријата во часови')
           .setRequired(true)
           .setMinValue(1),
+      )
+      .addChannelOption((option) =>
+        option
+          .setName('channel')
+          .setDescription('Канал во кој ќе се спроведе лотаријата')
+          .addChannelTypes(ChannelType.GuildText),
       )
       .addBooleanOption((option) =>
         option
@@ -142,8 +141,7 @@ const handleRegularsLottery = async (
 
   const channel = interaction.options.getChannel(
     'channel',
-    true,
-  ) as GuildTextBasedChannel;
+  ) as GuildTextBasedChannel | null;
   const duration = interaction.options.getInteger('duration', true);
   const weighted = interaction.options.getBoolean('weighted') ?? false;
   const winnerCount = interaction.options.getInteger('winners') ?? 1;
@@ -155,11 +153,15 @@ const handleRegularsLottery = async (
     duration,
   );
 
-  await channel.send(poll);
+  if (channel === null || interaction.channel === channel) {
+    await interaction.editReply(poll);
+  } else {
+    await channel.send(poll);
 
-  await interaction.editReply(
-    commandResponseFunctions.lotteryPollCreated(channel.id),
-  );
+    await interaction.editReply(
+      commandResponseFunctions.lotteryPollCreated(channel.id),
+    );
+  }
 };
 
 const handleRegularsRemove = async (
