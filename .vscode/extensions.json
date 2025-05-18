@@ -8,7 +8,7 @@
     "me-dutour-mathieu.vscode-github-actions",
     "meganrogge.template-string-converter",
     "mikestead.dotenv",
-    "ms-azuretools.vscode-docker",
+    "docker.docker",
     "ms-vscode-remote.remote-containers",
     "sonarsource.sonarlint-vscode",
     "yoavbls.pretty-ts-errors"
