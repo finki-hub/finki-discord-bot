@@ -28,7 +28,7 @@
     "vitest": "^3.1.4"
   },
   "engines": {
-    "node": "^20 || ^22"
+    "node": "^20 || ^22 || ^24"
   },
   "homepage": "https://github.com/Delemangi/finki-discord-bot",
   "license": "MIT",
