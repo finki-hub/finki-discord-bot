@@ -95,3 +95,111 @@ export const safeReplyToInteraction = async (
     reply = true;
   }
 };
+
+const smartSplit = (text: string, maxLength: number): [string, string] => {
+  if (text.length <= maxLength) return [text, ''];
+
+  let splitIdx = text.lastIndexOf('\n', maxLength);
+  if (splitIdx === -1) {
+    splitIdx = text.lastIndexOf(' ', maxLength);
+  }
+
+  if (splitIdx === -1) {
+    splitIdx = maxLength;
+  }
+
+  return [text.slice(0, splitIdx), text.slice(splitIdx).replace(/^\s+/u, '')];
+};
+
+export const safeStreamReplyToInteraction = async (
+  interaction: ChatInputCommandInteraction,
+  onChunk: (callback: (chunk: string) => Promise<void>) => Promise<void>,
+  options?: {
+    language?: string;
+    mentionUsers?: boolean;
+    useCodeBlock?: boolean;
+  },
+) => {
+  const {
+    language = '',
+    mentionUsers = false,
+    useCodeBlock = false,
+  } = options ?? {};
+
+  const MAX_LENGTH = 2_000;
+  const buffers: string[] = [''];
+  const messageIds: string[] = [];
+  let isFirst = true;
+
+  const formatContent = (text: string) =>
+    useCodeBlock ? codeBlock(language, text) : text;
+
+  const sendOrEdit = async (index: number, content: string) => {
+    const baseOptions = mentionUsers ? {} : { allowedMentions: { users: [] } };
+
+    if (index === 0) {
+      if (isFirst) {
+        if (interaction.deferred) {
+          const msg = await interaction.editReply({
+            ...baseOptions,
+            content: formatContent(content),
+          });
+          messageIds[0] = msg.id;
+        } else {
+          const msg = await interaction.reply({
+            ...baseOptions,
+            content: formatContent(content),
+          });
+          messageIds[0] = msg.id;
+        }
+        isFirst = false;
+      } else {
+        await interaction.editReply({
+          ...baseOptions,
+          content: formatContent(content),
+        });
+      }
+    } else if (messageIds[index]) {
+      await interaction.channel?.messages.edit(messageIds[index], {
+        content: formatContent(content),
+      });
+    } else {
+      const msg = await interaction.followUp({
+        ...baseOptions,
+        content: formatContent(content),
+      });
+      messageIds[index] = msg.id;
+    }
+  };
+
+  let lastEdit = Date.now();
+
+  const handleChunk = async (chunk: string) => {
+    let bufferIndex = buffers.length - 1;
+    buffers[bufferIndex] += chunk;
+
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    while (buffers[bufferIndex]!.length > MAX_LENGTH) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const [head, tail] = smartSplit(buffers[bufferIndex]!, MAX_LENGTH);
+      buffers[bufferIndex] = head;
+      buffers.push(tail);
+      bufferIndex++;
+    }
+
+    const now = Date.now();
+    if (now - lastEdit > 1_000) {
+      lastEdit = now;
+      for (const [i, buffer] of buffers.entries()) {
+        await sendOrEdit(i, buffer);
+      }
+    }
+  };
+
+  await onChunk(handleChunk);
+
+  // Final update to ensure all content is sent
+  for (const [i, buffer] of buffers.entries()) {
+    await sendOrEdit(i, buffer);
+  }
+};
