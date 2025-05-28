@@ -27,6 +27,7 @@ import {
 import { getMemberFromGuild } from '../utils/guild.js';
 import { hasCommandPermission } from '../utils/permissions.js';
 import {
+  handleAdAutocomplete,
   handleClassroomAutocomplete,
   handleCompanyAutocomplete,
   handleCourseAutocomplete,
@@ -374,6 +375,7 @@ export const handleButton = async (interaction: ButtonInteraction) => {
 };
 
 const autocompleteInteractionHandlers = {
+  ad: handleAdAutocomplete,
   classroom: handleClassroomAutocomplete,
   company: handleCompanyAutocomplete,
   course: handleCourseAutocomplete,

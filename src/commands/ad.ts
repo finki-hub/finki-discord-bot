@@ -7,7 +7,7 @@ import {
   commandDescriptions,
   commandResponses,
 } from '../translations/commands.js';
-import { getAdByName, getAdsOptions } from '../utils/ads.js';
+import { getAdByName } from '../utils/ads.js';
 
 const name = 'ad';
 
@@ -23,7 +23,7 @@ export const data = new SlashCommandBuilder()
           .setName('ad')
           .setDescription('Реклама')
           .setRequired(true)
-          .addChoices(getAdsOptions()),
+          .setAutocomplete(true),
       ),
   );
 

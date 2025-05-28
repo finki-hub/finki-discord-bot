@@ -126,16 +126,3 @@ export const refreshAds = () => {
 
   logger.info(logMessages.adsInitialized);
 };
-
-export const getAdsOptions = () => {
-  const ads = getConfigProperty('ads');
-
-  if (ads === undefined) {
-    return [];
-  }
-
-  return ads.map((ad) => ({
-    name: ad.name,
-    value: ad.name,
-  }));
-};

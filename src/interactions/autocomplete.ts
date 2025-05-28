@@ -7,6 +7,7 @@ import {
   getSessions,
   getStaff,
 } from '../configuration/files.js';
+import { getConfigProperty } from '../configuration/main.js';
 import { getLinkNames } from '../data/api/Link.js';
 import { getQuestionNames } from '../data/api/Question.js';
 import { getCompanies } from '../data/database/Company.js';
@@ -202,6 +203,29 @@ export const handleCompanyAutocomplete = async (
     await interaction.respond(
       createOptions(
         Object.entries(transformOptions(companies.map(({ name }) => name))),
+        interaction.options.getFocused(),
+      ),
+    );
+  } catch (error) {
+    logger.error(
+      logErrorFunctions.autocompleteResponseError(interaction.user.tag, error),
+    );
+  }
+};
+
+export const handleAdAutocomplete = async (
+  interaction: AutocompleteInteraction,
+) => {
+  const ads = getConfigProperty('ads');
+
+  if (ads === undefined) {
+    return;
+  }
+
+  try {
+    await interaction.respond(
+      createOptions(
+        Object.entries(transformOptions(ads.map((ad) => ad.name))),
         interaction.options.getFocused(),
       ),
     );
