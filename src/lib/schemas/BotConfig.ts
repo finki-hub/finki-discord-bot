@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { AdSchema } from './Ad.js';
 import { ChannelSchema, TemporaryChannelSchema } from './Channel.js';
 import { ModelSchema } from './Model.js';
 import { RoleSchema } from './Role.js';
@@ -15,17 +16,7 @@ const TemporaryChannelConfigSchema = z
 
 export const RequiredBotConfigSchema = z
   .object({
-    ads: z
-      .array(
-        z.object({
-          channels: z.array(z.string()),
-          content: z.string(),
-          cron: z.string(),
-          expiry: z.string().optional(),
-          name: z.string(),
-        }),
-      )
-      .optional(),
+    ads: z.array(AdSchema).optional(),
     channels: z.record(ChannelSchema, z.string().optional()).optional(),
     chatBotModel: ModelSchema.optional(),
     crossposting: z

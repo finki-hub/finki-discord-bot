@@ -30,6 +30,16 @@ export const logMessages = {
 };
 
 export const logMessageFunctions = {
+  adAlreadySent: (adName: string, channelId: string) =>
+    `Ad ${adName} already sent to channel ${channelMention(
+      channelId,
+    )}, skipping`,
+
+  adDeleted: (adName: string, channelId: string, messageId: string) =>
+    `Ad ${adName} deleted from channel ${channelMention(
+      channelId,
+    )} with message ID ${messageId}`,
+
   adSent: (adName: string, channelId: string) =>
     `Ad ${adName} sent to channel ${channelMention(channelId)}`,
 

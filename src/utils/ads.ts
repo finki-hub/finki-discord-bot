@@ -1,6 +1,6 @@
 import { Cron, scheduledJobs } from 'croner';
 
-import type { FullyRequiredBotConfig } from '../lib/schemas/BotConfig.js';
+import type { Ad } from '../lib/schemas/Ad.js';
 
 import { client } from '../client.js';
 import { getConfigProperty } from '../configuration/main.js';
@@ -31,39 +31,64 @@ export const getAdByName = (name: string) => {
   };
 };
 
-export const createSendAdsJob =
-  (ad: FullyRequiredBotConfig['ads'][0]) => async () => {
-    for (const channelId of ad.channels) {
-      try {
-        if (ad.expiry !== undefined) {
-          const adsExpiration = Date.parse(ad.expiry);
+export const createSendAdsJob = (ad: Ad) => async () => {
+  for (const channelId of ad.channels) {
+    try {
+      if (ad.expiry !== undefined) {
+        const adsExpiration = Date.parse(ad.expiry);
 
-          if (adsExpiration <= Date.now()) {
-            return;
-          }
-        }
-
-        const channel = await client.channels.fetch(channelId);
-
-        if (!channel?.isSendable()) {
-          logger.warn(logMessageFunctions.channelNotSendable(channelId));
+        if (adsExpiration <= Date.now()) {
           return;
         }
-
-        await channel.send({
-          allowedMentions: {
-            parse: [],
-          },
-          content: ad.content,
-        });
-
-        const logsChannel = getChannel(Channel.Logs);
-        await logsChannel?.send(logMessageFunctions.adSent(ad.name, channelId));
-      } catch (error) {
-        logger.error(logErrorFunctions.sendAdsError(error));
       }
+
+      const channel = await client.channels.fetch(channelId);
+
+      if (!channel?.isSendable()) {
+        logger.warn(logMessageFunctions.channelNotSendable(channelId));
+        return;
+      }
+
+      const recentMessages = await channel.messages.fetch({ limit: 5 });
+      const isAdAlreadySent = recentMessages.some(
+        (message) =>
+          message.content === ad.content &&
+          message.author.id === client.user?.id,
+      );
+
+      if (isAdAlreadySent) {
+        logger.info(logMessageFunctions.adAlreadySent(ad.name, channelId));
+        return;
+      }
+
+      const olderMessages = await channel.messages.fetch({ limit: 100 });
+      const oldAdMessage = olderMessages.find(
+        (message) =>
+          message.content === ad.content &&
+          message.author.id === client.user?.id,
+      );
+
+      if (oldAdMessage) {
+        await oldAdMessage.delete();
+        logger.info(
+          logMessageFunctions.adDeleted(ad.name, channelId, oldAdMessage.id),
+        );
+      }
+
+      await channel.send({
+        allowedMentions: {
+          parse: [],
+        },
+        content: ad.content,
+      });
+
+      const logsChannel = getChannel(Channel.Logs);
+      await logsChannel?.send(logMessageFunctions.adSent(ad.name, channelId));
+    } catch (error) {
+      logger.error(logErrorFunctions.sendAdsError(error));
     }
-  };
+  }
+};
 
 export const refreshAds = () => {
   for (const job of scheduledJobs) {
