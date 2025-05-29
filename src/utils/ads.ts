@@ -19,7 +19,10 @@ export const getAdByName = (name: string) => {
   const ads = getConfigProperty('ads');
 
   if (ads === undefined) {
-    return { ad: null, job: null };
+    return {
+      ad: null,
+      job: null,
+    };
   }
 
   const ad = ads.find((i) => i.name === name) ?? null;
@@ -46,10 +49,11 @@ export const createSendAdsJob = (ad: Ad) => async () => {
 
       if (!channel?.isSendable()) {
         logger.warn(logMessageFunctions.channelNotSendable(channelId));
+
         return;
       }
 
-      const recentMessages = await channel.messages.fetch({ limit: 5 });
+      const recentMessages = await channel.messages.fetch({ limit: 10 });
       const isAdAlreadySent = recentMessages.some(
         (message) =>
           message.content === ad.content &&
@@ -58,6 +62,7 @@ export const createSendAdsJob = (ad: Ad) => async () => {
 
       if (isAdAlreadySent) {
         logger.info(logMessageFunctions.adAlreadySent(ad.name, channelId));
+
         return;
       }
 
