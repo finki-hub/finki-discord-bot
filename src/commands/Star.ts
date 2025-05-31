@@ -49,6 +49,9 @@ export const execute = async (
   }
 
   await webhook?.send({
+    allowedMentions: {
+      parse: [],
+    },
     avatarURL: member.displayAvatarURL(),
     content: `${message?.content}\n\n${labels.link}: ${message?.url}`,
     files: message?.attachments.map((attachment) => attachment.url) ?? [],
