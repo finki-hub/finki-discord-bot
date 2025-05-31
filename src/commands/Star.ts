@@ -5,6 +5,7 @@ import {
   type UserContextMenuCommandInteraction,
 } from 'discord.js';
 
+import { truncateString } from '../components/utils.js';
 import { getChannelsProperty } from '../configuration/main.js';
 import { Channel } from '../lib/schemas/Channel.js';
 import {
@@ -53,7 +54,7 @@ export const execute = async (
       parse: [],
     },
     avatarURL: member.displayAvatarURL(),
-    content: `${message?.content}\n\n${labels.link}: ${message?.url}`,
+    content: `${truncateString(message?.content, 1_500)}\n\n${labels.link}: ${message?.url}`,
     files: message?.attachments.map((attachment) => attachment.url) ?? [],
     username: member.displayName,
   });
