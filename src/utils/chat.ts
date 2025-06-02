@@ -33,7 +33,7 @@ export const sendPrompt = async (
       method: 'POST',
     });
 
-    if (!result.ok || !result.body) {
+    if (!result.ok || !result.body || result.status !== 200) {
       return null;
     }
 
@@ -49,9 +49,7 @@ export const sendPrompt = async (
       if (value) {
         const chunk = decoder.decode(value, { stream: true });
         answer += chunk;
-        if (onChunk) {
-          onChunk(chunk);
-        }
+        onChunk?.(chunk);
       }
     }
 
