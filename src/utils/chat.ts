@@ -1,3 +1,5 @@
+/* eslint-disable camelcase */
+
 import { getChatbotUrl } from '../configuration/environment.js';
 import { getConfigProperty } from '../configuration/main.js';
 import { logger } from '../logger.js';
@@ -16,12 +18,13 @@ export const sendPrompt = async (
     return null;
   }
 
-  const model = getConfigProperty('chatBotModel');
+  const models = getConfigProperty('models');
 
   try {
     const result = await fetch(`${chatbotUrl}/chat/`, {
       body: JSON.stringify({
-        model,
+        embeddings_model: models.embeddings,
+        inference_model: models.inference,
         question: query,
       }),
       headers: {

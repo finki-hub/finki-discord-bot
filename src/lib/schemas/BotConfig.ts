@@ -14,11 +14,15 @@ const TemporaryChannelConfigSchema = z
   })
   .strict();
 
+const ModelsSchema = z.object({
+  embeddings: ModelSchema.optional(),
+  inference: ModelSchema.optional(),
+});
+
 export const RequiredBotConfigSchema = z
   .object({
     ads: z.array(AdSchema).optional(),
     channels: z.record(ChannelSchema, z.string().optional()).optional(),
-    chatBotModel: ModelSchema.optional(),
     crossposting: z
       .object({
         channels: z.array(z.string()).optional(),
@@ -43,6 +47,7 @@ export const RequiredBotConfigSchema = z
       })
       .strict()
       .optional(),
+    models: ModelsSchema.optional(),
     oathEnabled: z.boolean().optional(),
     reactions: z
       .object({

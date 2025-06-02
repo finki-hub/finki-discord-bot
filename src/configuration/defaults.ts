@@ -7,7 +7,6 @@ import { Model } from '../lib/schemas/Model.js';
 export const DEFAULT_CONFIGURATION = {
   ads: undefined,
   channels: undefined,
-  chatBotModel: Model.LLAMA_3_3_70B,
   crossposting: {
     channels: [],
     enabled: false,
@@ -22,6 +21,10 @@ export const DEFAULT_CONFIGURATION = {
     ephemeralReply: 5_000,
     sendReminders: 15_000,
     ticketsCheck: 900_000,
+  },
+  models: {
+    embeddings: Model.BGE_M3,
+    inference: Model.MISTRAL,
   },
   oathEnabled: false,
   reactions: {
