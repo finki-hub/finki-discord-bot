@@ -39,4 +39,4 @@ export const DEFAULT_CONFIGURATION = {
     enabled: false,
     tickets: undefined,
   },
-} satisfies BotConfig satisfies Record<BotConfigKeys, unknown>;
+} as const satisfies BotConfig satisfies Record<BotConfigKeys, unknown>;
