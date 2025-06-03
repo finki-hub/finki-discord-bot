@@ -24,7 +24,7 @@ export const DEFAULT_CONFIGURATION = {
   },
   models: {
     embeddings: Model.BGE_M3,
-    inference: Model.MISTRAL,
+    inference: Model.LLAMA_3_3_70B,
   },
   oathEnabled: false,
   reactions: {
