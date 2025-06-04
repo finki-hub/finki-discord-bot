@@ -9,6 +9,7 @@ import {
 } from '../translations/commands.js';
 import { labels } from '../translations/labels.js';
 import { getClosestQuestions } from '../utils/chat.js';
+import { safeReplyToInteraction } from '../utils/messages.js';
 
 const name = 'chat';
 
@@ -48,7 +49,7 @@ const handleChatClosest = async (interaction: ChatInputCommandInteraction) => {
     .map(({ distance, name }) => `- ${name} (${distance ?? labels.none})`)
     .join('\n');
 
-  await interaction.editReply(content);
+  await safeReplyToInteraction(interaction, content);
 };
 
 const chatHandlers = {
