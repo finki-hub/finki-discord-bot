@@ -2,6 +2,7 @@
 
 import { getChatbotUrl } from '../configuration/environment.js';
 import { getConfigProperty } from '../configuration/main.js';
+import { QuestionsSchema } from '../lib/schemas/Question.js';
 import { logger } from '../logger.js';
 import {
   logErrorFunctions,
@@ -57,6 +58,40 @@ export const sendPrompt = async (
     return answer;
   } catch (error) {
     logger.error(logErrorFunctions.promptError(error));
+    return null;
+  }
+};
+
+export const getClosestQuestions = async (query: string) => {
+  const chatbotUrl = getChatbotUrl();
+
+  if (chatbotUrl === null) {
+    return null;
+  }
+
+  const models = getConfigProperty('models');
+
+  const url = new URL(`${chatbotUrl}/questions/closest`);
+  url.searchParams.append('prompt', query);
+  if (models.embeddings !== undefined) {
+    url.searchParams.append('model', models.embeddings);
+  }
+
+  try {
+    const result = await fetch(url, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!result.ok || !result.body || result.status !== 200) {
+      return null;
+    }
+
+    const data = QuestionsSchema.parse(await result.json());
+    return data;
+  } catch (error) {
+    logger.error(logErrorFunctions.closestQuestionsError(error));
     return null;
   }
 };

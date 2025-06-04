@@ -139,6 +139,9 @@ export const logErrorFunctions = {
     error: unknown,
   ) => `Failed handling chat input interaction ${interaction}\n${error}`,
 
+  closestQuestionsError: (error: unknown) =>
+    `Failed getting closest questions\n${error}`,
+
   collectorEndError: (command: string, error: unknown) =>
     `Failed ending ${command} collector\n${error}`,
 
