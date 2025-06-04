@@ -26,7 +26,7 @@ export const sendPrompt = async (
       body: JSON.stringify({
         embeddings_model: models.embeddings,
         inference_model: models.inference,
-        question: query,
+        prompt: query,
       }),
       headers: {
         'Content-Type': 'application/json',
