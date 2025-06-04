@@ -8,7 +8,7 @@
     "async-lock": "^1.4.1",
     "chrono-node": "2.8.0",
     "croner": "^9.0.0",
-    "discord-api-types": "^0.38.10",
+    "discord-api-types": "^0.38.11",
     "discord.js": "^14.19.3",
     "fuse.js": "^7.1.0",
     "prisma": "^6.9.0",
