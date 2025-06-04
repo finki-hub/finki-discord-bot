@@ -44,7 +44,9 @@ const handleChatClosest = async (interaction: ChatInputCommandInteraction) => {
     return;
   }
 
-  const content = closestQuestions.map(({ name }) => `- ${name}`).join('\n');
+  const content = closestQuestions
+    .map(({ distance, name }) => `- ${name} (${distance ?? labels.none})`)
+    .join('\n');
 
   await interaction.editReply(content);
 };
