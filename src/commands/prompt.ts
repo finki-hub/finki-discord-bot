@@ -6,7 +6,10 @@ import {
 import type { ChatOptions } from '../lib/schemas/Chat.js';
 
 import { EMBEDDING_MODELS, INFERENCE_MODELS } from '../lib/schemas/Model.js';
-import { commandDescriptions } from '../translations/commands.js';
+import {
+  commandDescriptions,
+  commandErrors,
+} from '../translations/commands.js';
 import { sendPrompt } from '../utils/chat.js';
 import { safeStreamReplyToInteraction } from '../utils/messages.js';
 
@@ -89,9 +92,26 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     topP,
   };
 
-  await safeStreamReplyToInteraction(interaction, async (onChunk) => {
-    await sendPrompt(chatOptions, async (chunk) => {
-      await onChunk(chunk);
+  try {
+    await safeStreamReplyToInteraction(interaction, async (onChunk) => {
+      await sendPrompt(chatOptions, async (chunk) => {
+        await onChunk(chunk);
+      });
     });
-  });
+  } catch (error) {
+    const isLLMUnavailable =
+      error instanceof Error && error.message === 'LLM_UNAVAILABLE';
+
+    const errorMessage = isLLMUnavailable
+      ? commandErrors.llmUnavailable
+      : commandErrors.unknownChatError;
+
+    await (interaction.deferred || interaction.replied
+      ? interaction.editReply(errorMessage)
+      : interaction.reply({
+          content: errorMessage,
+          ephemeral: true,
+        }));
+  }
+  return true;
 };

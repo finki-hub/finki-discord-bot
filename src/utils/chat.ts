@@ -40,7 +40,7 @@ export const sendPrompt = async (
   });
 
   if (!res.ok || !res.body) {
-    return;
+    throw new Error('LLM_UNAVAILABLE');
   }
 
   const reader: ReadableStreamDefaultReader<Uint8Array> = res.body.getReader();

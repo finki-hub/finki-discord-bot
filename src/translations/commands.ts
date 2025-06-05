@@ -347,6 +347,7 @@ export const commandErrors = {
   linkNotFound: 'Линкот не постои.',
   linkSendFailed: 'Испраќањето на линкот беше неуспешно.',
   linksFetchFailed: 'Преземањето на линковите беше неуспешно.',
+  llmUnavailable: 'Јазичниот модел не е достапен. Обидете се подоцна.',
   memberNotFound: 'Членот не постои.',
   noAnto: 'Анто фактите не се креирани.',
   noTicketMembers:
@@ -378,6 +379,8 @@ export const commandErrors = {
   specialPollsFetchFailed: 'Преземањето на анкетите беше неуспешно.',
   staffNotFound: 'Професорот не постои.',
   ticketingDisabled: 'Тикетите не се овозможени.',
+  unknownChatError:
+    'Настана грешка при испраќање на промптот. Обидете се повторно.',
   unsupportedChannelType: 'Типот на каналот не е поддржан.',
   userAdmin: 'Корисникот е администратор.',
   userBarred: 'Корисникот е забранет.',
