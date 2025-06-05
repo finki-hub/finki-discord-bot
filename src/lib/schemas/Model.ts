@@ -10,3 +10,13 @@ export enum Model {
 }
 
 export const ModelSchema = z.nativeEnum(Model);
+
+export const EMBEDDING_MODELS = [Model.BGE_M3, Model.LLAMA_3_3_70B] as const;
+
+export const INFERENCE_MODELS = [
+  Model.DEEPSEEK_R1_70B,
+  Model.DOMESTIC_YAK_8B_INSTRUCT_GGUF,
+  Model.LLAMA_3_3_70B,
+  Model.MISTRAL,
+  Model.QWEN_2_5_72B,
+] as const;

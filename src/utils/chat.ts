@@ -1,5 +1,7 @@
 /* eslint-disable camelcase */
 
+import type { ChatOptions } from '../lib/schemas/Chat.js';
+
 import { getChatbotUrl } from '../configuration/environment.js';
 import { getConfigProperty } from '../configuration/main.js';
 import { QuestionsSchema } from '../lib/schemas/Question.js';
@@ -10,7 +12,7 @@ import {
 } from '../translations/logs.js';
 
 export const sendPrompt = async (
-  query: string,
+  chatOptions: ChatOptions,
   onChunk?: (chunk: string) => void,
 ) => {
   const chatbotUrl = getChatbotUrl();
@@ -23,9 +25,12 @@ export const sendPrompt = async (
 
   const res = await fetch(`${chatbotUrl}/chat/`, {
     body: JSON.stringify({
-      embeddings_model: models.embeddings,
-      inference_model: models.inference,
-      prompt: query,
+      embeddings_model: chatOptions.embeddingsModel ?? models.embeddings,
+      inference_model: chatOptions.inferenceModel ?? models.inference,
+      max_tokens: chatOptions.maxTokens,
+      prompt: chatOptions.query,
+      temperature: chatOptions.temperature,
+      top_p: chatOptions.topP,
     }),
     headers: {
       Accept: 'text/event-stream',
@@ -66,7 +71,7 @@ export const sendPrompt = async (
     onChunk?.(tail);
   }
 
-  logger.info(logMessageFunctions.promptAnswered(query));
+  logger.info(logMessageFunctions.promptAnswered(chatOptions.query));
 };
 
 export const getClosestQuestions = async (query: string) => {
