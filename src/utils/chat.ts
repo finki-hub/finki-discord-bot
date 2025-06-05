@@ -16,50 +16,57 @@ export const sendPrompt = async (
   const chatbotUrl = getChatbotUrl();
 
   if (chatbotUrl === null) {
-    return null;
+    return;
   }
 
   const models = getConfigProperty('models');
 
-  try {
-    const result = await fetch(`${chatbotUrl}/chat/`, {
-      body: JSON.stringify({
-        embeddings_model: models.embeddings,
-        inference_model: models.inference,
-        prompt: query,
-      }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      method: 'POST',
-    });
+  const res = await fetch(`${chatbotUrl}/chat/`, {
+    body: JSON.stringify({
+      embeddings_model: models.embeddings,
+      inference_model: models.inference,
+      prompt: query,
+    }),
+    headers: {
+      Accept: 'text/event-stream',
+      'Content-Type': 'application/json',
+    },
+    method: 'POST',
+  });
 
-    if (!result.ok || !result.body || result.status !== 200) {
-      return null;
-    }
-
-    const reader: ReadableStreamDefaultReader<Uint8Array> =
-      result.body.getReader();
-    const decoder = new TextDecoder();
-    let answer = '';
-    let done = false;
-
-    while (!done) {
-      const { done: doneReading, value } = await reader.read();
-      done = doneReading;
-      if (value) {
-        const chunk = decoder.decode(value, { stream: true });
-        answer += chunk;
-        onChunk?.(chunk);
-      }
-    }
-
-    logger.info(logMessageFunctions.promptAnswered(answer));
-    return answer;
-  } catch (error) {
-    logger.error(logErrorFunctions.promptError(error));
-    return null;
+  if (!res.ok || !res.body) {
+    return;
   }
+
+  const reader: ReadableStreamDefaultReader<Uint8Array> = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+
+  const sseRe = /data:\s?(?<chunk>.*)\r?\n\r?\n/gu;
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    let match;
+    while ((match = sseRe.exec(buffer)) !== null) {
+      const chunk = match.groups?.['chunk'] ?? '';
+      onChunk?.(chunk);
+    }
+
+    const lastDelim = buffer.lastIndexOf('\n\n');
+    if (lastDelim !== -1) {
+      buffer = buffer.slice(lastDelim + 2);
+      sseRe.lastIndex = 0;
+    }
+  }
+
+  if (buffer.startsWith('data:')) {
+    const tail = buffer.replace(/^data:\s?/u, '');
+    onChunk?.(tail);
+  }
+
+  logger.info(logMessageFunctions.promptAnswered(query));
 };
 
 export const getClosestQuestions = async (query: string) => {

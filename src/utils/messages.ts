@@ -135,6 +135,10 @@ export const safeStreamReplyToInteraction = async (
     useCodeBlock ? codeBlock(language, text) : text;
 
   const sendOrEdit = async (index: number, content: string) => {
+    if (content.length === 0) {
+      return;
+    }
+
     const baseOptions = mentionUsers ? {} : { allowedMentions: { users: [] } };
 
     if (index === 0) {
