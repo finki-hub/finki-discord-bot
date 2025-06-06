@@ -1,5 +1,7 @@
 /* eslint-disable camelcase */
 
+import { createParser } from 'eventsource-parser';
+
 import type { ChatOptions } from '../lib/schemas/Chat.js';
 
 import { getChatbotUrl } from '../configuration/environment.js';
@@ -43,32 +45,22 @@ export const sendPrompt = async (
     throw new Error('LLM_UNAVAILABLE');
   }
 
+  const parser = createParser({
+    onEvent: (event) => {
+      const restoredChunk = event.data.replaceAll(String.raw`\n`, '\n');
+      onChunk?.(restoredChunk);
+    },
+  });
+
   const reader: ReadableStreamDefaultReader<Uint8Array> = res.body.getReader();
   const decoder = new TextDecoder();
-  let buffer = '';
-
-  const sseRe = /data:\s?(?<chunk>.*)\r?\n\r?\n/gu;
-
   while (true) {
     const { done, value } = await reader.read();
-    if (done) break;
-    buffer += decoder.decode(value, { stream: true });
-    let match;
-    while ((match = sseRe.exec(buffer)) !== null) {
-      const chunk = match.groups?.['chunk'] ?? '';
-      onChunk?.(chunk);
+    if (done) {
+      break;
     }
-
-    const lastDelim = buffer.lastIndexOf('\n\n');
-    if (lastDelim !== -1) {
-      buffer = buffer.slice(lastDelim + 2);
-      sseRe.lastIndex = 0;
-    }
-  }
-
-  if (buffer.startsWith('data:')) {
-    const tail = buffer.replace(/^data:\s?/u, '');
-    onChunk?.(tail);
+    const decoded = decoder.decode(value, { stream: true });
+    parser.feed(decoded);
   }
 
   logger.info(logMessageFunctions.promptAnswered(chatOptions.query));

@@ -106,9 +106,17 @@ const smartSplit = (text: string, maxLength: number): [string, string] => {
 
   if (splitIdx === -1) {
     splitIdx = maxLength;
+    // For hard breaks, don't remove any characters
+    return [text.slice(0, splitIdx), text.slice(splitIdx)];
   }
 
-  return [text.slice(0, splitIdx), text.slice(splitIdx).replace(/^\s+/u, '')];
+  // If we split on a newline, include it in the first part and don't trim the second
+  if (text[splitIdx] === '\n') {
+    return [text.slice(0, splitIdx + 1), text.slice(splitIdx + 1)];
+  }
+
+  // If we split on a space, remove only the space (not newlines)
+  return [text.slice(0, splitIdx), text.slice(splitIdx + 1)];
 };
 
 export const safeStreamReplyToInteraction = async (
