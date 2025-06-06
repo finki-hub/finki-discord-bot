@@ -31,3 +31,11 @@ export const getChatbotUrl = () => {
     return null;
   }
 };
+
+export const getApiKey = () => {
+  try {
+    return z.string().parse(env['API_KEY']);
+  } catch {
+    return null;
+  }
+};

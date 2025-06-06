@@ -57,6 +57,9 @@ export const logMessageFunctions = {
   cronJobInitialized: (jobName: string, nextRun: string) =>
     `Cron job ${jobName} initialized. Next run: ${nextRun}`,
 
+  fillEmbeddingsCompleted: (model: string) =>
+    `Embeddings filled for model ${model}`,
+
   loggedIn: (username: string | undefined) =>
     `Bot is ready! Logged in as ${username ?? 'an unknown user'}`,
 
@@ -187,6 +190,9 @@ export const logErrorFunctions = {
 
   faqSendError: (error: unknown) => `Failed sending question\n${error}`,
 
+  fillEmbeddingsError: (error: unknown) =>
+    `Failed filling embeddings\n${error}`,
+
   interactionLogError: (interactionId: string, error: unknown) =>
     `Failed logging interaction ${interactionId}\n${error}`,
 
@@ -248,6 +254,9 @@ export const logErrorFunctions = {
 
   specialPollNotExecutedError: (pollType: string, userId: string) =>
     `Special poll ${pollType} for ${userId} could not be executed`,
+
+  supportedModelsError: (error: unknown) =>
+    `Failed getting supported models\n${error}`,
 
   unknownInteractionError: (userId: string) =>
     `Unknown interaction from ${userId}`,

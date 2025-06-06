@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { getChatbotUrl } from '../../configuration/environment.js';
+import { getApiKey, getChatbotUrl } from '../../configuration/environment.js';
 import {
   type CreateQuestion,
   PreparedCreateQuestionSchema,
@@ -84,8 +84,9 @@ export const getQuestion = async (name?: string) => {
 
 export const createQuestion = async (question?: CreateQuestion) => {
   const chatbotUrl = getChatbotUrl();
+  const apiKey = getApiKey();
 
-  if (chatbotUrl === null) {
+  if (chatbotUrl === null || apiKey === null) {
     return null;
   }
 
@@ -98,6 +99,7 @@ export const createQuestion = async (question?: CreateQuestion) => {
       body: JSON.stringify(PreparedCreateQuestionSchema.parse(question)),
       headers: {
         'Content-Type': 'application/json',
+        'x-api-key': apiKey,
       },
       method: 'POST',
     });
@@ -119,8 +121,9 @@ export const updateQuestion = async (
   question?: UpdateQuestion,
 ) => {
   const chatbotUrl = getChatbotUrl();
+  const apiKey = getApiKey();
 
-  if (chatbotUrl === null) {
+  if (chatbotUrl === null || apiKey === null) {
     return null;
   }
 
@@ -133,6 +136,7 @@ export const updateQuestion = async (
       body: JSON.stringify(PreparedUpdateQuestionSchema.parse(question)),
       headers: {
         'Content-Type': 'application/json',
+        'x-api-key': apiKey,
       },
       method: 'PUT',
     });
@@ -151,8 +155,9 @@ export const updateQuestion = async (
 
 export const deleteQuestion = async (name?: string) => {
   const chatbotUrl = getChatbotUrl();
+  const apiKey = getApiKey();
 
-  if (chatbotUrl === null) {
+  if (chatbotUrl === null || apiKey === null) {
     return null;
   }
 
@@ -162,6 +167,10 @@ export const deleteQuestion = async (name?: string) => {
 
   try {
     const result = await fetch(`${chatbotUrl}/questions/delete/${name}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+      },
       method: 'DELETE',
     });
 

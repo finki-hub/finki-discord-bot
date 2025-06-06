@@ -20,6 +20,10 @@ const commandPermissions: Record<
     permissions: [],
     roles: [Role.Council],
   },
+  'chat embed': {
+    permissions: [],
+    roles: [Role.Administrators],
+  },
   config: {
     permissions: [],
     roles: [Role.Administrators],

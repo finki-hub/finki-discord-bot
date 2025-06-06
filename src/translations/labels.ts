@@ -21,6 +21,7 @@ export const labels = {
   courses: 'Предмети',
   description: 'Опис',
   dm: 'DM',
+  done: 'Завршено',
   email: 'Електронска пошта',
   floor: 'Кат',
   girlies: 'Girlies',

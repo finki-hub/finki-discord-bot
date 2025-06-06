@@ -1,15 +1,26 @@
 import {
   type ChatInputCommandInteraction,
+  inlineCode,
   SlashCommandBuilder,
 } from 'discord.js';
 
+import { getCommonCommand } from '../common/commands/prompt.js';
+import { FillEvent } from '../lib/schemas/Embeddings.js';
+import { EMBEDDING_MODELS, INFERENCE_MODELS } from '../lib/schemas/Model.js';
 import {
   commandDescriptions,
   commandErrors,
 } from '../translations/commands.js';
 import { labels } from '../translations/labels.js';
-import { getClosestQuestions } from '../utils/chat.js';
-import { safeReplyToInteraction } from '../utils/messages.js';
+import {
+  getClosestQuestions,
+  getSupportedModels,
+  sendFillEmbeddings,
+} from '../utils/chat.js';
+import {
+  safeReplyToInteraction,
+  safeStreamReplyToInteraction,
+} from '../utils/messages.js';
 
 const name = 'chat';
 
@@ -25,6 +36,95 @@ export const data = new SlashCommandBuilder()
           .setName('query')
           .setDescription('Прашање за најблиски прашања')
           .setRequired(true),
+      ),
+  )
+  .addSubcommand((subcommand) =>
+    subcommand
+      .setName('models')
+      .setDescription(commandDescriptions['chat models']),
+  )
+  .addSubcommand((subcommand) =>
+    subcommand
+      .setName('embed')
+      .setDescription(commandDescriptions['chat embed'])
+      .addStringOption((option) =>
+        option
+          .setName('embeddings-model')
+          .setDescription('Моделот за ембедирање')
+          .setRequired(true)
+          .setChoices(
+            EMBEDDING_MODELS.map((model) => ({
+              name: model,
+              value: model,
+            })),
+          ),
+      )
+      .addBooleanOption((option) =>
+        option
+          .setName('all')
+          .setDescription(
+            'Дали да се ембедираат сите документи или само неембедираните',
+          )
+          .setRequired(false),
+      ),
+  )
+  .addSubcommand((subcommand) =>
+    subcommand
+      .setName('query')
+      .setDescription(commandDescriptions['chat query'])
+      .addStringOption((option) =>
+        option
+          .setName('prompt')
+          .setDescription('Промпт за LLM агентот')
+          .setRequired(true),
+      )
+      .addStringOption((option) =>
+        option
+          .setName('embeddings-model')
+          .setDescription('Моделот за ембедирање')
+          .setRequired(false)
+          .setChoices(
+            EMBEDDING_MODELS.map((model) => ({
+              name: model,
+              value: model,
+            })),
+          ),
+      )
+      .addStringOption((option) =>
+        option
+          .setName('inference-model')
+          .setDescription('Моделот за инференца')
+          .setRequired(false)
+          .setChoices(
+            INFERENCE_MODELS.map((model) => ({
+              name: model,
+              value: model,
+            })),
+          ),
+      )
+      .addNumberOption((option) =>
+        option
+          .setName('temperature')
+          .setDescription('Температурата на моделот')
+          .setRequired(false)
+          .setMinValue(0)
+          .setMaxValue(1),
+      )
+      .addNumberOption((option) =>
+        option
+          .setName('top-p')
+          .setDescription('Top P вредноста на моделот')
+          .setRequired(false)
+          .setMinValue(0)
+          .setMaxValue(1),
+      )
+      .addNumberOption((option) =>
+        option
+          .setName('max-tokens')
+          .setDescription('Максималниот број на токени за одговорот')
+          .setRequired(false)
+          .setMinValue(1)
+          .setMaxValue(4_096),
       ),
   );
 
@@ -52,8 +152,73 @@ const handleChatClosest = async (interaction: ChatInputCommandInteraction) => {
   await safeReplyToInteraction(interaction, content);
 };
 
+const handleChatModels = async (interaction: ChatInputCommandInteraction) => {
+  const models = await getSupportedModels();
+
+  if (models === null) {
+    await interaction.editReply(commandErrors.dataFetchFailed);
+    return;
+  }
+
+  if (models.length === 0) {
+    await interaction.editReply(labels.none);
+    return;
+  }
+
+  const content = models.join('\n- ');
+  await safeReplyToInteraction(interaction, `- ${content}`);
+};
+
+const { execute: handleChatQuery } = getCommonCommand('ask');
+
+const handleChatEmbed = async (interaction: ChatInputCommandInteraction) => {
+  const model = interaction.options.getString('embeddings-model', true);
+  const all = interaction.options.getBoolean('all') ?? false;
+
+  try {
+    await safeStreamReplyToInteraction(interaction, async (onChunk) => {
+      await sendFillEmbeddings(model, all, async (chunk) => {
+        // Not an object
+        if (!chunk.includes('{')) {
+          await onChunk(chunk);
+          return;
+        }
+
+        const event = FillEvent.parse(JSON.parse(chunk));
+
+        const state = inlineCode(
+          `${event.index} / ${event.total} | ${event.status}`,
+        );
+
+        await onChunk(`[${state}] ${event.name}\n`);
+      });
+    });
+  } catch (error) {
+    const isLLMUnavailable =
+      error instanceof Error && error.message === 'LLM_UNAVAILABLE';
+
+    const errorMessage = isLLMUnavailable
+      ? commandErrors.llmUnavailable
+      : commandErrors.unknownChatError;
+
+    await (interaction.deferred || interaction.replied
+      ? interaction.editReply(errorMessage)
+      : interaction.reply({
+          content: errorMessage,
+          ephemeral: true,
+        }));
+
+    return false;
+  }
+
+  return true;
+};
+
 const chatHandlers = {
   closest: handleChatClosest,
+  embed: handleChatEmbed,
+  models: handleChatModels,
+  query: handleChatQuery,
 };
 
 export const execute = async (interaction: ChatInputCommandInteraction) => {
