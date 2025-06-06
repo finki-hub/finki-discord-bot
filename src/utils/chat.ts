@@ -68,7 +68,12 @@ export const sendPrompt = async (
   logger.info(logMessageFunctions.promptAnswered(chatOptions.query));
 };
 
-export const getClosestQuestions = async (query: string) => {
+export const getClosestQuestions = async (
+  query: string,
+  embeddingsModel?: string,
+  threshold?: number,
+  limit?: number,
+) => {
   const chatbotUrl = getChatbotUrl();
 
   if (chatbotUrl === null) {
@@ -79,8 +84,18 @@ export const getClosestQuestions = async (query: string) => {
 
   const url = new URL(`${chatbotUrl}/questions/closest`);
   url.searchParams.append('prompt', query);
-  if (models.embeddings !== undefined) {
-    url.searchParams.append('model', models.embeddings);
+
+  const model = embeddingsModel ?? models.embeddings;
+  if (model !== undefined) {
+    url.searchParams.append('model', model);
+  }
+
+  if (threshold !== undefined) {
+    url.searchParams.append('threshold', threshold.toString());
+  }
+
+  if (limit !== undefined) {
+    url.searchParams.append('limit', limit.toString());
   }
 
   try {

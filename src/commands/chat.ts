@@ -36,6 +36,34 @@ export const data = new SlashCommandBuilder()
           .setName('query')
           .setDescription('Прашање за најблиски прашања')
           .setRequired(true),
+      )
+      .addStringOption((option) =>
+        option
+          .setName('embeddings-model')
+          .setDescription('Моделот за ембедирање')
+          .setRequired(false)
+          .setChoices(
+            EMBEDDING_MODELS.map((model) => ({
+              name: model,
+              value: model,
+            })),
+          ),
+      )
+      .addNumberOption((option) =>
+        option
+          .setName('threshold')
+          .setDescription('Праг за сличност на прашањата')
+          .setRequired(false)
+          .setMinValue(0)
+          .setMaxValue(1),
+      )
+      .addNumberOption((option) =>
+        option
+          .setName('limit')
+          .setDescription('Максимален број на прашања за враќање')
+          .setRequired(false)
+          .setMinValue(1)
+          .setMaxValue(100),
       ),
   )
   .addSubcommand((subcommand) =>
@@ -130,8 +158,18 @@ export const data = new SlashCommandBuilder()
 
 const handleChatClosest = async (interaction: ChatInputCommandInteraction) => {
   const query = interaction.options.getString('query', true);
+  const model =
+    interaction.options.getString('embeddings-model', false) ?? undefined;
+  const threshold =
+    interaction.options.getNumber('threshold', false) ?? undefined;
+  const limit = interaction.options.getNumber('limit', false) ?? undefined;
 
-  const closestQuestions = await getClosestQuestions(query);
+  const closestQuestions = await getClosestQuestions(
+    query,
+    model,
+    threshold,
+    limit,
+  );
 
   if (closestQuestions === null) {
     await interaction.editReply(commandErrors.dataFetchFailed);
