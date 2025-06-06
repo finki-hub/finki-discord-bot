@@ -4,6 +4,8 @@ export enum Model {
   BGE_M3 = 'bge-m3:latest',
   DEEPSEEK_R1_70B = 'deepseek-r1:70b',
   DOMESTIC_YAK_8B_INSTRUCT_GGUF = 'hf.co/LVSTCK/domestic-yak-8B-instruct-GGUF:Q8_0',
+  GPT_4_1_MINI = 'gpt-4.1-mini',
+  GPT_4_1_NANO = 'gpt-4.1-nano',
   GPT_4O_MINI = 'gpt-4o-mini',
   LLAMA_3_3_70B = 'llama3.3:70b',
   MISTRAL = 'mistral:latest',
@@ -23,4 +25,6 @@ export const INFERENCE_MODELS = [
   Model.QWEN_2_5_72B,
   Model.GPT_4O_MINI,
   Model.VEZILKALLM_GGUF,
+  Model.GPT_4_1_MINI,
+  Model.GPT_4_1_NANO,
 ] as const;
