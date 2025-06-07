@@ -39,6 +39,7 @@ export const sendPrompt = async (
       inference_model: chatOptions.inferenceModel ?? models.inference,
       max_tokens: chatOptions.maxTokens,
       prompt: chatOptions.query,
+      system_prompt: chatOptions.systemPrompt,
       temperature: chatOptions.temperature,
       top_p: chatOptions.topP,
     }),

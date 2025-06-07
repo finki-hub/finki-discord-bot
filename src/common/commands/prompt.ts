@@ -63,6 +63,8 @@ export const getCommonCommand = (name: keyof typeof commandDescriptions) => ({
     ),
   execute: async (interaction: ChatInputCommandInteraction) => {
     const prompt = interaction.options.getString('prompt', true);
+    const systemPrompt =
+      interaction.options.getString('system-prompt') ?? undefined;
     const embeddingsModel =
       interaction.options.getString('embeddings-model') ?? undefined;
     const inferenceModel =
@@ -77,6 +79,7 @@ export const getCommonCommand = (name: keyof typeof commandDescriptions) => ({
       inferenceModel,
       maxTokens,
       query: prompt,
+      systemPrompt,
       temperature,
       topP,
     };

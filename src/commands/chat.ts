@@ -99,6 +99,12 @@ export const data = new SlashCommandBuilder()
       )
       .addStringOption((option) =>
         option
+          .setName('system-prompt')
+          .setDescription('Системски промпт за LLM агентот')
+          .setRequired(false),
+      )
+      .addStringOption((option) =>
+        option
           .setName('embeddings-model')
           .setDescription('Моделот за ембедирање')
           .setRequired(false)
