@@ -1,4 +1,9 @@
-import { type ChatInputCommandInteraction, codeBlock } from 'discord.js';
+import {
+  type ChatInputCommandInteraction,
+  codeBlock,
+  type MessageContextMenuCommandInteraction,
+  type UserContextMenuCommandInteraction,
+} from 'discord.js';
 
 import { labels } from '../translations/labels.js';
 
@@ -44,7 +49,10 @@ export const splitMessage = function* (message: string) {
 };
 
 export const safeReplyToInteraction = async (
-  interaction: ChatInputCommandInteraction,
+  interaction:
+    | ChatInputCommandInteraction
+    | MessageContextMenuCommandInteraction
+    | UserContextMenuCommandInteraction,
   message: string,
   options?: {
     language?: string;
@@ -120,7 +128,10 @@ const smartSplit = (text: string, maxLength: number): [string, string] => {
 };
 
 export const safeStreamReplyToInteraction = async (
-  interaction: ChatInputCommandInteraction,
+  interaction:
+    | ChatInputCommandInteraction
+    | MessageContextMenuCommandInteraction
+    | UserContextMenuCommandInteraction,
   onChunk: (callback: (chunk: string) => Promise<void>) => Promise<void>,
   options?: {
     language?: string;
