@@ -95,7 +95,7 @@ export const createQuestion = async (question?: CreateQuestion) => {
   }
 
   try {
-    const result = await fetch(`${chatbotUrl}/questions/create`, {
+    const result = await fetch(`${chatbotUrl}/questions`, {
       body: JSON.stringify(PreparedCreateQuestionSchema.parse(question)),
       headers: {
         'Content-Type': 'application/json',
@@ -132,7 +132,7 @@ export const updateQuestion = async (
   }
 
   try {
-    const result = await fetch(`${chatbotUrl}/questions/update/${name}`, {
+    const result = await fetch(`${chatbotUrl}/questions/${name}`, {
       body: JSON.stringify(PreparedUpdateQuestionSchema.parse(question)),
       headers: {
         'Content-Type': 'application/json',
@@ -166,7 +166,7 @@ export const deleteQuestion = async (name?: string) => {
   }
 
   try {
-    const result = await fetch(`${chatbotUrl}/questions/delete/${name}`, {
+    const result = await fetch(`${chatbotUrl}/questions/${name}`, {
       headers: {
         'Content-Type': 'application/json',
         'x-api-key': apiKey,
