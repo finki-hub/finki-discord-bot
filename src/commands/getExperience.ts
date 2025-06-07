@@ -1,11 +1,10 @@
 import {
   ApplicationCommandType,
   ContextMenuCommandBuilder,
+  type MessageContextMenuCommandInteraction,
   PermissionFlagsBits,
-  type UserContextMenuCommandInteraction,
 } from 'discord.js';
 
-import { commandErrors } from '../translations/commands.js';
 import { getExperienceFromMessage } from '../utils/experience.js';
 
 const name = 'Get Experience';
@@ -16,19 +15,11 @@ export const data = new ContextMenuCommandBuilder()
   .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages);
 
 export const execute = async (
-  interaction: UserContextMenuCommandInteraction,
+  interaction: MessageContextMenuCommandInteraction,
 ) => {
-  const message = await interaction.channel?.messages.fetch(
-    interaction.targetId,
+  const experience = await getExperienceFromMessage(interaction.targetMessage);
+
+  await interaction.editReply(
+    `${interaction.targetMessage.url}: ${experience.toString()}`,
   );
-
-  if (message === undefined) {
-    await interaction.editReply(commandErrors.commandError);
-
-    return;
-  }
-
-  const experience = await getExperienceFromMessage(message);
-
-  await interaction.editReply(`${message.url}: ${experience.toString()}`);
 };
