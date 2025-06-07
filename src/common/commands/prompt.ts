@@ -3,6 +3,7 @@ import {
   SlashCommandBuilder,
 } from 'discord.js';
 
+import { getConfigProperty } from '../../configuration/main.js';
 import { SendPromptOptionsSchema } from '../../lib/schemas/Chat.js';
 import {
   commandDescriptions,
@@ -34,9 +35,11 @@ export const getCommonCommand = (name: keyof typeof commandDescriptions) => ({
     const topP = interaction.options.getNumber('top-p') ?? undefined;
     const maxTokens = interaction.options.getNumber('max-tokens') ?? undefined;
 
+    const models = getConfigProperty('models');
+
     const options = SendPromptOptionsSchema.parse({
-      embeddingsModel,
-      inferenceModel,
+      embeddingsModel: embeddingsModel ?? models.embeddings,
+      inferenceModel: inferenceModel ?? models.inference,
       maxTokens,
       prompt,
       systemPrompt,
