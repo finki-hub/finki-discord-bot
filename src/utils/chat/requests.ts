@@ -1,28 +1,25 @@
-/* eslint-disable camelcase */
-
 import { createParser } from 'eventsource-parser';
 import { z } from 'zod';
 
-import type { ChatOptions } from '../lib/schemas/Chat.js';
+import type {
+  ClosestQuestionsOptions,
+  FillEmbeddingsOptions,
+  SendPromptOptions,
+  UnembeddedQuestionsOptions,
+} from '../../lib/schemas/Chat.js';
 
-import { getApiKey, getChatbotUrl } from '../configuration/environment.js';
-import { getConfigProperty } from '../configuration/main.js';
-import { Model } from '../lib/schemas/Model.js';
-import { QuestionsSchema } from '../lib/schemas/Question.js';
-import { logger } from '../logger.js';
-import { labels } from '../translations/labels.js';
+import { getApiKey, getChatbotUrl } from '../../configuration/environment.js';
+import { QuestionsSchema } from '../../lib/schemas/Question.js';
+import { logger } from '../../logger.js';
+import { labels } from '../../translations/labels.js';
 import {
   logErrorFunctions,
   logMessageFunctions,
-} from '../translations/logs.js';
-
-export const generateModelChoices = (allowedModels: readonly Model[]) =>
-  Object.entries(Model)
-    .filter(([, value]) => allowedModels.includes(value as Model))
-    .map(([key, value]) => ({ name: key, value }));
+} from '../../translations/logs.js';
+import { sanitizeOptions } from './utils.js';
 
 export const sendPrompt = async (
-  chatOptions: ChatOptions,
+  options: SendPromptOptions,
   onChunk: (chunk: string) => void,
 ) => {
   const chatbotUrl = getChatbotUrl();
@@ -31,18 +28,8 @@ export const sendPrompt = async (
     throw new Error('LLM_UNAVAILABLE');
   }
 
-  const models = getConfigProperty('models');
-
-  const res = await fetch(`${chatbotUrl}/chat/`, {
-    body: JSON.stringify({
-      embeddings_model: chatOptions.embeddingsModel ?? models.embeddings,
-      inference_model: chatOptions.inferenceModel ?? models.inference,
-      max_tokens: chatOptions.maxTokens,
-      prompt: chatOptions.query,
-      system_prompt: chatOptions.systemPrompt,
-      temperature: chatOptions.temperature,
-      top_p: chatOptions.topP,
-    }),
+  const result = await fetch(`${chatbotUrl}/chat/`, {
+    body: JSON.stringify(sanitizeOptions(options)),
     headers: {
       Accept: 'text/event-stream',
       'Content-Type': 'application/json',
@@ -50,7 +37,7 @@ export const sendPrompt = async (
     method: 'POST',
   });
 
-  if (!res.ok || !res.body) {
+  if (!result.ok || !result.body || result.status !== 200) {
     throw new Error('LLM_UNAVAILABLE');
   }
 
@@ -61,7 +48,8 @@ export const sendPrompt = async (
     },
   });
 
-  const reader: ReadableStreamDefaultReader<Uint8Array> = res.body.getReader();
+  const reader: ReadableStreamDefaultReader<Uint8Array> =
+    result.body.getReader();
   const decoder = new TextDecoder();
   while (true) {
     const { done, value } = await reader.read();
@@ -72,37 +60,24 @@ export const sendPrompt = async (
     parser.feed(decoded);
   }
 
-  logger.info(logMessageFunctions.promptAnswered(chatOptions.query));
+  logger.info(logMessageFunctions.promptAnswered(options.prompt));
 };
 
-export const getClosestQuestions = async (
-  query: string,
-  embeddingsModel?: string,
-  threshold?: number,
-  limit?: number,
-) => {
+export const getClosestQuestions = async (options: ClosestQuestionsOptions) => {
   const chatbotUrl = getChatbotUrl();
 
   if (chatbotUrl === null) {
     return null;
   }
 
-  const models = getConfigProperty('models');
-
   const url = new URL(`${chatbotUrl}/questions/closest`);
-  url.searchParams.append('prompt', query);
 
-  const model = embeddingsModel ?? models.embeddings;
-  if (model !== undefined) {
-    url.searchParams.append('model', model);
-  }
+  const sanitizedOptions = sanitizeOptions(options);
 
-  if (threshold !== undefined) {
-    url.searchParams.append('threshold', threshold.toString());
-  }
-
-  if (limit !== undefined) {
-    url.searchParams.append('limit', limit.toString());
+  for (const [key, value] of Object.entries(sanitizedOptions)) {
+    if (value !== undefined) {
+      url.searchParams.append(key, String(value));
+    }
   }
 
   try {
@@ -150,19 +125,8 @@ export const getSupportedModels = async () => {
   }
 };
 
-export const FillProgressSchema = z.object({
-  id: z.string(),
-  index: z.number(),
-  name: z.string(),
-  status: z.string(),
-  total: z.number(),
-  ts: z.string(),
-});
-
-export const sendFillEmbeddings = async (
-  embeddingsModel: string,
-  questions: string[],
-  all: boolean,
+export const fillEmbeddings = async (
+  options: FillEmbeddingsOptions,
   onChunk: (chunk: string) => void,
 ) => {
   const chatbotUrl = getChatbotUrl();
@@ -172,12 +136,8 @@ export const sendFillEmbeddings = async (
     throw new Error('LLM_UNAVAILABLE');
   }
 
-  const res = await fetch(`${chatbotUrl}/questions/fill`, {
-    body: JSON.stringify({
-      all,
-      model: embeddingsModel,
-      questions,
-    }),
+  const result = await fetch(`${chatbotUrl}/questions/fill`, {
+    body: JSON.stringify(sanitizeOptions(options)),
     headers: {
       Accept: 'text/event-stream',
       'Content-Type': 'application/json',
@@ -186,7 +146,7 @@ export const sendFillEmbeddings = async (
     method: 'POST',
   });
 
-  if (!res.ok || !res.body || res.status !== 200) {
+  if (!result.ok || !result.body || result.status !== 200) {
     throw new Error('LLM_UNAVAILABLE');
   }
 
@@ -198,7 +158,8 @@ export const sendFillEmbeddings = async (
 
   let hasChunks = false;
 
-  const reader: ReadableStreamDefaultReader<Uint8Array> = res.body.getReader();
+  const reader: ReadableStreamDefaultReader<Uint8Array> =
+    result.body.getReader();
   const decoder = new TextDecoder();
   while (true) {
     const { done, value } = await reader.read();
@@ -213,10 +174,16 @@ export const sendFillEmbeddings = async (
     parser.feed(`data: ${labels.none}\n\n`);
   }
 
-  logger.info(logMessageFunctions.fillEmbeddingsCompleted(embeddingsModel));
+  logger.info(
+    logMessageFunctions.fillEmbeddingsCompleted(
+      options.embeddings_model ?? 'ALL',
+    ),
+  );
 };
 
-export const getUnembeddedQuestions = async (model: string) => {
+export const getUnembeddedQuestions = async (
+  options: UnembeddedQuestionsOptions,
+) => {
   const chatbotUrl = getChatbotUrl();
 
   if (chatbotUrl === null) {
@@ -224,7 +191,14 @@ export const getUnembeddedQuestions = async (model: string) => {
   }
 
   const url = new URL(`${chatbotUrl}/questions/unfilled`);
-  url.searchParams.append('model', model);
+
+  const sanitizedOptions = sanitizeOptions(options);
+
+  for (const [key, value] of Object.entries(sanitizedOptions)) {
+    if (value !== undefined) {
+      url.searchParams.append(key, String(value));
+    }
+  }
 
   try {
     const result = await fetch(url, {

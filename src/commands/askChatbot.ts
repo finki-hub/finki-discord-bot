@@ -4,11 +4,10 @@ import {
   type MessageContextMenuCommandInteraction,
 } from 'discord.js';
 
-import type { ChatOptions } from '../lib/schemas/Chat.js';
-
 import { getConfigProperty } from '../configuration/main.js';
+import { SendPromptOptionsSchema } from '../lib/schemas/Chat.js';
 import { commandErrors } from '../translations/commands.js';
-import { sendPrompt } from '../utils/chat.js';
+import { sendPrompt } from '../utils/chat/requests.js';
 import { safeStreamReplyToInteraction } from '../utils/messages.js';
 
 const name = 'Ask Chatbot';
@@ -24,15 +23,15 @@ export const execute = async (
 
   const models = getConfigProperty('models');
 
-  const chatOptions: ChatOptions = {
+  const options = SendPromptOptionsSchema.parse({
     embeddingsModel: models.embeddings,
     inferenceModel: models.inference,
-    query: message.content,
-  };
+    prompt: message.content,
+  });
 
   try {
     await safeStreamReplyToInteraction(interaction, async (onChunk) => {
-      await sendPrompt(chatOptions, async (chunk) => {
+      await sendPrompt(options, async (chunk) => {
         await onChunk(chunk);
       });
     });

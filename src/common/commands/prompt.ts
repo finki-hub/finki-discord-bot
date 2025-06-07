@@ -3,13 +3,12 @@ import {
   SlashCommandBuilder,
 } from 'discord.js';
 
-import type { ChatOptions } from '../../lib/schemas/Chat.js';
-
+import { SendPromptOptionsSchema } from '../../lib/schemas/Chat.js';
 import {
   commandDescriptions,
   commandErrors,
 } from '../../translations/commands.js';
-import { sendPrompt } from '../../utils/chat.js';
+import { sendPrompt } from '../../utils/chat/requests.js';
 import { safeStreamReplyToInteraction } from '../../utils/messages.js';
 
 export const getCommonCommand = (name: keyof typeof commandDescriptions) => ({
@@ -35,19 +34,19 @@ export const getCommonCommand = (name: keyof typeof commandDescriptions) => ({
     const topP = interaction.options.getNumber('top-p') ?? undefined;
     const maxTokens = interaction.options.getNumber('max-tokens') ?? undefined;
 
-    const chatOptions: ChatOptions = {
+    const options = SendPromptOptionsSchema.parse({
       embeddingsModel,
       inferenceModel,
       maxTokens,
-      query: prompt,
+      prompt,
       systemPrompt,
       temperature,
       topP,
-    };
+    });
 
     try {
       await safeStreamReplyToInteraction(interaction, async (onChunk) => {
-        await sendPrompt(chatOptions, async (chunk) => {
+        await sendPrompt(options, async (chunk) => {
           await onChunk(chunk);
         });
       });

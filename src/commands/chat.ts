@@ -5,7 +5,13 @@ import {
 } from 'discord.js';
 
 import { getCommonCommand } from '../common/commands/prompt.js';
-import { FillEvent } from '../lib/schemas/Embeddings.js';
+import { getConfigProperty } from '../configuration/main.js';
+import {
+  ClosestQuestionsOptionsSchema,
+  FillEmbeddingsOptionsSchema,
+  FillProgressSchema,
+  UnembeddedQuestionsOptionsSchema,
+} from '../lib/schemas/Chat.js';
 import { EMBEDDING_MODELS, INFERENCE_MODELS } from '../lib/schemas/Model.js';
 import {
   commandDescriptions,
@@ -13,12 +19,12 @@ import {
 } from '../translations/commands.js';
 import { labels } from '../translations/labels.js';
 import {
-  generateModelChoices,
+  fillEmbeddings,
   getClosestQuestions,
   getSupportedModels,
   getUnembeddedQuestions,
-  sendFillEmbeddings,
-} from '../utils/chat.js';
+} from '../utils/chat/requests.js';
+import { generateModelChoices } from '../utils/chat/utils.js';
 import {
   safeReplyToInteraction,
   safeStreamReplyToInteraction,
@@ -76,7 +82,7 @@ export const data = new SlashCommandBuilder()
         option
           .setName('embeddings-model')
           .setDescription('Моделот за ембедирање')
-          .setRequired(true)
+          .setRequired(false)
           .setChoices(generateModelChoices(EMBEDDING_MODELS)),
       )
       .addStringOption((option) =>
@@ -87,9 +93,17 @@ export const data = new SlashCommandBuilder()
       )
       .addBooleanOption((option) =>
         option
-          .setName('all')
+          .setName('all-questions')
           .setDescription(
             'Дали да се ембедираат сите документи или само неембедираните',
+          )
+          .setRequired(false),
+      )
+      .addBooleanOption((option) =>
+        option
+          .setName('all-models')
+          .setDescription(
+            'Дали да се ембедираат сите модели или само избраниот',
           )
           .setRequired(false),
       ),
@@ -164,18 +178,22 @@ export const data = new SlashCommandBuilder()
 
 const handleChatClosest = async (interaction: ChatInputCommandInteraction) => {
   const query = interaction.options.getString('query', true);
-  const model =
+  const embeddingsModel =
     interaction.options.getString('embeddings-model', false) ?? undefined;
   const threshold =
     interaction.options.getNumber('threshold', false) ?? undefined;
   const limit = interaction.options.getNumber('limit', false) ?? undefined;
 
-  const closestQuestions = await getClosestQuestions(
-    query,
-    model,
-    threshold,
+  const models = getConfigProperty('models');
+
+  const options = ClosestQuestionsOptionsSchema.parse({
+    embeddingsModel: embeddingsModel ?? models.embeddings ?? undefined,
     limit,
-  );
+    query,
+    threshold,
+  });
+
+  const closestQuestions = await getClosestQuestions(options);
 
   if (closestQuestions === null) {
     await interaction.editReply(commandErrors.dataFetchFailed);
@@ -216,32 +234,39 @@ const handleChatModels = async (interaction: ChatInputCommandInteraction) => {
 const { execute: handleChatQuery } = getCommonCommand('ask');
 
 const handleChatEmbed = async (interaction: ChatInputCommandInteraction) => {
-  const model = interaction.options.getString('embeddings-model', true);
-  const question = interaction.options.getString('question');
-  const all = interaction.options.getBoolean('all') ?? false;
+  const embeddingsModel =
+    interaction.options.getString('embeddings-model') ?? undefined;
+  const question = interaction.options.getString('question') ?? undefined;
+  const allQuestions =
+    interaction.options.getBoolean('all-questions') ?? undefined;
+  const allModels = interaction.options.getBoolean('all-models') ?? undefined;
+
+  const models = getConfigProperty('models');
+
+  const options = FillEmbeddingsOptionsSchema.parse({
+    allModels,
+    allQuestions,
+    embeddingsModel: embeddingsModel ?? models.embeddings ?? undefined,
+    questions: question ? [question] : undefined,
+  });
 
   try {
     await safeStreamReplyToInteraction(interaction, async (onChunk) => {
-      await sendFillEmbeddings(
-        model,
-        question ? [question] : [],
-        all,
-        async (chunk) => {
-          // Not an object
-          if (!chunk.includes('{')) {
-            await onChunk(chunk);
-            return;
-          }
+      await fillEmbeddings(options, async (chunk) => {
+        // Not an object
+        if (!chunk.includes('{')) {
+          await onChunk(chunk);
+          return;
+        }
 
-          const event = FillEvent.parse(JSON.parse(chunk));
+        const event = FillProgressSchema.parse(JSON.parse(chunk));
 
-          const state = inlineCode(
-            `${event.index} / ${event.total} | ${event.status}`,
-          );
+        const state = inlineCode(
+          `${event.index} / ${event.total} | ${event.status}`,
+        );
 
-          await onChunk(`[${state}] ${event.name}\n`);
-        },
-      );
+        await onChunk(`[${state}] ${event.name}\n`);
+      });
     });
   } catch (error) {
     const isLLMUnavailable =
@@ -263,9 +288,16 @@ const handleChatEmbed = async (interaction: ChatInputCommandInteraction) => {
 const handleChatUnembedded = async (
   interaction: ChatInputCommandInteraction,
 ) => {
-  const model = interaction.options.getString('embeddings-model', true);
+  const embeddingsModel = interaction.options.getString(
+    'embeddings-model',
+    true,
+  );
 
-  const unembeddedQuestions = await getUnembeddedQuestions(model);
+  const options = UnembeddedQuestionsOptionsSchema.parse({
+    embeddingsModel,
+  });
+
+  const unembeddedQuestions = await getUnembeddedQuestions(options);
 
   if (unembeddedQuestions === null) {
     await interaction.editReply(commandErrors.dataFetchFailed);
