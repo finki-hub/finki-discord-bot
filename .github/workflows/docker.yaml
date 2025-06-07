@@ -5,6 +5,16 @@ on:
     branches:
       - "main"
       - "dev"
+    paths:
+      - "src/**"
+      - "prisma/**"
+      - "eslint.config.js"
+      - "package.json"
+      - "package-lock.json"
+      - "tsconfig.json"
+      - ".dockerignore"
+      - "Dockerfile"
+      - "esbuild.config.js"
 
 permissions:
   contents: read

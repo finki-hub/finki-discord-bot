@@ -4,9 +4,23 @@ on:
   push:
     branches:
       - "main"
+    paths:
+      - "src/**"
+      - "prisma/**"
+      - "eslint.config.js"
+      - "package.json"
+      - "package-lock.json"
+      - "tsconfig.json"
   pull_request:
     branches:
       - "main"
+    paths:
+      - "src/**"
+      - "prisma/**"
+      - "eslint.config.js"
+      - "package.json"
+      - "package-lock.json"
+      - "tsconfig.json"
 
 permissions:
   contents: read
