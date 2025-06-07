@@ -28,13 +28,13 @@ export const ClosestQuestionsOptionsSchema = z
   .object({
     embeddingsModel: z.string().optional(),
     limit: z.number().min(1).max(100).optional(),
-    query: z.string().min(1, 'Query must not be empty'),
+    prompt: z.string().min(1, 'Query must not be empty'),
     threshold: z.number().min(0).max(1).optional(),
   })
   .transform((data) => ({
     embeddings_model: data.embeddingsModel,
     limit: data.limit,
-    query: data.query,
+    prompt: data.prompt,
     threshold: data.threshold,
   }));
 

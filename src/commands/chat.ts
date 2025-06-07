@@ -177,7 +177,7 @@ export const data = new SlashCommandBuilder()
   );
 
 const handleChatClosest = async (interaction: ChatInputCommandInteraction) => {
-  const query = interaction.options.getString('query', true);
+  const prompt = interaction.options.getString('query', true);
   const embeddingsModel =
     interaction.options.getString('embeddings-model', false) ?? undefined;
   const threshold =
@@ -189,7 +189,7 @@ const handleChatClosest = async (interaction: ChatInputCommandInteraction) => {
   const options = ClosestQuestionsOptionsSchema.parse({
     embeddingsModel: embeddingsModel ?? models.embeddings ?? undefined,
     limit,
-    query,
+    prompt,
     threshold,
   });
 
