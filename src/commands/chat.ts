@@ -16,6 +16,7 @@ import {
   generateModelChoices,
   getClosestQuestions,
   getSupportedModels,
+  getUnembeddedQuestions,
   sendFillEmbeddings,
 } from '../utils/chat.js';
 import {
@@ -85,6 +86,18 @@ export const data = new SlashCommandBuilder()
             'Дали да се ембедираат сите документи или само неембедираните',
           )
           .setRequired(false),
+      ),
+  )
+  .addSubcommand((subcommand) =>
+    subcommand
+      .setName('unembedded')
+      .setDescription(commandDescriptions['chat unembedded'])
+      .addStringOption((option) =>
+        option
+          .setName('embeddings-model')
+          .setDescription('Моделот за ембедирање')
+          .setRequired(false)
+          .setChoices(generateModelChoices(EMBEDDING_MODELS)),
       ),
   )
   .addSubcommand((subcommand) =>
@@ -190,8 +203,8 @@ const handleChatModels = async (interaction: ChatInputCommandInteraction) => {
     return;
   }
 
-  const content = models.join('\n- ');
-  await safeReplyToInteraction(interaction, `- ${content}`);
+  const content = models.map((model) => `- ${model}`).join('\n');
+  await safeReplyToInteraction(interaction, content);
 };
 
 const { execute: handleChatQuery } = getCommonCommand('ask');
@@ -232,11 +245,30 @@ const handleChatEmbed = async (interaction: ChatInputCommandInteraction) => {
           content: errorMessage,
           ephemeral: true,
         }));
+  }
+};
 
-    return false;
+const handleChatUnembedded = async (
+  interaction: ChatInputCommandInteraction,
+) => {
+  const model = interaction.options.getString('embeddings-model', true);
+
+  const unembeddedQuestions = await getUnembeddedQuestions(model);
+
+  if (unembeddedQuestions === null) {
+    await interaction.editReply(commandErrors.dataFetchFailed);
+
+    return;
   }
 
-  return true;
+  if (unembeddedQuestions.length === 0) {
+    await interaction.editReply(labels.none);
+
+    return;
+  }
+
+  const content = unembeddedQuestions.map(({ name }) => `- ${name}`).join('\n');
+  await safeReplyToInteraction(interaction, content);
 };
 
 const chatHandlers = {
@@ -244,6 +276,7 @@ const chatHandlers = {
   embed: handleChatEmbed,
   models: handleChatModels,
   query: handleChatQuery,
+  unembedded: handleChatUnembedded,
 };
 
 export const execute = async (interaction: ChatInputCommandInteraction) => {

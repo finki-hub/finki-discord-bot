@@ -213,3 +213,32 @@ export const sendFillEmbeddings = async (
 
   logger.info(logMessageFunctions.fillEmbeddingsCompleted(embeddingsModel));
 };
+
+export const getUnembeddedQuestions = async (model: string) => {
+  const chatbotUrl = getChatbotUrl();
+
+  if (chatbotUrl === null) {
+    return null;
+  }
+
+  const url = new URL(`${chatbotUrl}/questions/unfilled`);
+  url.searchParams.append('model', model);
+
+  try {
+    const result = await fetch(url, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!result.ok || !result.body || result.status !== 200) {
+      return null;
+    }
+
+    const data = QuestionsSchema.parse(await result.json());
+    return data;
+  } catch (error) {
+    logger.error(logErrorFunctions.unembeddedQuestionsError(error));
+    return null;
+  }
+};

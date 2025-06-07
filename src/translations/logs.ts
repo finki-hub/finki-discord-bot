@@ -258,6 +258,9 @@ export const logErrorFunctions = {
   supportedModelsError: (error: unknown) =>
     `Failed getting supported models\n${error}`,
 
+  unembeddedQuestionsError: (error: unknown) =>
+    `Failed getting unembedded questions\n${error}`,
+
   unknownInteractionError: (userId: string) =>
     `Unknown interaction from ${userId}`,
 
