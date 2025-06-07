@@ -1,6 +1,7 @@
 import {
   ApplicationCommandType,
   ContextMenuCommandBuilder,
+  PermissionFlagsBits,
   type UserContextMenuCommandInteraction,
 } from 'discord.js';
 
@@ -11,7 +12,8 @@ const name = 'Get Experience';
 
 export const data = new ContextMenuCommandBuilder()
   .setName(name)
-  .setType(ApplicationCommandType.Message);
+  .setType(ApplicationCommandType.Message)
+  .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages);
 
 export const execute = async (
   interaction: UserContextMenuCommandInteraction,

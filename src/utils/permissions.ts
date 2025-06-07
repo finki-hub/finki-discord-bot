@@ -52,6 +52,10 @@ const commandPermissions: Record<
     permissions: [],
     roles: [Role.Administrators],
   },
+  'Get Experience': {
+    permissions: [PermissionsBitField.Flags.ManageMessages],
+    roles: [],
+  },
   'irregulars add': {
     permissions: [],
     roles: [Role.Council],
