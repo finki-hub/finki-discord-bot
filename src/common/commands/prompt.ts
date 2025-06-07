@@ -5,12 +5,11 @@ import {
 
 import type { ChatOptions } from '../../lib/schemas/Chat.js';
 
-import { EMBEDDING_MODELS, INFERENCE_MODELS } from '../../lib/schemas/Model.js';
 import {
   commandDescriptions,
   commandErrors,
 } from '../../translations/commands.js';
-import { generateModelChoices, sendPrompt } from '../../utils/chat.js';
+import { sendPrompt } from '../../utils/chat.js';
 import { safeStreamReplyToInteraction } from '../../utils/messages.js';
 
 export const getCommonCommand = (name: keyof typeof commandDescriptions) => ({
@@ -22,44 +21,6 @@ export const getCommonCommand = (name: keyof typeof commandDescriptions) => ({
         .setName('prompt')
         .setDescription('Промпт за LLM агентот')
         .setRequired(true),
-    )
-    .addStringOption((option) =>
-      option
-        .setName('embeddings-model')
-        .setDescription('Моделот за ембедирање')
-        .setRequired(false)
-        .setChoices(generateModelChoices(EMBEDDING_MODELS)),
-    )
-    .addStringOption((option) =>
-      option
-        .setName('inference-model')
-        .setDescription('Моделот за инференца')
-        .setRequired(false)
-        .setChoices(generateModelChoices(INFERENCE_MODELS)),
-    )
-    .addNumberOption((option) =>
-      option
-        .setName('temperature')
-        .setDescription('Температурата на моделот')
-        .setRequired(false)
-        .setMinValue(0)
-        .setMaxValue(1),
-    )
-    .addNumberOption((option) =>
-      option
-        .setName('top-p')
-        .setDescription('Top P вредноста на моделот')
-        .setRequired(false)
-        .setMinValue(0)
-        .setMaxValue(1),
-    )
-    .addNumberOption((option) =>
-      option
-        .setName('max-tokens')
-        .setDescription('Максималниот број на токени за одговорот')
-        .setRequired(false)
-        .setMinValue(1)
-        .setMaxValue(4_096),
     ),
   execute: async (interaction: ChatInputCommandInteraction) => {
     const prompt = interaction.options.getString('prompt', true);
