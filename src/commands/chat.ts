@@ -13,6 +13,7 @@ import {
 } from '../translations/commands.js';
 import { labels } from '../translations/labels.js';
 import {
+  generateModelChoices,
   getClosestQuestions,
   getSupportedModels,
   sendFillEmbeddings,
@@ -42,12 +43,7 @@ export const data = new SlashCommandBuilder()
           .setName('embeddings-model')
           .setDescription('Моделот за ембедирање')
           .setRequired(false)
-          .setChoices(
-            EMBEDDING_MODELS.map((model) => ({
-              name: model,
-              value: model,
-            })),
-          ),
+          .setChoices(generateModelChoices(EMBEDDING_MODELS)),
       )
       .addNumberOption((option) =>
         option
@@ -80,12 +76,7 @@ export const data = new SlashCommandBuilder()
           .setName('embeddings-model')
           .setDescription('Моделот за ембедирање')
           .setRequired(true)
-          .setChoices(
-            EMBEDDING_MODELS.map((model) => ({
-              name: model,
-              value: model,
-            })),
-          ),
+          .setChoices(generateModelChoices(EMBEDDING_MODELS)),
       )
       .addBooleanOption((option) =>
         option
@@ -111,24 +102,14 @@ export const data = new SlashCommandBuilder()
           .setName('embeddings-model')
           .setDescription('Моделот за ембедирање')
           .setRequired(false)
-          .setChoices(
-            EMBEDDING_MODELS.map((model) => ({
-              name: model,
-              value: model,
-            })),
-          ),
+          .setChoices(generateModelChoices(EMBEDDING_MODELS)),
       )
       .addStringOption((option) =>
         option
           .setName('inference-model')
           .setDescription('Моделот за инференца')
           .setRequired(false)
-          .setChoices(
-            INFERENCE_MODELS.map((model) => ({
-              name: model,
-              value: model,
-            })),
-          ),
+          .setChoices(generateModelChoices(INFERENCE_MODELS)),
       )
       .addNumberOption((option) =>
         option

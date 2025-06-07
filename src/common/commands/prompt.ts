@@ -10,7 +10,7 @@ import {
   commandDescriptions,
   commandErrors,
 } from '../../translations/commands.js';
-import { sendPrompt } from '../../utils/chat.js';
+import { generateModelChoices, sendPrompt } from '../../utils/chat.js';
 import { safeStreamReplyToInteraction } from '../../utils/messages.js';
 
 export const getCommonCommand = (name: keyof typeof commandDescriptions) => ({
@@ -28,24 +28,14 @@ export const getCommonCommand = (name: keyof typeof commandDescriptions) => ({
         .setName('embeddings-model')
         .setDescription('Моделот за ембедирање')
         .setRequired(false)
-        .setChoices(
-          EMBEDDING_MODELS.map((model) => ({
-            name: model,
-            value: model,
-          })),
-        ),
+        .setChoices(generateModelChoices(EMBEDDING_MODELS)),
     )
     .addStringOption((option) =>
       option
         .setName('inference-model')
         .setDescription('Моделот за инференца')
         .setRequired(false)
-        .setChoices(
-          INFERENCE_MODELS.map((model) => ({
-            name: model,
-            value: model,
-          })),
-        ),
+        .setChoices(generateModelChoices(INFERENCE_MODELS)),
     )
     .addNumberOption((option) =>
       option

@@ -7,6 +7,7 @@ import type { ChatOptions } from '../lib/schemas/Chat.js';
 
 import { getApiKey, getChatbotUrl } from '../configuration/environment.js';
 import { getConfigProperty } from '../configuration/main.js';
+import { Model } from '../lib/schemas/Model.js';
 import { QuestionsSchema } from '../lib/schemas/Question.js';
 import { logger } from '../logger.js';
 import { labels } from '../translations/labels.js';
@@ -14,6 +15,11 @@ import {
   logErrorFunctions,
   logMessageFunctions,
 } from '../translations/logs.js';
+
+export const generateModelChoices = (allowedModels: readonly Model[]) =>
+  Object.entries(Model)
+    .filter(([, value]) => allowedModels.includes(value as Model))
+    .map(([key, value]) => ({ name: key, value }));
 
 export const sendPrompt = async (
   chatOptions: ChatOptions,
