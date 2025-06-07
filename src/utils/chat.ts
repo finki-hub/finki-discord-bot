@@ -161,6 +161,7 @@ export const FillProgressSchema = z.object({
 
 export const sendFillEmbeddings = async (
   embeddingsModel: string,
+  questions: string[],
   all: boolean,
   onChunk: (chunk: string) => void,
 ) => {
@@ -175,6 +176,7 @@ export const sendFillEmbeddings = async (
     body: JSON.stringify({
       all,
       model: embeddingsModel,
+      questions,
     }),
     headers: {
       Accept: 'text/event-stream',

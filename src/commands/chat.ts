@@ -79,6 +79,12 @@ export const data = new SlashCommandBuilder()
           .setRequired(true)
           .setChoices(generateModelChoices(EMBEDDING_MODELS)),
       )
+      .addStringOption((option) =>
+        option
+          .setName('question')
+          .setDescription('Име на прашање за ембедирање')
+          .setRequired(false),
+      )
       .addBooleanOption((option) =>
         option
           .setName('all')
@@ -211,25 +217,31 @@ const { execute: handleChatQuery } = getCommonCommand('ask');
 
 const handleChatEmbed = async (interaction: ChatInputCommandInteraction) => {
   const model = interaction.options.getString('embeddings-model', true);
+  const question = interaction.options.getString('question');
   const all = interaction.options.getBoolean('all') ?? false;
 
   try {
     await safeStreamReplyToInteraction(interaction, async (onChunk) => {
-      await sendFillEmbeddings(model, all, async (chunk) => {
-        // Not an object
-        if (!chunk.includes('{')) {
-          await onChunk(chunk);
-          return;
-        }
+      await sendFillEmbeddings(
+        model,
+        question ? [question] : [],
+        all,
+        async (chunk) => {
+          // Not an object
+          if (!chunk.includes('{')) {
+            await onChunk(chunk);
+            return;
+          }
 
-        const event = FillEvent.parse(JSON.parse(chunk));
+          const event = FillEvent.parse(JSON.parse(chunk));
 
-        const state = inlineCode(
-          `${event.index} / ${event.total} | ${event.status}`,
-        );
+          const state = inlineCode(
+            `${event.index} / ${event.total} | ${event.status}`,
+          );
 
-        await onChunk(`[${state}] ${event.name}\n`);
-      });
+          await onChunk(`[${state}] ${event.name}\n`);
+        },
+      );
     });
   } catch (error) {
     const isLLMUnavailable =
