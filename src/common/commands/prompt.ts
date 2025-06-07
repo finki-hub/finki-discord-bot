@@ -66,6 +66,5 @@ export const getCommonCommand = (name: keyof typeof commandDescriptions) => ({
             ephemeral: true,
           }));
     }
-    return true;
   },
 });
