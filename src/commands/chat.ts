@@ -173,6 +173,12 @@ export const data = new SlashCommandBuilder()
           .setRequired(false)
           .setMinValue(1)
           .setMaxValue(4_096),
+      )
+      .addBooleanOption((option) =>
+        option
+          .setName('use-agent')
+          .setDescription('Дали да се користи LLM агентот')
+          .setRequired(false),
       ),
   );
 

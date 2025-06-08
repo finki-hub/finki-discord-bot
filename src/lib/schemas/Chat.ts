@@ -11,6 +11,7 @@ export const SendPromptOptionsSchema = z
     systemPrompt: z.string().optional(),
     temperature: z.number().min(0).max(1).optional(),
     topP: z.number().min(0).max(1).optional(),
+    useAgent: z.boolean().optional(),
   })
   .transform((data) => ({
     embeddings_model: data.embeddingsModel,
@@ -20,6 +21,7 @@ export const SendPromptOptionsSchema = z
     system_prompt: data.systemPrompt,
     temperature: data.temperature,
     top_p: data.topP,
+    use_agent: data.useAgent,
   }));
 
 export type SendPromptOptions = z.infer<typeof SendPromptOptionsSchema>;

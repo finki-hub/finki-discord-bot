@@ -34,6 +34,7 @@ export const getCommonCommand = (name: keyof typeof commandDescriptions) => ({
       interaction.options.getNumber('temperature') ?? undefined;
     const topP = interaction.options.getNumber('top-p') ?? undefined;
     const maxTokens = interaction.options.getNumber('max-tokens') ?? undefined;
+    const useAgent = interaction.options.getBoolean('use-agent') ?? undefined;
 
     const models = getConfigProperty('models');
 
@@ -45,6 +46,7 @@ export const getCommonCommand = (name: keyof typeof commandDescriptions) => ({
       systemPrompt,
       temperature,
       topP,
+      useAgent,
     });
 
     try {
