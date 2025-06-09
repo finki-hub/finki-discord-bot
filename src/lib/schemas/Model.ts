@@ -10,7 +10,9 @@ export enum Model {
   GPT_4O_MINI = 'gpt-4o-mini',
   LLAMA_3_3_70B = 'llama3.3:70b',
   MISTRAL = 'mistral:latest',
-  QWEN_2_5_72B = 'qwen2.5:72b',
+  MULTILINGUAL_E5_LARGE = 'intfloat/multilingual-e5-large',
+  QWEN2_1_5_B_INSTRUCT = 'Qwen/Qwen2-1.5B-Instruct',
+  QWEN2_5_72B = 'qwen2.5:72b',
   TEXT_EMBEDDING_3_LARGE = 'text-embedding-3-large',
   TEXT_EMBEDDING_004 = 'models/text-embedding-004',
   VEZILKALLM_GGUF = 'hf.co/mradermacher/VezilkaLLM-GGUF:Q8_0',
@@ -23,6 +25,7 @@ export const EMBEDDING_MODELS = [
   Model.LLAMA_3_3_70B,
   Model.TEXT_EMBEDDING_3_LARGE,
   Model.TEXT_EMBEDDING_004,
+  Model.MULTILINGUAL_E5_LARGE,
 ] as const;
 
 export const INFERENCE_MODELS = [
@@ -30,10 +33,11 @@ export const INFERENCE_MODELS = [
   Model.DOMESTIC_YAK_8B_INSTRUCT_GGUF,
   Model.LLAMA_3_3_70B,
   Model.MISTRAL,
-  Model.QWEN_2_5_72B,
+  Model.QWEN2_5_72B,
   Model.GPT_4O_MINI,
   Model.VEZILKALLM_GGUF,
   Model.GPT_4_1_MINI,
   Model.GPT_4_1_NANO,
   Model.GEMINI_2_5_FLASH_PREVIEW_05_20,
+  Model.QWEN2_1_5_B_INSTRUCT,
 ] as const;
