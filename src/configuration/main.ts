@@ -18,10 +18,10 @@ export const reloadDatabaseConfig = async () => {
   const parsedConfig = BotConfigSchema.safeParse(currentConfig?.value);
 
   if (parsedConfig.data === undefined) {
-    const defaultConfig = await setConfig(DEFAULT_CONFIGURATION);
-    config = BotConfigSchema.parse(defaultConfig?.value);
+    config = BotConfigSchema.parse(DEFAULT_CONFIGURATION);
 
     logger.warn(configErrors.invalidConfiguration);
+    logger.warn(parsedConfig.error);
 
     return;
   }
