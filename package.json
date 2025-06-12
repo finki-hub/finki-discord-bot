@@ -14,7 +14,7 @@
     "fuse.js": "^7.1.0",
     "prisma": "^6.9.0",
     "winston": "^3.17.0",
-    "zod": "^3.25.57"
+    "zod": "^3.25.62"
   },
   "description": "FINKI Discord Bot",
   "devDependencies": {
@@ -24,7 +24,7 @@
     "eslint-config-imperium": "^2.2.0",
     "husky": "^9.1.7",
     "rimraf": "^6.0.1",
-    "tsx": "^4.19.4",
+    "tsx": "^4.20.1",
     "typescript": "~5.8.3",
     "vitest": "^3.2.3"
   },
