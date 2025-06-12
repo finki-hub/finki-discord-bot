@@ -115,7 +115,11 @@ const executeVipRemovePollAction = async (
   );
 };
 
-const executeBarPollAction = async (member: GuildMember, decision: string) => {
+export const executeBarPollAction = async (
+  member: GuildMember,
+  decision: string,
+  silent = false,
+) => {
   const vipChannel = getChannel(Channel.VIP);
 
   if (decision !== labels.yes) {
@@ -153,12 +157,17 @@ const executeBarPollAction = async (member: GuildMember, decision: string) => {
     await member.roles.remove(councilRoleId);
   }
 
+  if (silent) {
+    return;
+  }
+
   await vipChannel?.send(specialStringFunctions.barAccepted(member.user.id));
 };
 
-const executeUnbarPollAction = async (
+export const executeUnbarPollAction = async (
   member: GuildMember,
   decision: string,
+  silent = false,
 ) => {
   const vipChannel = getChannel(Channel.VIP);
 
@@ -171,6 +180,10 @@ const executeUnbarPollAction = async (
   }
 
   await deleteBar(member.user.id);
+
+  if (silent) {
+    return;
+  }
 
   await vipChannel?.send(specialStringFunctions.unbarAccepted(member.user.id));
 };

@@ -28,6 +28,10 @@ import { createCommandChoices } from '../utils/commands.js';
 import { getGuild, getMemberFromGuild } from '../utils/guild.js';
 import { isMemberAdmin, isMemberBarred } from '../utils/members.js';
 import { safeReplyToInteraction } from '../utils/messages.js';
+import {
+  executeBarPollAction,
+  executeUnbarPollAction,
+} from '../utils/polls/actions/special.js';
 import { SPECIAL_POLL_OPTIONS } from '../utils/polls/constants.js';
 import {
   createSpecialPoll,
@@ -90,6 +94,12 @@ export const data = new SlashCommandBuilder()
           .setName('notify')
           .setDescription('Испрати нотификација')
           .setRequired(false),
+      )
+      .addBooleanOption((option) =>
+        option
+          .setName('force')
+          .setDescription('Форсирај одлука')
+          .setRequired(false),
       ),
   )
   .addSubcommand((command) =>
@@ -103,6 +113,12 @@ export const data = new SlashCommandBuilder()
         option
           .setName('notify')
           .setDescription('Испрати нотификација')
+          .setRequired(false),
+      )
+      .addBooleanOption((option) =>
+        option
+          .setName('force')
+          .setDescription('Форсирај одлука')
           .setRequired(false),
       ),
   );
@@ -254,7 +270,28 @@ const handleSpecialBar = async (interaction: ChatInputCommandInteraction) => {
 
   const user = interaction.options.getUser('user', true);
   const notify = interaction.options.getBoolean('notify') ?? true;
+  const force = interaction.options.getBoolean('force') ?? false;
   const councilChannelId = getChannelsProperty(Channel.Council);
+  const member = await getMemberFromGuild(user.id, interaction.guild);
+
+  if (member === null) {
+    await interaction.editReply(commandErrors.userNotMember);
+
+    return;
+  }
+
+  if (force) {
+    const authorMember = await getMemberFromGuild(
+      interaction.user.id,
+      interaction.guild,
+    );
+
+    await (authorMember && isMemberAdmin(authorMember)
+      ? executeBarPollAction(member, labels.yes, true)
+      : interaction.editReply(commandErrors.userNotAdmin));
+
+    return;
+  }
 
   if (interaction.channelId !== councilChannelId) {
     await interaction.editReply({
@@ -266,14 +303,6 @@ const handleSpecialBar = async (interaction: ChatInputCommandInteraction) => {
 
   if (user.bot) {
     await interaction.editReply(commandErrors.userBot);
-
-    return;
-  }
-
-  const member = await getMemberFromGuild(user.id, interaction.guild);
-
-  if (member === null) {
-    await interaction.editReply(commandErrors.userNotMember);
 
     return;
   }
@@ -322,7 +351,28 @@ const handleSpecialUnbar = async (interaction: ChatInputCommandInteraction) => {
 
   const user = interaction.options.getUser('user', true);
   const notify = interaction.options.getBoolean('notify') ?? true;
+  const force = interaction.options.getBoolean('force') ?? false;
   const councilChannelId = getChannelsProperty(Channel.Council);
+  const member = await getMemberFromGuild(user.id, interaction.guild);
+
+  if (member === null) {
+    await interaction.editReply(commandErrors.userNotMember);
+
+    return;
+  }
+
+  if (force) {
+    const authorMember = await getMemberFromGuild(
+      interaction.user.id,
+      interaction.guild,
+    );
+
+    await (authorMember && isMemberAdmin(authorMember)
+      ? executeUnbarPollAction(member, labels.yes, true)
+      : interaction.editReply(commandErrors.userNotAdmin));
+
+    return;
+  }
 
   if (interaction.channelId !== councilChannelId) {
     await interaction.editReply({
