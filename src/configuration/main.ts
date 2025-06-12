@@ -8,25 +8,21 @@ import {
   type FullyRequiredBotConfig,
 } from '../lib/schemas/BotConfig.js';
 import { logger } from '../logger.js';
-import { configErrors } from '../translations/errors.js';
+import { configErrorFunctions } from '../translations/errors.js';
 import { DEFAULT_CONFIGURATION } from './defaults.js';
 
 let config: BotConfig | undefined;
 
 export const reloadDatabaseConfig = async () => {
   const currentConfig = await getConfig();
-  const parsedConfig = BotConfigSchema.safeParse(currentConfig?.value);
 
-  if (parsedConfig.data === undefined) {
+  try {
+    config = BotConfigSchema.parse(currentConfig?.value);
+  } catch (error) {
     config = BotConfigSchema.parse(DEFAULT_CONFIGURATION);
 
-    logger.warn(configErrors.invalidConfiguration);
-    logger.warn(parsedConfig.error);
-
-    return;
+    logger.warn(configErrorFunctions.invalidConfiguration(error));
   }
-
-  config = parsedConfig.data;
 };
 
 export const getConfigProperty = <T extends BotConfigKeys>(key: T) =>
