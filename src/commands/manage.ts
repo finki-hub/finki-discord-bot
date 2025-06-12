@@ -59,6 +59,7 @@ import {
 import { labels } from '../translations/labels.js';
 import { logErrorFunctions } from '../translations/logs.js';
 import { getNormalizedUrl } from '../utils/links.js';
+import { safeReplyToInteraction } from '../utils/messages.js';
 import { LINK_REGEX } from '../utils/regex.js';
 
 const name = 'manage';
@@ -431,11 +432,11 @@ const handleManageQuestionContent = async (
     return;
   }
 
-  await interaction.editReply(
-    `Име:${codeBlock(question.name)}\nОдговор:${codeBlock(
-      question.content.replaceAll('\n', String.raw`\n`),
-    )}\nЛинкови:${codeBlock(JSON.stringify(question.links, null, 2))}`,
-  );
+  const content = `Име:${codeBlock(question.name)}\nОдговор:${codeBlock(
+    question.content.replaceAll('\n', String.raw`\n`),
+  )}\nЛинкови:${codeBlock(JSON.stringify(question.links, null, 2))}`;
+
+  await safeReplyToInteraction(interaction, content);
 };
 
 const handleManageQuestionDump = async (
