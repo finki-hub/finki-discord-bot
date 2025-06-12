@@ -31,34 +31,6 @@ export const specialStrings = {
 };
 
 export const specialStringFunctions = {
-  adminAddAccepted: (userId: string) =>
-    `# Корисникот ${userMention(
-      userId,
-    )} е одобрен како член на Администрацијата.`,
-
-  adminAddDescription: (userTag: string) =>
-    `Дали се согласувате корисникот ${userTag} да стане член на Администрацијата?`,
-
-  adminAddRejected: (userId: string) =>
-    `# Корисникот ${userMention(
-      userId,
-    )} не е одобрен како член на Администрацијата.`,
-
-  adminAddTitle: ({ id, tag }: PartialUser) =>
-    `Влез во Администрација за ${tagAndMentionUser({ id, tag })}`,
-
-  adminRemoveAccepted: (userId: string) =>
-    `# Корисникот ${userMention(userId)} е избркан од Администрацијата.`,
-
-  adminRemoveDescription: (userTag: string) =>
-    `Дали се согласувате корисникот ${userTag} да биде избркан од Администрацијата?`,
-
-  adminRemoveRejected: (userId: string) =>
-    `# Корисникот ${userMention(userId)} не е избркан од Администрацијата.`,
-
-  adminRemoveTitle: ({ id, tag }: PartialUser) =>
-    `Излез од Администрација за ${tagAndMentionUser({ id, tag })}`,
-
   barAccepted: (userId: string) =>
     `# Корисникот ${userMention(userId)} е забранет.`,
 
@@ -70,30 +42,6 @@ export const specialStringFunctions = {
 
   barTitle: ({ id, tag }: PartialUser) =>
     `Забрана за ${tagAndMentionUser({ id, tag })}`,
-
-  councilAddAccepted: (userId: string) =>
-    `# Корисникот ${userMention(userId)} е одобрен како член на Советот.`,
-
-  councilAddDescription: (userTag: string) =>
-    `Дали се согласувате корисникот ${userTag} да стане член на Советот?`,
-
-  councilAddRejected: (userId: string) =>
-    `# Корисникот ${userMention(userId)} не е одобрен како член на Советот.`,
-
-  councilAddTitle: ({ id, tag }: PartialUser) =>
-    `Влез во Советот за ${tagAndMentionUser({ id, tag })}`,
-
-  councilRemoveAccepted: (userId: string) =>
-    `# Корисникот ${userMention(userId)} е избркан од Советот.`,
-
-  councilRemoveDescription: (userTag: string) =>
-    `Дали се согласувате корисникот ${userTag} да биде избркан од Советот?`,
-
-  councilRemoveRejected: (userId: string) =>
-    `# Корисникот ${userMention(userId)} не е избркан од Советот.`,
-
-  councilRemoveTitle: ({ id, tag }: PartialUser) =>
-    `Излез од Советот за ${tagAndMentionUser({ id, tag })}`,
 
   irregularsAddAccepted: (userId: string) =>
     `# Корисникот ${userMention(userId)} е одобрен како член на Вонредните.`,

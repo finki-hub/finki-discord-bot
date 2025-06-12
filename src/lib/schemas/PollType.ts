@@ -5,11 +5,7 @@ export enum LotteryPollType {
 }
 
 export enum SpecialPollType {
-  ADMIN_ADD = 'adminAdd',
-  ADMIN_REMOVE = 'adminRemove',
   BAR = 'bar',
-  COUNCIL_ADD = 'councilAdd',
-  COUNCIL_REMOVE = 'councilRemove',
   IRREGULARS_ADD = 'irregularsAdd',
   IRREGULARS_REMOVE = 'irregularsRemove',
   IRREGULARS_REQUEST = 'irregularsRequest',

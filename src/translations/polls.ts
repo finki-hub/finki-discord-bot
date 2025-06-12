@@ -7,11 +7,7 @@ import {
 export const POLL_TYPE_LABELS: Record<PollType, string> = {
   [LotteryPollType.REGULARS_LOTTERY]: 'REGULARS LOTTERY',
 
-  [SpecialPollType.ADMIN_ADD]: 'ADMIN ADD',
-  [SpecialPollType.ADMIN_REMOVE]: 'ADMIN REMOVE',
   [SpecialPollType.BAR]: 'BAR',
-  [SpecialPollType.COUNCIL_ADD]: 'COUNCIL ADD',
-  [SpecialPollType.COUNCIL_REMOVE]: 'COUNCIL REMOVE',
   [SpecialPollType.IRREGULARS_ADD]: 'IRREGULARS ADD',
   [SpecialPollType.IRREGULARS_REMOVE]: 'IRREGULARS REMOVE',
   [SpecialPollType.IRREGULARS_REQUEST]: 'IRREGULARS REQUEST',

@@ -5,7 +5,6 @@ import { getLevels } from '../configuration/files.js';
 import {
   getExperienceMultiplier,
   getExperienceProperty,
-  getRolesProperty,
 } from '../configuration/main.js';
 import {
   createExperience,
@@ -13,13 +12,10 @@ import {
   updateExperience,
 } from '../data/database/Experience.js';
 import { Channel } from '../lib/schemas/Channel.js';
-import { Role } from '../lib/schemas/Role.js';
 import { logger } from '../logger.js';
 import { experienceMessages } from '../translations/experience.js';
 import { logErrorFunctions } from '../translations/logs.js';
 import { getChannel } from './channels.js';
-import { COUNCIL_LEVEL, REGULAR_LEVEL } from './levels.js';
-import { isMemberBarred, isMemberInVip, isMemberLevel } from './members.js';
 import { EMOJI_REGEX, URL_REGEX } from './regex.js';
 
 // Golden ratio
@@ -85,41 +81,6 @@ const awardMember = async (member: GuildMember, level: number) => {
 
   await member.roles.add(roles.add);
   await member.roles.remove(roles.remove);
-
-  if (await isMemberBarred(member.id)) {
-    return;
-  }
-
-  if (await isMemberLevel(member, REGULAR_LEVEL, false)) {
-    const regularRoleId = getRolesProperty(Role.Regulars);
-
-    if (regularRoleId === undefined) {
-      return;
-    }
-
-    await member.roles.add(regularRoleId);
-  }
-
-  if (
-    isMemberInVip(member) &&
-    (await isMemberLevel(member, COUNCIL_LEVEL, false))
-  ) {
-    const councilRoleId = getRolesProperty(Role.Council);
-
-    if (councilRoleId === undefined) {
-      return;
-    }
-
-    await member.roles.add(councilRoleId);
-
-    const vipChannel = getChannel(Channel.VIP);
-    await vipChannel?.send({
-      allowedMentions: {
-        parse: [],
-      },
-      content: experienceMessages.council(member.id),
-    });
-  }
 };
 
 const lock = new AsyncLock();
@@ -180,8 +141,6 @@ export const addExperience = async (message: Message) => {
         content: experienceMessages.levelUp(
           message.author.id,
           currentLevel.level,
-          level.toString() === REGULAR_LEVEL.toString() &&
-            !(await isMemberBarred(message.author.id)),
         ),
       });
     }

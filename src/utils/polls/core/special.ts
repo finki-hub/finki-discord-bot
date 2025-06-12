@@ -80,33 +80,10 @@ const getSpecialPollText = (
   const { tag: userTag } = partialUser;
 
   switch (pollType) {
-    case SpecialPollType.ADMIN_ADD:
-      return {
-        description: specialStringFunctions.adminAddDescription(userTag),
-        title: specialStringFunctions.adminAddTitle(partialUser),
-      };
-    case SpecialPollType.ADMIN_REMOVE:
-      return {
-        description: specialStringFunctions.adminRemoveDescription(userTag),
-        title: specialStringFunctions.adminRemoveTitle(partialUser),
-      };
-
     case SpecialPollType.BAR:
       return {
         description: specialStringFunctions.barDescription(userTag),
         title: specialStringFunctions.barTitle(partialUser),
-      };
-
-    case SpecialPollType.COUNCIL_ADD:
-      return {
-        description: specialStringFunctions.councilAddDescription(userTag),
-        title: specialStringFunctions.councilAddTitle(partialUser),
-      };
-
-    case SpecialPollType.COUNCIL_REMOVE:
-      return {
-        description: specialStringFunctions.councilRemoveDescription(userTag),
-        title: specialStringFunctions.councilRemoveTitle(partialUser),
       };
 
     case SpecialPollType.IRREGULARS_ADD:
@@ -326,8 +303,6 @@ const getSpecialPollAdminDecision = async (poll: Poll) => {
   }
 
   switch (pollType) {
-    case SpecialPollType.ADMIN_ADD:
-    case SpecialPollType.COUNCIL_ADD:
     case SpecialPollType.IRREGULARS_ADD:
     case SpecialPollType.IRREGULARS_REQUEST:
     case SpecialPollType.VIP_ADD:

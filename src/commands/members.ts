@@ -43,14 +43,6 @@ export const data = new SlashCommandBuilder()
   )
   .addSubcommand((command) =>
     command
-      .setName('girlies')
-      .setDescription(commandDescriptions['members girlies']),
-  )
-  .addSubcommand((command) =>
-    command.setName('boys').setDescription(commandDescriptions['members boys']),
-  )
-  .addSubcommand((command) =>
-    command
       .setName('barred')
       .setDescription(commandDescriptions['members barred']),
   )
@@ -174,72 +166,6 @@ const handleMembersRegulars = async (
   });
 };
 
-const handleMembersGirlies = async (
-  interaction: ChatInputCommandInteraction,
-) => {
-  const guild = await getGuild(interaction);
-
-  if (guild === null) {
-    await interaction.editReply(commandErrors.guildFetchFailed);
-
-    return;
-  }
-
-  const girliesRoleId = getRolesProperty(Role.Girlies);
-  const girliesMemberIds = await getMembersByRoleIds(
-    guild,
-    [girliesRoleId].filter((value) => value !== undefined),
-  );
-
-  const girliesMembers = (
-    await Promise.all(
-      girliesMemberIds.map(
-        async (id) => await getMemberFromGuild(id, interaction.guild),
-      ),
-    )
-  ).filter((member) => member !== null);
-  const girliesMembersFormatted = formatUsers(
-    labels.girlies,
-    girliesMembers.map(({ user }) => user),
-  );
-
-  await safeReplyToInteraction(interaction, girliesMembersFormatted, {
-    mentionUsers: false,
-  });
-};
-
-const handleMembersBoys = async (interaction: ChatInputCommandInteraction) => {
-  const guild = await getGuild(interaction);
-
-  if (guild === null) {
-    await interaction.editReply(commandErrors.guildFetchFailed);
-
-    return;
-  }
-
-  const boysRoleId = getRolesProperty(Role.Boys);
-  const boysMemberIds = await getMembersByRoleIds(
-    guild,
-    [boysRoleId].filter((value) => value !== undefined),
-  );
-
-  const boysMembers = (
-    await Promise.all(
-      boysMemberIds.map(
-        async (id) => await getMemberFromGuild(id, interaction.guild),
-      ),
-    )
-  ).filter((member) => member !== null);
-  const boysMembersFormatted = formatUsers(
-    labels.boys,
-    boysMembers.map(({ user }) => user),
-  );
-
-  await safeReplyToInteraction(interaction, boysMembersFormatted, {
-    mentionUsers: false,
-  });
-};
-
 const handleMembersBarred = async (
   interaction: ChatInputCommandInteraction,
 ) => {
@@ -355,9 +281,7 @@ const handleMembersIrregulars = async (
 const membersHandlers = {
   barred: handleMembersBarred,
   boosters: handleMembersBoosters,
-  boys: handleMembersBoys,
   count: handleMembersCount,
-  girlies: handleMembersGirlies,
   irregulars: handleMembersIrregulars,
   regulars: handleMembersRegulars,
   vip: handleMembersVip,

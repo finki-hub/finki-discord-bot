@@ -14,11 +14,7 @@ const commandPermissions: Record<
 > = {
   ad: {
     permissions: [],
-    roles: [Role.Administrators, Role.Moderators],
-  },
-  admin: {
-    permissions: [],
-    roles: [Role.Council],
+    roles: [Role.Administrators],
   },
   chat: {
     permissions: [],
@@ -31,14 +27,6 @@ const commandPermissions: Record<
   config: {
     permissions: [],
     roles: [Role.Administrators],
-  },
-  council: {
-    permissions: [],
-    roles: [Role.Council],
-  },
-  'council toggle': {
-    permissions: [],
-    roles: [Role.VIP],
   },
   'experience add': {
     permissions: [],
@@ -144,17 +132,13 @@ const commandPermissions: Record<
     permissions: [],
     roles: [Role.Administrators, Role.Moderators, Role.FSS, Role.Ombudsman],
   },
-  'vip add': {
+  vip: {
     permissions: [],
     roles: [Role.Council],
   },
   'vip recreate': {
     permissions: [],
     roles: [Role.Administrators, Role.Moderators],
-  },
-  'vip remove': {
-    permissions: [],
-    roles: [Role.Council],
   },
 };
 

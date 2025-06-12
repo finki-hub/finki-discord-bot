@@ -36,7 +36,7 @@ import {
 } from '../translations/special.js';
 import { deleteResponse, getChannel } from '../utils/channels.js';
 import { getGuild } from '../utils/guild.js';
-import { COUNCIL_LEVEL, IRREGULARS_LEVEL, VIP_LEVEL } from '../utils/levels.js';
+import { IRREGULARS_LEVEL, VIP_LEVEL } from '../utils/levels.js';
 import {
   isMemberBarred,
   isMemberInIrregulars,
@@ -501,13 +501,6 @@ export const handleVipButton = async (
       logger.warn(logErrorFunctions.roleNotFound(Role.VIP));
     } else {
       await member.roles.add(vipRoleId);
-    }
-
-    if (councilRoleId === undefined) {
-      await vipChannel?.send(commandErrorFunctions.roleNotFound(Role.Council));
-      logger.warn(logErrorFunctions.roleNotFound(Role.Council));
-    } else if (await isMemberLevel(member, COUNCIL_LEVEL)) {
-      await member.roles.add(councilRoleId);
     }
 
     const message = await interaction.reply({
