@@ -14,7 +14,7 @@
     "fuse.js": "^7.1.0",
     "prisma": "^6.9.0",
     "winston": "^3.17.0",
-    "zod": "^3.25.63"
+    "zod": "^3.25.64"
   },
   "description": "FINKI Discord Bot",
   "devDependencies": {
