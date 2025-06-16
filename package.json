@@ -6,22 +6,22 @@
   "dependencies": {
     "@prisma/client": "^6.9.0",
     "async-lock": "^1.4.1",
-    "chrono-node": "^2.8.2",
-    "croner": "^9.0.0",
-    "discord-api-types": "^0.38.11",
-    "discord.js": "^14.19.3",
+    "chrono-node": "^2.8.3",
+    "croner": "^9.1.0",
+    "discord-api-types": "^0.38.12",
+    "discord.js": "^14.20.0",
     "eventsource-parser": "^3.0.2",
     "fuse.js": "^7.1.0",
     "prisma": "^6.9.0",
     "winston": "^3.17.0",
-    "zod": "^3.25.64"
+    "zod": "^3.25.65"
   },
   "description": "FINKI Discord Bot",
   "devDependencies": {
     "@types/async-lock": "^1.4.2",
     "esbuild": "^0.25.5",
     "eslint": "^9.29.0",
-    "eslint-config-imperium": "^2.2.0",
+    "eslint-config-imperium": "^2.4.0",
     "husky": "^9.1.7",
     "rimraf": "^6.0.1",
     "tsx": "^4.20.3",
