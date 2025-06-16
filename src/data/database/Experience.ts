@@ -97,7 +97,7 @@ export const addExperienceByUserId = async (
     return null;
   }
 
-  exp.experience = BigInt(exp.experience) + BigInt(experience);
+  exp.experience += BigInt(experience);
 
   try {
     return await database.experience.update({

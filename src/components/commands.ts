@@ -281,7 +281,7 @@ export const getStaffEmbed = (information: Staff) =>
       },
       {
         inline: true,
-        name: labels.cabinet.toString(),
+        name: labels.cabinet,
         value:
           information.cabinet === ''
             ? labels.none

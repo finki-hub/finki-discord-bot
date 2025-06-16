@@ -135,13 +135,10 @@ const handleExperienceAdd = async (
     return;
   }
 
-  existingExperience.experience =
-    BigInt(existingExperience.experience) + BigInt(experience);
+  existingExperience.experience += BigInt(experience);
   const newLevel = getLevelFromExperience(
-    BigInt(existingExperience.experience) + BigInt(experience),
+    existingExperience.experience + BigInt(experience),
   );
-
-  existingExperience.experience = BigInt(existingExperience.experience);
 
   if (newLevel !== existingExperience.level) {
     existingExperience.level = newLevel;

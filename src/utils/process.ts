@@ -16,7 +16,7 @@ const shutdown = async () => {
     logger.error(exitMessageFunctions.databaseConnectionError(error));
   }
 
-  // eslint-disable-next-line n/no-process-exit
+  // eslint-disable-next-line n/no-process-exit, unicorn/no-process-exit
   process.exit(0);
 };
 

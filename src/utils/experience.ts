@@ -117,7 +117,7 @@ export const addExperience = async (message: Message) => {
     currentLevel.messages++;
 
     const experience = await getExperienceFromMessage(message);
-    currentLevel.experience = BigInt(currentLevel.experience) + experience;
+    currentLevel.experience += experience;
     const level = getLevelFromExperience(currentLevel.experience);
 
     await updateExperience(currentLevel);

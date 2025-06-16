@@ -222,7 +222,7 @@ const handleScriptCourses = async (
     const embed = getCoursesEmbed(roleSet, roles);
     const components = getCoursesComponents(roles);
     try {
-      await sendEmbed(channel, embed, components, Number(newlines));
+      await sendEmbed(channel, embed, components, newlines);
       await interaction.editReply(commandResponses.scriptExecuted);
     } catch (error) {
       await interaction.editReply(commandErrors.scriptNotExecuted);
@@ -237,7 +237,7 @@ const handleScriptCourses = async (
     roleSets.length === 0 ? Array.from('12345678') : roleSets,
   );
   try {
-    await sendEmbed(channel, addEmbed, addComponents, Number(newlines));
+    await sendEmbed(channel, addEmbed, addComponents, newlines);
     await interaction.editReply(commandResponses.scriptExecuted);
   } catch (error) {
     await interaction.editReply(commandErrors.scriptNotExecuted);
@@ -251,7 +251,7 @@ const handleScriptCourses = async (
     roleSets.length === 0 ? Array.from('12345678') : roleSets,
   );
   try {
-    await sendEmbed(channel, removeEmbed, removeComponents, Number(newlines));
+    await sendEmbed(channel, removeEmbed, removeComponents, newlines);
     await interaction.editReply(commandResponses.scriptExecuted);
   } catch (error) {
     await interaction.editReply(commandErrors.scriptNotExecuted);
@@ -273,7 +273,7 @@ const handleScriptColors = async (interaction: ChatInputCommandInteraction) => {
   const embed = getColorsEmbed(image);
   const components = getColorsComponents();
   try {
-    await sendEmbed(channel, embed, components, Number(newlines));
+    await sendEmbed(channel, embed, components, newlines);
     await interaction.editReply(commandResponses.scriptExecuted);
   } catch (error) {
     await interaction.editReply(commandErrors.scriptNotExecuted);
@@ -300,7 +300,7 @@ const handleScriptNotifications = async (
       channel as GuildTextBasedChannel,
       embed,
       components,
-      Number(newlines),
+      newlines,
     );
     await interaction.editReply(commandResponses.scriptExecuted);
   } catch (error) {
@@ -324,7 +324,7 @@ const handleScriptPrograms = async (
   const embed = getProgramsEmbed();
   const components = getProgramsComponents();
   try {
-    await sendEmbed(channel, embed, components, Number(newlines));
+    await sendEmbed(channel, embed, components, newlines);
     await interaction.editReply(commandResponses.scriptExecuted);
   } catch (error) {
     await interaction.editReply(commandErrors.scriptNotExecuted);
@@ -347,7 +347,7 @@ const handleScriptYears = async (interaction: ChatInputCommandInteraction) => {
       channel as GuildTextBasedChannel,
       embed,
       [components],
-      Number(newlines),
+      newlines,
     );
     await interaction.editReply(commandResponses.scriptExecuted);
   } catch (error) {
