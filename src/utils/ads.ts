@@ -53,7 +53,7 @@ export const createSendAdsJob = (ad: Ad) => async () => {
         return;
       }
 
-      const recentMessages = await channel.messages.fetch({ limit: 10 });
+      const recentMessages = await channel.messages.fetch({ limit: 5 });
       const isAdAlreadySent = recentMessages.some(
         (message) =>
           message.content === ad.content &&
