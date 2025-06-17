@@ -1,4 +1,4 @@
-import { getAnalyticsUrl } from '../configuration/environment.js';
+import { getAnalyticsUrl, getApiKey } from '../configuration/environment.js';
 import {
   IngestResponseSchema,
   type UsageEvent,
@@ -8,8 +8,9 @@ import { logErrorFunctions } from '../translations/logs.js';
 
 export const logEvent = async (event: UsageEvent) => {
   const url = getAnalyticsUrl();
+  const apiKey = getApiKey();
 
-  if (url === null) {
+  if (url === null || apiKey === null) {
     return null;
   }
 
@@ -18,6 +19,7 @@ export const logEvent = async (event: UsageEvent) => {
       body: JSON.stringify(event),
       headers: {
         'Content-Type': 'application/json',
+        'x-api-key': apiKey,
       },
       method: 'POST',
     });
