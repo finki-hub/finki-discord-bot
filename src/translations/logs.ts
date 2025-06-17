@@ -206,6 +206,9 @@ export const logErrorFunctions = {
 
   linksParseError: (error: unknown) => `Failed parsing links\n${error}`,
 
+  logAnalyticsError: (error: unknown) =>
+    `Failed logging analytics event\n${error}`,
+
   loginFailed: (error: unknown) => `Failed logging in\n${error}`,
 
   lotteryPollNotExecutedError: (
