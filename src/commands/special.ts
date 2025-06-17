@@ -286,9 +286,14 @@ const handleSpecialBar = async (interaction: ChatInputCommandInteraction) => {
       interaction.guild,
     );
 
-    await (authorMember && isMemberAdmin(authorMember)
-      ? executeBarPollAction(member, labels.yes, true)
-      : interaction.editReply(commandErrors.userNotAdmin));
+    if (!authorMember || !isMemberAdmin(authorMember)) {
+      await interaction.editReply(commandErrors.userNotAdmin);
+
+      return;
+    }
+
+    await executeBarPollAction(member, labels.yes, true);
+    await interaction.editReply(commandResponses.pollOverridden);
 
     return;
   }
@@ -367,9 +372,14 @@ const handleSpecialUnbar = async (interaction: ChatInputCommandInteraction) => {
       interaction.guild,
     );
 
-    await (authorMember && isMemberAdmin(authorMember)
-      ? executeUnbarPollAction(member, labels.yes, true)
-      : interaction.editReply(commandErrors.userNotAdmin));
+    if (!authorMember || !isMemberAdmin(authorMember)) {
+      await interaction.editReply(commandErrors.userNotAdmin);
+
+      return;
+    }
+
+    await executeUnbarPollAction(member, labels.yes, true);
+    await interaction.editReply(commandResponses.pollOverridden);
 
     return;
   }
