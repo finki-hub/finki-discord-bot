@@ -7,6 +7,7 @@ import {
   getQuestionComponents,
   getQuestionEmbed,
 } from '../../components/commands.js';
+import { UsageEventSchema } from '../../lib/schemas/Analytics.js';
 import {
   commandDescriptions,
   commandErrors,
@@ -81,10 +82,12 @@ export const getCommonCommand = (name: keyof typeof commandDescriptions) => ({
       payload['targetUserMessage'] = question.content;
     }
 
-    await logEvent({
+    const data = UsageEventSchema.parse({
       eventType: 'faq',
       metadata,
       payload,
     });
+
+    await logEvent(data);
   },
 });

@@ -2,7 +2,6 @@ import { getAnalyticsUrl } from '../configuration/environment.js';
 import {
   IngestResponseSchema,
   type UsageEvent,
-  UsageEventSchema,
 } from '../lib/schemas/Analytics.js';
 import { logger } from '../logger.js';
 import { logErrorFunctions } from '../translations/logs.js';
@@ -14,11 +13,9 @@ export const logEvent = async (event: UsageEvent) => {
     return null;
   }
 
-  const payload = UsageEventSchema.parse(event);
-
   try {
     const res = await fetch(`${url}/events/ingest`, {
-      body: JSON.stringify(payload),
+      body: JSON.stringify(event),
       headers: {
         'Content-Type': 'application/json',
       },

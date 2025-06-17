@@ -2,11 +2,17 @@
 
 import { z } from 'zod';
 
-export const UsageEventSchema = z.object({
-  eventType: z.string().min(1),
-  metadata: z.record(z.any()).optional(),
-  payload: z.record(z.any()),
-});
+export const UsageEventSchema = z
+  .object({
+    eventType: z.string().min(1),
+    metadata: z.record(z.any()).optional(),
+    payload: z.record(z.any()),
+  })
+  .transform((data) => ({
+    event_type: data.eventType,
+    metadata: data.metadata,
+    payload: data.payload,
+  }));
 
 export type UsageEvent = z.infer<typeof UsageEventSchema>;
 
