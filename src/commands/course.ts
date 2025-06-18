@@ -383,7 +383,6 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
 
   await logCommandEvent(interaction, getFullCommandName(interaction), {
     closestItem,
-    course: course ?? null,
-    courseRole: courseRole ?? null,
+    options: interaction.options.data,
   });
 };
