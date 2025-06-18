@@ -23,6 +23,7 @@ export const getCommonCommand = (name: keyof typeof commandDescriptions) => ({
         .setDescription('Промпт за LLM агентот')
         .setRequired(true),
     ),
+
   execute: async (interaction: ChatInputCommandInteraction) => {
     const prompt = interaction.options.getString('prompt', true);
     const systemPrompt =
