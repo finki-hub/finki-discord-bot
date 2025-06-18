@@ -25,6 +25,8 @@ import {
   commandErrors,
   commandResponseFunctions,
 } from '../translations/commands.js';
+import { logCommandEvent } from '../utils/analytics.js';
+import { getFullCommandName } from '../utils/commands.js';
 import { getGuild } from '../utils/guild.js';
 import { getCourseRoleByCourseName } from '../utils/roles.js';
 import { getClosestCourse, getClosestCourseRole } from '../utils/search.js';
@@ -378,4 +380,10 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
       closestItem,
     );
   }
+
+  await logCommandEvent(interaction, getFullCommandName(interaction), {
+    closestItem,
+    course: course ?? null,
+    courseRole: courseRole ?? null,
+  });
 };
