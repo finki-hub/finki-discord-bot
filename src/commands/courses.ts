@@ -11,6 +11,8 @@ import {
   commandResponseFunctions,
   commandResponses,
 } from '../translations/commands.js';
+import { logCommandEvent } from '../utils/analytics.js';
+import { getFullCommandName } from '../utils/commands.js';
 import { getGuild } from '../utils/guild.js';
 import { getCourseRolesBySemester, getRoles } from '../utils/roles.js';
 import { getClosestCourse } from '../utils/search.js';
@@ -141,4 +143,8 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
       interaction,
     );
   }
+
+  await logCommandEvent(interaction, getFullCommandName(interaction), {
+    options: interaction.options.data,
+  });
 };
