@@ -7,13 +7,12 @@ import {
   getQuestionComponents,
   getQuestionEmbed,
 } from '../../components/commands.js';
-import { UsageEventSchema } from '../../lib/schemas/Analytics.js';
 import {
   commandDescriptions,
   commandErrors,
   commandResponseFunctions,
 } from '../../translations/commands.js';
-import { logEvent } from '../../utils/analytics.js';
+import { logCommandEvent } from '../../utils/analytics.js';
 import { getClosestQuestion } from '../../utils/search.js';
 
 export const getCommonCommand = (name: keyof typeof commandDescriptions) => ({
@@ -51,65 +50,10 @@ export const getCommonCommand = (name: keyof typeof commandDescriptions) => ({
       embeds: [embed],
     });
 
-    const metadata: Record<string, unknown> = {
-      callerId: interaction.user.id,
-      channelId: interaction.channel?.id ?? null,
-      commandName: interaction.commandName,
-      guildId: interaction.guild?.id ?? null,
-    };
-
-    const payload: Record<string, unknown> = {
+    await logCommandEvent(interaction, 'faq', {
       content: question.content,
       keyword,
       question: question.name,
-    };
-
-    if (user === null) {
-      const fetched = await interaction.channel?.messages.fetch({
-        limit: 5,
-      });
-      const context = Array.from(fetched?.values() ?? [])
-        .slice(-5)
-        .map((m) => ({
-          authorId: m.author.id,
-          content: m.content,
-          messageId: m.id,
-          timestamp: new Date(m.createdTimestamp).toISOString(),
-        }));
-      if (context.length > 0) {
-        payload['context'] = context;
-      }
-    } else {
-      metadata['targetUserId'] = user.id;
-
-      const fetchedAll = await interaction.channel?.messages.fetch({
-        limit: 20,
-      });
-      const userMsgs = Array.from(fetchedAll?.values() ?? []).filter(
-        (m) => m.author.id === user.id,
-      );
-
-      if (userMsgs.length > 0) {
-        userMsgs.sort((a, b) => b.createdTimestamp - a.createdTimestamp);
-        const last = userMsgs[0];
-
-        payload['targetUserMessage'] =
-          last === undefined
-            ? null
-            : {
-                content: last.content,
-                messageId: last.id,
-                timestamp: new Date(last.createdTimestamp).toISOString(),
-              };
-      }
-    }
-
-    const data = UsageEventSchema.parse({
-      eventType: 'faq',
-      metadata,
-      payload,
     });
-
-    await logEvent(data);
   },
 });
