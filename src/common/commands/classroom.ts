@@ -11,6 +11,7 @@ import {
   commandErrors,
   commandResponseFunctions,
 } from '../../translations/commands.js';
+import { logCommandEvent } from '../../utils/analytics.js';
 import { getClosestClassroom } from '../../utils/search.js';
 
 export const getCommonCommand = (
@@ -58,6 +59,12 @@ export const getCommonCommand = (
     await interaction.editReply({
       content: user ? commandResponseFunctions.commandFor(user.id) : null,
       embeds,
+    });
+
+    await logCommandEvent(interaction, 'classroom', {
+      classroom: closestClassroom,
+      keyword: classroom,
+      matchedClassrooms: classrooms,
     });
   },
 });
