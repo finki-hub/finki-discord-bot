@@ -10,6 +10,7 @@ import {
   commandErrors,
   commandResponseFunctions,
 } from '../translations/commands.js';
+import { logCommandEvent } from '../utils/analytics.js';
 import { getClosestSession } from '../utils/search.js';
 
 const name = 'session';
@@ -57,5 +58,9 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   await interaction.editReply({
     content: user ? commandResponseFunctions.commandFor(user.id) : null,
     files: [path],
+  });
+
+  await logCommandEvent(interaction, 'session', {
+    session: information[0],
   });
 };
