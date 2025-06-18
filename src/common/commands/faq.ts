@@ -65,7 +65,9 @@ export const getCommonCommand = (name: keyof typeof commandDescriptions) => ({
     };
 
     if (user === null) {
-      const fetched = await interaction.channel?.messages.fetch({ limit: 5 });
+      const fetched = await interaction.channel?.messages.fetch({
+        limit: 5,
+      });
       const context = Array.from(fetched?.values() ?? [])
         .slice(-5)
         .map((m) => ({
@@ -79,7 +81,27 @@ export const getCommonCommand = (name: keyof typeof commandDescriptions) => ({
       }
     } else {
       metadata['targetUserId'] = user.id;
-      payload['targetUserMessage'] = question.content;
+
+      const fetchedAll = await interaction.channel?.messages.fetch({
+        limit: 20,
+      });
+      const userMsgs = Array.from(fetchedAll?.values() ?? []).filter(
+        (m) => m.author.id === user.id,
+      );
+
+      if (userMsgs.length > 0) {
+        userMsgs.sort((a, b) => b.createdTimestamp - a.createdTimestamp);
+        const last = userMsgs[0];
+
+        payload['targetUserMessage'] =
+          last === undefined
+            ? null
+            : {
+                content: last.content,
+                messageId: last.id,
+                timestamp: new Date(last.createdTimestamp).toISOString(),
+              };
+      }
     }
 
     const data = UsageEventSchema.parse({
