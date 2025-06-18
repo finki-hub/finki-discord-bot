@@ -10,6 +10,7 @@ import {
   commandErrors,
   commandResponseFunctions,
 } from '../translations/commands.js';
+import { logCommandEvent } from '../utils/analytics.js';
 import { getClosestStaff } from '../utils/search.js';
 
 const name = 'staff';
@@ -48,5 +49,10 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   await interaction.editReply({
     content: user ? commandResponseFunctions.commandFor(user.id) : null,
     embeds: [embed],
+  });
+
+  await logCommandEvent(interaction, 'staff', {
+    keyword: professor,
+    staff: information,
   });
 };
