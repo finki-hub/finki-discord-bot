@@ -44,6 +44,7 @@ export const logCommandEvent = async (
   interaction: ChatInputCommandInteraction,
   eventType: string,
   basePayload: Record<string, unknown>,
+  logContext = true,
 ) => {
   if (!interaction.channel?.isTextBased()) {
     return;
@@ -83,7 +84,7 @@ export const logCommandEvent = async (
               timestamp: new Date(last.createdTimestamp).toISOString(),
             };
     }
-  } else {
+  } else if (logContext) {
     const fetched = await interaction.channel.messages.fetch({ limit: 10 });
     const now = Date.now();
     const context = Array.from(fetched.values())
