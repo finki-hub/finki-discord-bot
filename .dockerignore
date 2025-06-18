@@ -46,7 +46,7 @@ db
 pgadmin
 
 # SonarCloud
-sonar-project.properties
+.sonarcloud.properties
 
 # Husky
 .husky
