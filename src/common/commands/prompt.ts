@@ -9,6 +9,7 @@ import {
   commandDescriptions,
   commandErrors,
 } from '../../translations/commands.js';
+import { logCommandEvent } from '../../utils/analytics.js';
 import { sendPrompt } from '../../utils/chat/requests.js';
 import { safeStreamReplyToInteraction } from '../../utils/messages.js';
 
@@ -49,10 +50,13 @@ export const getCommonCommand = (name: keyof typeof commandDescriptions) => ({
       useAgent,
     });
 
+    let answer = '';
+
     try {
       await safeStreamReplyToInteraction(interaction, async (onChunk) => {
         await sendPrompt(options, async (chunk) => {
           await onChunk(chunk);
+          answer += chunk;
         });
       });
     } catch (error) {
@@ -70,5 +74,10 @@ export const getCommonCommand = (name: keyof typeof commandDescriptions) => ({
             ephemeral: true,
           }));
     }
+
+    await logCommandEvent(interaction, 'prompt', {
+      answer,
+      options,
+    });
   },
 });
