@@ -60,6 +60,9 @@ export const logMessageFunctions = {
   fillEmbeddingsCompleted: (model: string) =>
     `Embeddings filled for model ${model}`,
 
+  logCommandEvent: (commandName: string) =>
+    `Command ${commandName} logged in analytics`,
+
   loggedIn: (username: string | undefined) =>
     `Bot is ready! Logged in as ${username ?? 'an unknown user'}`,
 

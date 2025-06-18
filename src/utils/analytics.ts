@@ -7,7 +7,10 @@ import {
   UsageEventSchema,
 } from '../lib/schemas/Analytics.js';
 import { logger } from '../logger.js';
-import { logErrorFunctions } from '../translations/logs.js';
+import {
+  logErrorFunctions,
+  logMessageFunctions,
+} from '../translations/logs.js';
 
 const logEvent = async (event: UsageEvent) => {
   const url = getAnalyticsUrl();
@@ -110,4 +113,6 @@ export const logCommandEvent = async (
   });
 
   await logEvent(event);
+
+  logger.info(logMessageFunctions.logCommandEvent(interaction.commandName));
 };
