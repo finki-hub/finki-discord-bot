@@ -60,7 +60,7 @@ export const createSendAdsJob = (ad: Ad) => async () => {
       if (!channel?.isSendable()) {
         logger.warn(logMessageFunctions.channelNotSendable(channelId));
 
-        return;
+        continue;
       }
 
       const recentMessages = await channel.messages.fetch({ limit: 5 });
@@ -73,7 +73,7 @@ export const createSendAdsJob = (ad: Ad) => async () => {
       if (isAdAlreadySent) {
         logger.info(logMessageFunctions.adAlreadySent(ad.name, channelId));
 
-        return;
+        continue;
       }
 
       const olderMessages = await channel.messages.fetch({ limit: 100 });
