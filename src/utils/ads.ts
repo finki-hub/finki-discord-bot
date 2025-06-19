@@ -3,6 +3,7 @@ import { Cron, scheduledJobs } from 'croner';
 import type { Ad } from '../lib/schemas/Ad.js';
 
 import { client } from '../client.js';
+import { truncateString } from '../components/utils.js';
 import { getConfigProperty } from '../configuration/main.js';
 import { Channel } from '../lib/schemas/Channel.js';
 import { logger } from '../logger.js';
@@ -36,11 +37,20 @@ export const getAdByName = (name: string) => {
 
 export const createSendAdsJob = (ad: Ad) => async () => {
   for (const channelId of ad.channels) {
+    logger.info(
+      logMessageFunctions.sendingAd(
+        ad.name,
+        channelId,
+        truncateString(ad.content, 30),
+      ),
+    );
+
     try {
       if (ad.expiry !== undefined) {
         const adsExpiration = Date.parse(ad.expiry);
 
         if (adsExpiration <= Date.now()) {
+          logger.info(logMessageFunctions.adExpired(ad.name, channelId));
           return;
         }
       }

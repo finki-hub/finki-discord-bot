@@ -40,6 +40,9 @@ export const logMessageFunctions = {
       channelId,
     )} with message ID ${messageId}`,
 
+  adExpired: (adName: string, channelId: string) =>
+    `Ad ${adName} expired in channel ${channelMention(channelId)}`,
+
   adSent: (adName: string, channelId: string) =>
     `Ad ${adName} sent to channel ${channelMention(channelId)}`,
 
@@ -69,6 +72,11 @@ export const logMessageFunctions = {
   noRefreshNeeded: (property: string) => `No refresh needed for ${property}`,
 
   promptAnswered: (answer: string) => `Prompt answered: ${answer}`,
+
+  sendingAd: (adName: string, channelId: string, content: string) =>
+    `Sending ad ${adName} to channel ${channelMention(
+      channelId,
+    )} with content: ${content}`,
 
   specialPollOverriden: (type: string, userId: string, decision: string) =>
     `Special poll ${type} for ${userId} overriden with decision ${decision}`,
