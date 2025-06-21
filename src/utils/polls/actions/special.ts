@@ -94,7 +94,7 @@ const executeVipRemovePollAction = async (
   }
 
   const vipRoleId = getRolesProperty(Role.VIP);
-  const councilRoleId = getRolesProperty(Role.Council);
+  const managementRoleId = getRolesProperty(Role.Management);
 
   if (vipRoleId === undefined) {
     await vipChannel?.send(commandErrorFunctions.roleNotFound(Role.VIP));
@@ -103,11 +103,11 @@ const executeVipRemovePollAction = async (
     await member.roles.remove(vipRoleId);
   }
 
-  if (councilRoleId === undefined) {
-    await vipChannel?.send(commandErrorFunctions.roleNotFound(Role.Council));
-    logger.warn(logErrorFunctions.roleNotFound(Role.Council));
+  if (managementRoleId === undefined) {
+    await vipChannel?.send(commandErrorFunctions.roleNotFound(Role.Management));
+    logger.warn(logErrorFunctions.roleNotFound(Role.Management));
   } else {
-    await member.roles.remove(councilRoleId);
+    await member.roles.remove(managementRoleId);
   }
 
   await vipChannel?.send(
@@ -134,7 +134,7 @@ export const executeBarPollAction = async (
 
   const regularsRoleId = getRolesProperty(Role.Regulars);
   const vipRoleId = getRolesProperty(Role.VIP);
-  const councilRoleId = getRolesProperty(Role.Council);
+  const managementRoleId = getRolesProperty(Role.Management);
 
   if (regularsRoleId === undefined) {
     await vipChannel?.send(commandErrorFunctions.roleNotFound(Role.Regulars));
@@ -150,11 +150,11 @@ export const executeBarPollAction = async (
     await member.roles.remove(vipRoleId);
   }
 
-  if (councilRoleId === undefined) {
-    await vipChannel?.send(commandErrorFunctions.roleNotFound(Role.Council));
-    logger.warn(logErrorFunctions.roleNotFound(Role.Council));
+  if (managementRoleId === undefined) {
+    await vipChannel?.send(commandErrorFunctions.roleNotFound(Role.Management));
+    logger.warn(logErrorFunctions.roleNotFound(Role.Management));
   } else {
-    await member.roles.remove(councilRoleId);
+    await member.roles.remove(managementRoleId);
   }
 
   if (silent) {

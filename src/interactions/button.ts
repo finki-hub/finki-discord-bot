@@ -455,7 +455,7 @@ export const handleVipButton = async (
   const member = interaction.member as GuildMember;
 
   const vipRoleId = getRolesProperty(Role.VIP);
-  const councilRoleId = getRolesProperty(Role.Council);
+  const managementRoleId = getRolesProperty(Role.Management);
 
   if (args[0] === 'acknowledge') {
     if (
@@ -569,11 +569,11 @@ export const handleVipButton = async (
 
   const poll = createSpecialPoll(SpecialPollType.VIP_REQUEST, interaction.user);
 
-  const councilChannel = getChannel(Channel.Council);
-  await councilChannel?.send(poll);
+  const managementChannel = getChannel(Channel.Management);
+  await managementChannel?.send(poll);
 
-  if (councilRoleId !== undefined) {
-    await councilChannel?.send(roleMention(councilRoleId));
+  if (managementRoleId !== undefined) {
+    await managementChannel?.send(roleMention(managementRoleId));
   }
 
   await interaction.reply({
@@ -616,7 +616,7 @@ export const handleIrregularsButton = async (
   }
 
   const irregularsRoleId = getRolesProperty(Role.Irregulars);
-  const councilRoleId = getRolesProperty(Role.Council);
+  const managementRoleId = getRolesProperty(Role.Management);
 
   if (args[0] === 'acknowledge') {
     if (
@@ -717,11 +717,11 @@ export const handleIrregularsButton = async (
     interaction.user,
   );
 
-  const councilChannel = getChannel(Channel.Council);
-  await councilChannel?.send(poll);
+  const managementChannel = getChannel(Channel.Management);
+  await managementChannel?.send(poll);
 
-  if (councilRoleId !== undefined) {
-    await councilChannel?.send(roleMention(councilRoleId));
+  if (managementRoleId !== undefined) {
+    await managementChannel?.send(roleMention(managementRoleId));
   }
 
   await interaction.reply({

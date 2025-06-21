@@ -46,11 +46,11 @@ const commandPermissions: Record<
   },
   'irregulars add': {
     permissions: [],
-    roles: [Role.Council],
+    roles: [Role.Management],
   },
   'irregulars remove': {
     permissions: [],
-    roles: [Role.Council],
+    roles: [Role.Management],
   },
   lottery: {
     permissions: [],
@@ -62,7 +62,7 @@ const commandPermissions: Record<
   },
   members: {
     permissions: [],
-    roles: [Role.Administrators, Role.Moderators, Role.Council, Role.VIP],
+    roles: [Role.Administrators, Role.Moderators, Role.Management, Role.VIP],
   },
   'members count': {
     permissions: [],
@@ -102,7 +102,7 @@ const commandPermissions: Record<
   },
   'special bar': {
     permissions: [],
-    roles: [Role.Council],
+    roles: [Role.Management],
   },
   'special delete': {
     permissions: [],
@@ -118,11 +118,11 @@ const commandPermissions: Record<
   },
   'special remaining': {
     permissions: [],
-    roles: [Role.Council],
+    roles: [Role.Management],
   },
   'special unbar': {
     permissions: [],
-    roles: [Role.Council],
+    roles: [Role.Management],
   },
   Star: {
     permissions: [PermissionsBitField.Flags.ManageMessages],
@@ -134,7 +134,7 @@ const commandPermissions: Record<
   },
   vip: {
     permissions: [],
-    roles: [Role.Council],
+    roles: [Role.Management],
   },
   'vip recreate': {
     permissions: [],

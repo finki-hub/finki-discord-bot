@@ -82,9 +82,9 @@ const handleVipAdd = async (interaction: ChatInputCommandInteraction) => {
 
   const user = interaction.options.getUser('user', true);
   const notify = interaction.options.getBoolean('notify') ?? true;
-  const councilChannelId = getChannelsProperty(Channel.Council);
+  const managementChannelId = getChannelsProperty(Channel.Management);
 
-  if (interaction.channelId !== councilChannelId) {
+  if (interaction.channelId !== managementChannelId) {
     await interaction.editReply({
       content: commandErrors.invalidChannel,
     });
@@ -136,10 +136,10 @@ const handleVipAdd = async (interaction: ChatInputCommandInteraction) => {
   }
 
   const poll = createSpecialPoll(SpecialPollType.VIP_ADD, user);
-  const councilRoleId = getRolesProperty(Role.Council);
+  const managementRoleId = getRolesProperty(Role.Management);
 
-  if (notify && councilRoleId !== undefined) {
-    await interaction.channel.send(roleMention(councilRoleId));
+  if (notify && managementRoleId !== undefined) {
+    await interaction.channel.send(roleMention(managementRoleId));
   }
 
   await interaction.editReply(poll);
@@ -156,9 +156,9 @@ const handleVipRemove = async (interaction: ChatInputCommandInteraction) => {
 
   const user = interaction.options.getUser('user', true);
   const notify = interaction.options.getBoolean('notify') ?? true;
-  const councilChannelId = getChannelsProperty(Channel.Council);
+  const managementChannelId = getChannelsProperty(Channel.Management);
 
-  if (interaction.channelId !== councilChannelId) {
+  if (interaction.channelId !== managementChannelId) {
     await interaction.editReply({
       content: commandErrors.invalidChannel,
     });
@@ -204,10 +204,10 @@ const handleVipRemove = async (interaction: ChatInputCommandInteraction) => {
   }
 
   const poll = createSpecialPoll(SpecialPollType.VIP_REMOVE, user);
-  const councilRoleId = getRolesProperty(Role.Council);
+  const managementRoleId = getRolesProperty(Role.Management);
 
-  if (notify && councilRoleId !== undefined) {
-    await interaction.channel.send(roleMention(councilRoleId));
+  if (notify && managementRoleId !== undefined) {
+    await interaction.channel.send(roleMention(managementRoleId));
   }
 
   await interaction.editReply(poll);

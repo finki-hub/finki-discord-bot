@@ -43,8 +43,8 @@ export const isMemberInVip = (member: GuildMember) => {
   );
 };
 
-export const isMemberInCouncil = (member: GuildMember) =>
-  memberHasRole(member, Role.Council);
+export const isMemberInManagement = (member: GuildMember) =>
+  memberHasRole(member, Role.Management);
 
 export const isMemberInIrregulars = (member: GuildMember) =>
   memberHasRole(member, Role.Irregulars);

@@ -2,9 +2,9 @@ import { z } from 'zod';
 
 export enum Channel {
   Activity = 'activity',
-  Council = 'council',
   Irregulars = 'irregulars',
   Logs = 'logs',
+  Management = 'management',
   Oath = 'oath',
   Regulars = 'regulars',
   Starboard = 'starboard',

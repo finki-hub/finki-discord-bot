@@ -27,13 +27,13 @@ import { executeSpecialPollAction } from '../actions/special.js';
 import { getPollArguments, getPollContent, getVoters } from '../utils.js';
 
 export const initializeSpecialPolls = async () => {
-  const councilChannel = getChannel(Channel.Council);
+  const managementChannel = getChannel(Channel.Management);
 
-  if (councilChannel === undefined) {
+  if (managementChannel === undefined) {
     return;
   }
 
-  await councilChannel.messages.fetch();
+  await managementChannel.messages.fetch();
 
   logger.info(logMessages.pollsInitialized);
 };
@@ -129,7 +129,7 @@ const getSpecialPollText = (
 };
 
 export const getActiveSpecialPolls = async () => {
-  const channel = getChannel(Channel.Council);
+  const channel = getChannel(Channel.Management);
 
   if (channel === undefined) {
     return [];
@@ -200,16 +200,18 @@ const getMissingVoters = async (poll: Poll) => {
     return [];
   }
 
-  const councilRoleId = getRolesProperty(Role.Council);
+  const managementRoleId = getRolesProperty(Role.Management);
 
-  if (councilRoleId === undefined) {
+  if (managementRoleId === undefined) {
     return [];
   }
 
-  const councilMembers = await getMembersByRoleIds(guild, [councilRoleId]);
+  const managementMembers = await getMembersByRoleIds(guild, [
+    managementRoleId,
+  ]);
   const voters = await getVoters(poll);
 
-  return councilMembers.filter((member) => !voters.includes(member));
+  return managementMembers.filter((member) => !voters.includes(member));
 };
 
 const getSpecialPollThreshold = async (
@@ -327,15 +329,15 @@ const getSpecialPollAdminDecision = async (poll: Poll) => {
 };
 
 const getSpecialPollDecision = async (poll: Poll, pollExpired: boolean) => {
-  const councilRoleId = getRolesProperty(Role.Council);
+  const managementRoleId = getRolesProperty(Role.Management);
 
-  if (councilRoleId === undefined) {
+  if (managementRoleId === undefined) {
     return null;
   }
 
   const threshold = await getSpecialPollThreshold(
     poll,
-    councilRoleId,
+    managementRoleId,
     pollExpired,
   );
 
