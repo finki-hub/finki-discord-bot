@@ -147,14 +147,12 @@ export const recreateRegularsTemporaryChannel = async () => {
 
   const administratorsRoleId = getRolesProperty(Role.Administrators);
   const moderatorsRoleId = getRolesProperty(Role.Moderators);
-  const veteransRoleId = getRolesProperty(Role.Veterans);
   const vipRoleId = getRolesProperty(Role.VIP);
   const regularsRoleId = getRolesProperty(Role.Regulars);
 
   const rolesToAdd = [
     administratorsRoleId,
     moderatorsRoleId,
-    veteransRoleId,
     vipRoleId,
     regularsRoleId,
   ].filter((role) => role !== undefined);

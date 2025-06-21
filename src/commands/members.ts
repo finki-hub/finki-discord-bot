@@ -136,18 +136,13 @@ const handleMembersRegulars = async (
   const vipRoleId = getRolesProperty(Role.VIP);
   const moderatorRoleId = getRolesProperty(Role.Moderators);
   const adminRoleId = getRolesProperty(Role.Administrators);
-  const veteranRoleId = getRolesProperty(Role.Veterans);
 
   const regularsMembersIds = await getMembersByRoleIdsExtended(
     guild,
     [regularRoleId].filter((value) => value !== undefined),
-    [
-      vipRoleId,
-      moderatorRoleId,
-      adminRoleId,
-      veteranRoleId,
-      irregularRoleId,
-    ].filter((value) => value !== undefined),
+    [vipRoleId, moderatorRoleId, adminRoleId, irregularRoleId].filter(
+      (value) => value !== undefined,
+    ),
   );
   const regularsMembers = (
     await Promise.all(

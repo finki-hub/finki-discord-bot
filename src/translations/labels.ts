@@ -58,7 +58,6 @@ export const labels = {
   title: 'Звање',
   type: 'Тип',
   unknown: '?',
-  veterans: 'Ветерани',
   vip: 'ВИП',
   votersFor: 'Гласачи за',
   votes: 'Гласови',

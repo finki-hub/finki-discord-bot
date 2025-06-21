@@ -11,7 +11,6 @@ export enum Role {
   Moderators = 'moderators',
   Ombudsman = 'ombudsman',
   Regulars = 'regulars',
-  Veterans = 'veterans',
   VIP = 'vip',
 }
 
