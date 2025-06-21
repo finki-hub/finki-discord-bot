@@ -30,6 +30,7 @@ export const labels = {
   link: 'Линк',
   links: 'Линкови',
   location: 'Локација',
+  management: 'Управа',
   multipleChoice: 'Повеќекратен избор',
   no: 'Не',
   none: 'Нема',

@@ -55,6 +55,11 @@ export const data = new SlashCommandBuilder()
     command
       .setName('irregulars')
       .setDescription(commandDescriptions['members irregulars']),
+  )
+  .addSubcommand((command) =>
+    command
+      .setName('management')
+      .setDescription(commandDescriptions['members management']),
   );
 
 const handleMembersCount = async (interaction: ChatInputCommandInteraction) => {
@@ -256,11 +261,70 @@ const handleMembersIrregulars = async (
   });
 };
 
+const handleMembersManagement = async (
+  interaction: ChatInputCommandInteraction,
+) => {
+  const guild = await getGuild(interaction);
+
+  if (guild === null) {
+    await interaction.editReply(commandErrors.guildFetchFailed);
+
+    return;
+  }
+
+  const managementRoleId = getRolesProperty(Role.Management);
+
+  const managementMembersIds = await getMembersByRoleIdsExtended(
+    guild,
+    [managementRoleId].filter((value) => value !== undefined),
+    [],
+  );
+  const managementMembers = (
+    await Promise.all(
+      managementMembersIds.map(
+        async (id) => await getMemberFromGuild(id, interaction.guild),
+      ),
+    )
+  ).filter((member) => member !== null);
+  const managementMemberNames = formatUsers(
+    labels.management,
+    managementMembers.map(({ user }) => user),
+  );
+
+  const moderatorRoleId = getRolesProperty(Role.Moderators);
+  const adminRoleId = getRolesProperty(Role.Administrators);
+
+  const administrationMembersIds = await getMembersByRoleIds(
+    guild,
+    [moderatorRoleId, adminRoleId].filter((value) => value !== undefined),
+  );
+  const administrationMembers = (
+    await Promise.all(
+      administrationMembersIds.map(
+        async (id) => await getMemberFromGuild(id, interaction.guild),
+      ),
+    )
+  ).filter((member) => member !== null);
+  const administrationMemberNames = formatUsers(
+    labels.administration,
+    administrationMembers.map(({ user }) => user),
+  );
+
+  await safeReplyToInteraction(
+    interaction,
+    `${managementMemberNames}\n${administrationMemberNames}`,
+    {
+      mentionUsers: false,
+    },
+  );
+};
+
 const membersHandlers = {
   barred: handleMembersBarred,
   boosters: handleMembersBoosters,
   count: handleMembersCount,
   irregulars: handleMembersIrregulars,
+  management: handleMembersManagement,
   regulars: handleMembersRegulars,
   vip: handleMembersVip,
 };
