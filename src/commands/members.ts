@@ -338,13 +338,15 @@ const handleMembersStatistics = async (
 
   const totalMembersCount = guild.memberCount;
   const totalBoostersCount = guild.premiumSubscriptionCount;
-  const totalRegulars = await getMembersByRoleIds(
+  const totalRegulars = await getMembersByRoleIdsExtended(
     guild,
     [regularsRoleId].filter((value) => value !== undefined),
+    [irregularsRoleId].filter((value) => value !== undefined),
   );
-  const totalIrregulars = await getMembersByRoleIds(
+  const totalIrregulars = await getMembersByRoleIdsExtended(
     guild,
     [irregularsRoleId].filter((value) => value !== undefined),
+    [vipRoleId].filter((value) => value !== undefined),
   );
   const totalVip = await getMembersByRoleIds(
     guild,
