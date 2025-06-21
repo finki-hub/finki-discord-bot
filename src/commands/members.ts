@@ -80,16 +80,10 @@ const handleMembersVip = async (interaction: ChatInputCommandInteraction) => {
   }
 
   const vipRoleId = getRolesProperty(Role.VIP);
-  const managementRoleId = getRolesProperty(Role.Management);
-  const adminRoleId = getRolesProperty(Role.Administrators);
-  const moderatorRoleId = getRolesProperty(Role.Moderators);
 
-  const vipMemberIds = await getMembersByRoleIdsExtended(
+  const vipMemberIds = await getMembersByRoleIds(
     guild,
     [vipRoleId].filter((value) => value !== undefined),
-    [managementRoleId, adminRoleId, moderatorRoleId].filter(
-      (value) => value !== undefined,
-    ),
   );
   const vipMembers = (
     await Promise.all(
