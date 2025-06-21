@@ -75,13 +75,16 @@ const handleMembersVip = async (interaction: ChatInputCommandInteraction) => {
   }
 
   const vipRoleId = getRolesProperty(Role.VIP);
+  const councilRoleId = getRolesProperty(Role.Council);
   const adminRoleId = getRolesProperty(Role.Administrators);
   const moderatorRoleId = getRolesProperty(Role.Moderators);
 
   const vipMemberIds = await getMembersByRoleIdsExtended(
     guild,
     [vipRoleId].filter((value) => value !== undefined),
-    [adminRoleId, moderatorRoleId].filter((value) => value !== undefined),
+    [councilRoleId, adminRoleId, moderatorRoleId].filter(
+      (value) => value !== undefined,
+    ),
   );
   const vipMembers = (
     await Promise.all(
@@ -95,29 +98,9 @@ const handleMembersVip = async (interaction: ChatInputCommandInteraction) => {
     vipMembers.map(({ user }) => user),
   );
 
-  const adminTeamMemberIds = await getMembersByRoleIds(
-    guild,
-    [adminRoleId, moderatorRoleId].filter((value) => value !== undefined),
-  );
-  const adminTeamMembers = (
-    await Promise.all(
-      adminTeamMemberIds.map(
-        async (id) => await getMemberFromGuild(id, interaction.guild),
-      ),
-    )
-  ).filter((member) => member !== null);
-  const adminTeamMembersFormatted = formatUsers(
-    labels.administration,
-    adminTeamMembers.map(({ user }) => user),
-  );
-
-  await safeReplyToInteraction(
-    interaction,
-    `${vipMembersFormatted}\n${adminTeamMembersFormatted}`,
-    {
-      mentionUsers: false,
-    },
-  );
+  await safeReplyToInteraction(interaction, vipMembersFormatted, {
+    mentionUsers: false,
+  });
 };
 
 const handleMembersRegulars = async (
