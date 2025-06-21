@@ -86,6 +86,7 @@ export const commandDescriptions = {
   'members irregulars': 'Преземи листа од вонредните членови',
   'members management': 'Преземи листа од членовите на управа',
   'members regulars': 'Преземи листа од редовните членови',
+  'members statistics': 'Прикажи статистика за улогите за членови',
   'members vip': 'Преземи ги членовите на ВИП',
   message: 'Испрати порака',
   office: 'Преземи информации за просторија',

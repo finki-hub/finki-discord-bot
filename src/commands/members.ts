@@ -60,6 +60,11 @@ export const data = new SlashCommandBuilder()
     command
       .setName('management')
       .setDescription(commandDescriptions['members management']),
+  )
+  .addSubcommand((command) =>
+    command
+      .setName('statistics')
+      .setDescription(commandDescriptions['members statistics']),
   );
 
 const handleMembersCount = async (interaction: ChatInputCommandInteraction) => {
@@ -313,6 +318,65 @@ const handleMembersManagement = async (
   );
 };
 
+const handleMembersStatistics = async (
+  interaction: ChatInputCommandInteraction,
+) => {
+  const guild = await getGuild(interaction);
+
+  if (guild === null) {
+    await interaction.editReply(commandErrors.guildFetchFailed);
+
+    return;
+  }
+
+  const regularsRoleId = getRolesProperty(Role.Regulars);
+  const irregularsRoleId = getRolesProperty(Role.Irregulars);
+  const vipRoleId = getRolesProperty(Role.VIP);
+  const managementRoleId = getRolesProperty(Role.Management);
+  const moderatorRoleId = getRolesProperty(Role.Moderators);
+  const adminRoleId = getRolesProperty(Role.Administrators);
+
+  const totalMembersCount = guild.memberCount;
+  const totalBoostersCount = guild.premiumSubscriptionCount;
+  const totalRegulars = await getMembersByRoleIds(
+    guild,
+    [regularsRoleId].filter((value) => value !== undefined),
+  );
+  const totalIrregulars = await getMembersByRoleIds(
+    guild,
+    [irregularsRoleId].filter((value) => value !== undefined),
+  );
+  const totalVip = await getMembersByRoleIds(
+    guild,
+    [vipRoleId].filter((value) => value !== undefined),
+  );
+  const totalManagement = await getMembersByRoleIds(
+    guild,
+    [managementRoleId].filter((value) => value !== undefined),
+  );
+  const totalModerators = await getMembersByRoleIds(
+    guild,
+    [moderatorRoleId].filter((value) => value !== undefined),
+  );
+  const totalAdministrators = await getMembersByRoleIds(
+    guild,
+    [adminRoleId].filter((value) => value !== undefined),
+  );
+
+  const output = [
+    `${labels.members}: ${totalMembersCount}`,
+    `${labels.boosters}: ${totalBoostersCount}`,
+    `${labels.regulars}: ${totalRegulars.length}`,
+    `${labels.irregulars}: ${totalIrregulars.length}`,
+    `${labels.vip}: ${totalVip.length}`,
+    `${labels.management}: ${totalManagement.length}`,
+    `${labels.moderators}: ${totalModerators.length}`,
+    `${labels.administrators}: ${totalAdministrators.length}`,
+  ];
+
+  await safeReplyToInteraction(interaction, output.join('\n'));
+};
+
 const membersHandlers = {
   barred: handleMembersBarred,
   boosters: handleMembersBoosters,
@@ -320,6 +384,7 @@ const membersHandlers = {
   irregulars: handleMembersIrregulars,
   management: handleMembersManagement,
   regulars: handleMembersRegulars,
+  statistics: handleMembersStatistics,
   vip: handleMembersVip,
 };
 
