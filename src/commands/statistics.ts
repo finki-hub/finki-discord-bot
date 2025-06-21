@@ -119,11 +119,11 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
         guild.stickers.cache.size,
         getMaxStickersByBoostLevel(boostLevel),
       ),
-      commandResponseFunctions.serverInvitesStat(guild.invites.cache.size),
       commandResponseFunctions.serverSoundboardSoundsStat(
         guild.soundboardSounds.cache.size,
         getMaxSoundboardSoundsByBoostLevel(boostLevel),
       ),
+      commandResponseFunctions.serverInvitesStat(guild.invites.cache.size),
     ];
 
     await interaction.editReply(output.join('\n'));
