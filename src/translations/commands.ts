@@ -299,6 +299,9 @@ export const commandResponseFunctions = {
 
   serverRolesStat: (roleCount: number) => `Улоги: ${roleCount} / 250`,
 
+  serverSoundboardSoundsStat: (soundCount: number, maxCount: number) =>
+    `Звуци: ${soundCount} / ${maxCount}`,
+
   serverStickersStat: (stickerCount: number, maxCount: number) =>
     `Стикери: ${stickerCount} / ${maxCount}`,
 

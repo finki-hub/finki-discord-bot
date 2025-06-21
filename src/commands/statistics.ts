@@ -11,6 +11,7 @@ import {
 } from '../translations/commands.js';
 import {
   getMaxEmojisByBoostLevel,
+  getMaxSoundboardSoundsByBoostLevel,
   getMaxStickersByBoostLevel,
 } from '../utils/boost.js';
 import { getGuild } from '../utils/guild.js';
@@ -91,6 +92,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     await guild.emojis.fetch();
     await guild.stickers.fetch();
     await guild.invites.fetch();
+    await guild.soundboardSounds.fetch();
 
     const output = [
       commandResponseFunctions.serverMembersStat(
@@ -118,6 +120,10 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
         getMaxStickersByBoostLevel(boostLevel),
       ),
       commandResponseFunctions.serverInvitesStat(guild.invites.cache.size),
+      commandResponseFunctions.serverSoundboardSoundsStat(
+        guild.soundboardSounds.cache.size,
+        getMaxSoundboardSoundsByBoostLevel(boostLevel),
+      ),
     ];
 
     await interaction.editReply(output.join('\n'));

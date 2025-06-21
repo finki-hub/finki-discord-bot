@@ -37,3 +37,24 @@ export const getMaxStickersByBoostLevel = (boostLevel: GuildPremiumTier) => {
       return 5;
   }
 };
+
+export const getMaxSoundboardSoundsByBoostLevel = (
+  boostLevel: GuildPremiumTier,
+) => {
+  switch (boostLevel) {
+    case GuildPremiumTier.None:
+      return 8;
+
+    case GuildPremiumTier.Tier1:
+      return 24;
+
+    case GuildPremiumTier.Tier2:
+      return 36;
+
+    case GuildPremiumTier.Tier3:
+      return 48;
+
+    default:
+      return 8;
+  }
+};
