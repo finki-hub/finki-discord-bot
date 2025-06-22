@@ -110,10 +110,34 @@ export const recreateVipTemporaryChannel = async () => {
     await existingChannel.delete();
   }
 
+  const administratorsRoleId = getRolesProperty(Role.Administrators);
+  const moderatorsRoleId = getRolesProperty(Role.Moderators);
+  const vipRoleId = getRolesProperty(Role.VIP);
+  const managementRoleId = getRolesProperty(Role.Management);
+
+  const rolesToAdd = [
+    administratorsRoleId,
+    moderatorsRoleId,
+    vipRoleId,
+    managementRoleId,
+  ].filter((role) => role !== undefined);
+
   await guild?.channels.create({
     name: temporaryChannel.name,
     nsfw: true,
     parent: temporaryChannel.parent ?? null,
+    permissionOverwrites: [
+      ...rolesToAdd.map((role) => ({
+        allow: [PermissionFlagsBits.ViewChannel],
+        id: role,
+        type: OverwriteType.Role,
+      })),
+      {
+        deny: [PermissionFlagsBits.ViewChannel],
+        id: guild.roles.everyone.id,
+        type: OverwriteType.Role,
+      },
+    ],
     topic: specialStringFunctions.tempVipTopic(
       getNextChannelRecreationTime(TemporaryChannel.VIP, 'mk-MK'),
     ),
@@ -148,13 +172,17 @@ export const recreateRegularsTemporaryChannel = async () => {
   const administratorsRoleId = getRolesProperty(Role.Administrators);
   const moderatorsRoleId = getRolesProperty(Role.Moderators);
   const vipRoleId = getRolesProperty(Role.VIP);
+  const irregularsRoleId = getRolesProperty(Role.Irregulars);
   const regularsRoleId = getRolesProperty(Role.Regulars);
+  const managementRoleId = getRolesProperty(Role.Management);
 
   const rolesToAdd = [
     administratorsRoleId,
     moderatorsRoleId,
     vipRoleId,
+    irregularsRoleId,
     regularsRoleId,
+    managementRoleId,
   ].filter((role) => role !== undefined);
 
   await guild?.channels.create({
