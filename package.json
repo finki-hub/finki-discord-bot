@@ -12,7 +12,7 @@
     "discord.js": "^14.21.0",
     "eventsource-parser": "^3.0.3",
     "fuse.js": "^7.1.0",
-    "prisma": "^6.10.1",
+    "prisma": "^6.11.0",
     "winston": "^3.17.0",
     "zod": "^3.25.67"
   },
