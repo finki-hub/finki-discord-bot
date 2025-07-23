@@ -33,7 +33,7 @@ export const RequiredBotConfigSchema = z
     experience: z
       .object({
         enabled: z.boolean().optional(),
-        multipliers: z.record(z.number()).optional(),
+        multipliers: z.record(z.string(), z.number()).optional(),
       })
       .strict()
       .optional(),
@@ -51,8 +51,8 @@ export const RequiredBotConfigSchema = z
     oathEnabled: z.boolean().optional(),
     reactions: z
       .object({
-        add: z.record(z.string()).optional(),
-        remove: z.record(z.string()).optional(),
+        add: z.record(z.string(), z.string()).optional(),
+        remove: z.record(z.string(), z.string()).optional(),
       })
       .strict()
       .optional(),

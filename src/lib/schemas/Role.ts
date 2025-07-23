@@ -14,4 +14,4 @@ export enum Role {
   VIP = 'vip',
 }
 
-export const RoleSchema = z.nativeEnum(Role);
+export const RoleSchema = z.enum(Role);

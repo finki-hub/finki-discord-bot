@@ -18,7 +18,7 @@ export enum Model {
   VEZILKALLM_GGUF = 'hf.co/mradermacher/VezilkaLLM-GGUF:Q8_0',
 }
 
-export const ModelSchema = z.nativeEnum(Model);
+export const ModelSchema = z.enum(Model);
 
 export const EMBEDDING_MODELS = [
   Model.BGE_M3,

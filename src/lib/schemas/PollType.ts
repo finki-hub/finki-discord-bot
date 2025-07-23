@@ -17,8 +17,8 @@ export enum SpecialPollType {
 
 export type PollType = LotteryPollType | SpecialPollType;
 
-export const LotteryPollTypeSchema = z.nativeEnum(LotteryPollType);
-export const SpecialPollTypeSchema = z.nativeEnum(SpecialPollType);
+export const LotteryPollTypeSchema = z.enum(LotteryPollType);
+export const SpecialPollTypeSchema = z.enum(SpecialPollType);
 export const PollTypeSchema = z.union([
   LotteryPollTypeSchema,
   SpecialPollTypeSchema,

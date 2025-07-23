@@ -16,7 +16,7 @@ This Docker image is available as [ghcr.io/finki-hub/finki-discord-bot](https://
 ## Quick Setup (Development)
 
 1. Clone the repository: `git clone https://github.com/finki-hub/finki-discord-bot.git`
-2. Install dependencies (and pre-commit hooks): `npm i`
+2. Install dependencies: `npm i`
 3. Generate the database schema typings: `npm run generate`
 4. Prepare env. variables by copying `env.sample` to `.env` - minimum setup requires `BOT_TOKEN` and `APPLICATION_ID`
 5. Build the project in Docker: `docker compose build`
@@ -27,7 +27,7 @@ There is also a dev container available. To use it, just clone the repository, d
 ## Setup Without Docker
 
 1. Clone the repository: `git clone https://github.com/finki-hub/finki-discord-bot.git`
-2. Install dependencies (and pre-commit hooks): `npm i`
+2. Install dependencies: `npm i`
 3. Generate the database schema typings: `npm run generate`
 4. Make sure to have a PostgreSQL instance running
 5. Prepare env. variables by copying `env.sample` to `.env` - minimum setup requires `BOT_TOKEN`, `APPLICATION_ID` and `DATABASE_URL`

@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 export const LevelConfigSchema = z.record(
+  z.string(),
   z
     .object({
       add: z.array(z.string()),

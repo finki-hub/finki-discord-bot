@@ -8,7 +8,7 @@ export const QuestionSchema = z
     created_at: z.string(),
     distance: z.number().nullish(),
     id: z.string(),
-    links: z.record(z.string()).nullable(),
+    links: z.record(z.string(), z.string()).nullable(),
     name: z.string(),
     updated_at: z.string(),
     user_id: z.string().nullable(),
@@ -30,7 +30,7 @@ export type Question = z.infer<typeof QuestionSchema>;
 
 export const CreateQuestionSchema = z.object({
   content: z.string(),
-  links: z.record(z.string()).nullable(),
+  links: z.record(z.string(), z.string()).nullable(),
   name: z.string(),
   userId: z.string().nullable(),
 });
@@ -48,7 +48,7 @@ export type CreateQuestion = z.infer<typeof CreateQuestionSchema>;
 
 export const UpdateQuestionSchema = z.object({
   content: z.string().nullable(),
-  links: z.record(z.string()).nullable(),
+  links: z.record(z.string(), z.string()).nullable(),
   name: z.string().nullable(),
   userId: z.string().nullable(),
 });

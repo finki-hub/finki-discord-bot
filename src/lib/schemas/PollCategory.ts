@@ -5,4 +5,4 @@ export enum PollCategory {
   SPECIAL = 'special',
 }
 
-export const PollCategorySchema = z.nativeEnum(PollCategory);
+export const PollCategorySchema = z.enum(PollCategory);

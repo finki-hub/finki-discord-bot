@@ -335,7 +335,7 @@ const handleManageQuestionSet = async (
   const question = await getQuestion(keyword);
 
   const { data: parsedLinks, error: parseError } = z
-    .record(z.string())
+    .record(z.string(), z.string())
     .safeParse(JSON.parse(links));
 
   if (parseError !== undefined) {

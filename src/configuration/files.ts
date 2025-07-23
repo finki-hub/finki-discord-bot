@@ -112,7 +112,9 @@ export const reloadConfigurationFiles = async () => {
   const professorsDataPromise =
     CourseStaffSchema.array().parseAsync(professorsData);
   const rolesDataPromise = RoleConfigSchema.parseAsync(rolesData);
-  const sessionsDataPromise = z.record(z.string()).parseAsync(sessionsData);
+  const sessionsDataPromise = z
+    .record(z.string(), z.string())
+    .parseAsync(sessionsData);
   const staffDataPromise = StaffSchema.array().parseAsync(staffData);
 
   [

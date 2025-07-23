@@ -5,8 +5,8 @@ import { z } from 'zod';
 export const UsageEventSchema = z
   .object({
     eventType: z.string().min(1),
-    metadata: z.record(z.any()).optional(),
-    payload: z.record(z.any()),
+    metadata: z.record(z.string(), z.any()).optional(),
+    payload: z.record(z.string(), z.any()),
   })
   .transform((data) => ({
     event_type: data.eventType,
