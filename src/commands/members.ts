@@ -272,11 +272,15 @@ const handleMembersManagement = async (
   }
 
   const managementRoleId = getRolesProperty(Role.Management);
+  const administratorsRoleId = getRolesProperty(Role.Administrators);
+  const moderatorsRoleId = getRolesProperty(Role.Moderators);
 
   const managementMembersIds = await getMembersByRoleIdsExtended(
     guild,
     [managementRoleId].filter((value) => value !== undefined),
-    [],
+    [administratorsRoleId, moderatorsRoleId].filter(
+      (value) => value !== undefined,
+    ),
   );
   const managementMembers = (
     await Promise.all(
