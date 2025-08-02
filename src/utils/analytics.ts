@@ -37,7 +37,7 @@ const logEvent = async (event: UsageEvent) => {
     const json = await res.json();
     return IngestResponseSchema.parse(json);
   } catch (error) {
-    logger.error(logErrorFunctions.logAnalyticsError(error));
+    logger.warn(logErrorFunctions.logAnalyticsError(error));
 
     return null;
   }
@@ -52,6 +52,8 @@ export const logCommandEvent = async (
   if (!interaction.channel?.isTextBased()) {
     return;
   }
+
+  logger.info(logMessageFunctions.logCommandEvent(interaction.commandName));
 
   const targetUser = interaction.options.getUser('user') ?? null;
   const metadata: Record<string, unknown> = {
@@ -113,6 +115,4 @@ export const logCommandEvent = async (
   });
 
   await logEvent(event);
-
-  logger.info(logMessageFunctions.logCommandEvent(interaction.commandName));
 };
