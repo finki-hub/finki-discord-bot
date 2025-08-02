@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 export enum Model {
   BGE_M3 = 'bge-m3:latest',
+  BGE_M3_GPU_API = 'BAAI/bge-m3',
   DEEPSEEK_R1_70B = 'deepseek-r1:70b',
   DOMESTIC_YAK_8B_INSTRUCT_GGUF = 'hf.co/LVSTCK/domestic-yak-8B-instruct-GGUF:Q8_0',
   GEMINI_2_5_FLASH_PREVIEW_05_20 = 'gemini-2.5-flash-preview-05-20',
@@ -22,6 +23,7 @@ export const ModelSchema = z.enum(Model);
 
 export const EMBEDDING_MODELS = [
   Model.BGE_M3,
+  Model.BGE_M3_GPU_API,
   Model.LLAMA_3_3_70B,
   Model.TEXT_EMBEDDING_3_LARGE,
   Model.TEXT_EMBEDDING_004,
