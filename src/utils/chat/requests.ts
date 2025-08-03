@@ -25,7 +25,7 @@ export const sendPrompt = async (
   const chatbotUrl = getChatbotUrl();
 
   if (chatbotUrl === null) {
-    throw new Error('LLM_UNAVAILABLE');
+    throw new Error('LLM_DISABLED');
   }
 
   const result = await fetch(`${chatbotUrl}/chat/`, {
@@ -36,6 +36,16 @@ export const sendPrompt = async (
     },
     method: 'POST',
   });
+
+  if (result.status === 503) {
+    const text = await result.text();
+
+    if (text.includes('not ready')) {
+      throw new Error('LLM_NOT_READY');
+    }
+
+    throw new Error('LLM_UNAVAILABLE');
+  }
 
   if (!result.ok || !result.body || result.status !== 200) {
     throw new Error('LLM_UNAVAILABLE');

@@ -10,6 +10,7 @@ import {
   commandErrors,
 } from '../../translations/commands.js';
 import { logCommandEvent } from '../../utils/analytics.js';
+import { LLM_ERRORS } from '../../utils/chat/errors.js';
 import { sendPrompt } from '../../utils/chat/requests.js';
 import { safeStreamReplyToInteraction } from '../../utils/messages.js';
 
@@ -61,12 +62,12 @@ export const getCommonCommand = (name: keyof typeof commandDescriptions) => ({
         });
       });
     } catch (error) {
-      const isLLMUnavailable =
-        error instanceof Error && error.message === 'LLM_UNAVAILABLE';
+      if (!(error instanceof Error)) {
+        throw error;
+      }
 
-      const errorMessage = isLLMUnavailable
-        ? commandErrors.llmUnavailable
-        : commandErrors.unknownChatError;
+      const errorMessage =
+        LLM_ERRORS[error.message] ?? commandErrors.unknownChatError;
 
       await (interaction.deferred || interaction.replied
         ? interaction.editReply(errorMessage)
