@@ -20,7 +20,7 @@
   "devDependencies": {
     "@types/async-lock": "^1.4.2",
     "esbuild": "^0.25.8",
-    "eslint": "^9.32.0",
+    "eslint": "^9.33.0",
     "eslint-config-imperium": "^2.6.0",
     "rimraf": "^6.0.1",
     "tsx": "^4.20.3",
