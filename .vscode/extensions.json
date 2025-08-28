@@ -4,13 +4,7 @@
     "Prisma.prisma",
     "dbaeumer.vscode-eslint",
     "eamodio.gitlens",
-    "esbenp.prettier-vscode",
-    "me-dutour-mathieu.vscode-github-actions",
-    "meganrogge.template-string-converter",
-    "mikestead.dotenv",
     "docker.docker",
-    "ms-vscode-remote.remote-containers",
-    "sonarsource.sonarlint-vscode",
-    "yoavbls.pretty-ts-errors"
+    "ms-vscode-remote.remote-containers"
   ]
 }
