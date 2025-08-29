@@ -45,7 +45,10 @@ import {
 } from '../translations/commands.js';
 import { logErrorFunctions } from '../translations/logs.js';
 import { threadMessageFunctions } from '../translations/threads.js';
-import { ticketMessages } from '../translations/tickets.js';
+import {
+  ticketMessageFunctions,
+  ticketMessages,
+} from '../translations/tickets.js';
 import { sendEmbed } from '../utils/channels.js';
 import { getCommands } from '../utils/commands.js';
 
@@ -569,7 +572,10 @@ const handleScriptTickets = async (
       parse: [],
     },
     components,
-    content: ticketMessages.createTicket,
+    content:
+      `${ticketMessages.createTicket}\n${ticketMessageFunctions.ticketTypes(
+        tickets ?? [],
+      )}`.trim(),
   });
 
   await interaction.editReply(commandResponses.scriptExecuted);
