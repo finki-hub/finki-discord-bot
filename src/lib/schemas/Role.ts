@@ -1,7 +1,6 @@
 import { z } from 'zod';
 
 export enum Role {
-  Administration = 'administration',
   Administrators = 'administrators',
   Boosters = 'boosters',
   Contributors = 'contributors',
