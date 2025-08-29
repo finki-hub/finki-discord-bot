@@ -10,7 +10,7 @@
     "croner": "^9.1.0",
     "discord-api-types": "^0.38.22",
     "discord.js": "^14.22.1",
-    "eventsource-parser": "^3.0.5",
+    "eventsource-parser": "^3.0.6",
     "fuse.js": "^7.1.0",
     "prisma": "^6.15.0",
     "winston": "^3.17.0",
