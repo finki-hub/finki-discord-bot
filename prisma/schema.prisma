@@ -25,43 +25,6 @@ model Anto {
   updatedAt DateTime @updatedAt
 }
 
-model Rule {
-  id String @id @default(uuid())
-
-  rule   String  @unique
-  userId String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model InfoMessage {
-  id String @id @default(uuid())
-
-  index   Int             @unique
-  type    InfoMessageType
-  content String
-  userId  String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-enum InfoMessageType {
-  TEXT
-  IMAGE
-}
-
-model Company {
-  id String @id @default(uuid())
-
-  name   String  @unique
-  userId String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
 model Experience {
   id String @id @default(uuid())
 

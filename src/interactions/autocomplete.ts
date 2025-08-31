@@ -9,8 +9,6 @@ import {
 } from '../configuration/files.js';
 import { getLinkNames } from '../data/api/Link.js';
 import { getQuestionNames } from '../data/api/Question.js';
-import { getCompanies } from '../data/database/Company.js';
-import { getRules } from '../data/database/Rule.js';
 import { logger } from '../logger.js';
 import { logErrorFunctions } from '../translations/logs.js';
 import { transformOptions } from '../utils/options.js';
@@ -158,52 +156,6 @@ export const handleClassroomAutocomplete = async (
   try {
     await interaction.respond(
       createOptions(transformedClassrooms, interaction.options.getFocused()),
-    );
-  } catch (error) {
-    logger.error(
-      logErrorFunctions.autocompleteResponseError(interaction.user.tag, error),
-    );
-  }
-};
-
-export const handleRuleAutocomplete = async (
-  interaction: AutocompleteInteraction,
-) => {
-  const rules = await getRules();
-
-  if (rules === null) {
-    return;
-  }
-
-  try {
-    await interaction.respond(
-      createOptions(
-        Object.entries(transformOptions(rules.map(({ rule }) => rule))),
-        interaction.options.getFocused(),
-      ),
-    );
-  } catch (error) {
-    logger.error(
-      logErrorFunctions.autocompleteResponseError(interaction.user.tag, error),
-    );
-  }
-};
-
-export const handleCompanyAutocomplete = async (
-  interaction: AutocompleteInteraction,
-) => {
-  const companies = await getCompanies();
-
-  if (companies === null) {
-    return;
-  }
-
-  try {
-    await interaction.respond(
-      createOptions(
-        Object.entries(transformOptions(companies.map(({ name }) => name))),
-        interaction.options.getFocused(),
-      ),
     );
   } catch (error) {
     logger.error(

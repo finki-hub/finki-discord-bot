@@ -6,16 +6,16 @@ import { getBarByUserId } from '../data/database/Bar.js';
 import { getExperienceByUserId } from '../data/database/Experience.js';
 import { Role } from '../lib/schemas/Role.js';
 
+const memberHasRole = (member: GuildMember, role: Role) => {
+  const roleId = getRolesProperty(role);
+
+  return roleId !== undefined && member.roles.cache.has(roleId);
+};
+
 export const getUsername = async (userId: string) => {
   const user = await client.users.fetch(userId);
 
   return user.tag;
-};
-
-export const memberHasRole = (member: GuildMember, role: Role) => {
-  const roleId = getRolesProperty(role);
-
-  return roleId !== undefined && member.roles.cache.has(roleId);
 };
 
 export const excludeMembersWithRole = (members: GuildMember[], role: Role) => {

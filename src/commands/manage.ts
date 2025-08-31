@@ -1,4 +1,3 @@
-import { InfoMessageType } from '@prisma/client';
 import {
   type ChatInputCommandInteraction,
   codeBlock,
@@ -30,21 +29,7 @@ import {
   deleteAnto,
   getAntos,
 } from '../data/database/Anto.js';
-import {
-  createCompanies,
-  createCompany,
-  deleteCompany,
-  getCompanies,
-} from '../data/database/Company.js';
-import {
-  createInfoMessage,
-  deleteInfoMessage,
-  getInfoMessage,
-  updateInfoMessage,
-} from '../data/database/InfoMessage.js';
-import { createRule, deleteRule, getRules } from '../data/database/Rule.js';
 import { AntosSchema } from '../lib/schemas/Anto.js';
-import { CompaniesSchema } from '../lib/schemas/Company.js';
 import { CreateLinkSchema, UpdateLinkSchema } from '../lib/schemas/Link.js';
 import {
   CreateQuestionSchema,
@@ -667,242 +652,11 @@ const handleManageAntoDump = async (
   });
 };
 
-const handleManageRuleSet = async (
-  interaction: ChatInputCommandInteraction,
-) => {
-  const rule = interaction.options.getString('rule', true);
-
-  await createRule({
-    rule,
-    userId: interaction.user.id,
-  });
-
-  await interaction.editReply(commandResponses.ruleCreated);
-};
-
-const handleManageRuleDelete = async (
-  interaction: ChatInputCommandInteraction,
-) => {
-  const rule = interaction.options.getString('rule', true);
-
-  await deleteRule(rule);
-
-  await interaction.editReply(commandResponses.ruleDeleted);
-};
-
-const handleManageInfoMessageGet = async (
-  interaction: ChatInputCommandInteraction,
-) => {
-  const index = interaction.options.getNumber('index', true);
-  const infoMessage = await getInfoMessage(index);
-
-  if (infoMessage === null) {
-    await interaction.editReply(commandErrors.infoNotFound);
-
-    return;
-  }
-
-  await (infoMessage.type === InfoMessageType.IMAGE
-    ? interaction.editReply({
-        files: [infoMessage.content],
-      })
-    : interaction.editReply({
-        allowedMentions: {
-          parse: [],
-        },
-        content: infoMessage.content.replaceAll(String.raw`\n`, '\n'),
-      }));
-};
-
-const handleManageRuleDump = async (
-  interaction: ChatInputCommandInteraction,
-) => {
-  const rules = await getRules();
-
-  if (rules === null) {
-    await interaction.editReply(commandErrors.rulesNotFound);
-
-    return;
-  }
-
-  await interaction.editReply({
-    files: [
-      {
-        attachment: Buffer.from(JSON.stringify(rules, null, 2)),
-        name: 'rules.json',
-      },
-    ],
-  });
-};
-
-const handleMangeInfoMessageSet = async (
-  interaction: ChatInputCommandInteraction,
-) => {
-  const index = interaction.options.getNumber('index', true);
-  const type = interaction.options.getString('type', true);
-  const content = interaction.options
-    .getString('content', true)
-    .replaceAll(String.raw`\n`, '\n');
-  const infoMessage = await getInfoMessage(index);
-
-  if (infoMessage === null) {
-    await createInfoMessage({
-      content,
-      index,
-      type: type === 'text' ? InfoMessageType.TEXT : InfoMessageType.IMAGE,
-      userId: interaction.user.id,
-    });
-
-    await interaction.editReply(commandResponses.infoCreated);
-  } else {
-    infoMessage.content = content;
-    infoMessage.type =
-      type === 'text' ? InfoMessageType.TEXT : InfoMessageType.IMAGE;
-    await updateInfoMessage(infoMessage);
-
-    await interaction.editReply(commandResponses.infoUpdated);
-  }
-};
-
-const handleManageInfoMessageDelete = async (
-  interaction: ChatInputCommandInteraction,
-) => {
-  const index = interaction.options.getNumber('index', true);
-
-  const infoMessage = await getInfoMessage(index);
-
-  if (infoMessage === null) {
-    await interaction.editReply(commandErrors.infoNotFound);
-
-    return;
-  }
-
-  await deleteInfoMessage(index);
-
-  await interaction.editReply(commandResponses.infoDeleted);
-};
-
-const handleManageInfoMessageDump = async (
-  interaction: ChatInputCommandInteraction,
-) => {
-  const infoMessages = await getInfoMessage();
-
-  if (infoMessages === null) {
-    await interaction.editReply(commandErrors.infoNotFound);
-
-    return;
-  }
-
-  await interaction.editReply({
-    files: [
-      {
-        attachment: Buffer.from(JSON.stringify(infoMessages, null, 2)),
-        name: 'infoMessages.json',
-      },
-    ],
-  });
-};
-
-const handleManageCompanySet = async (
-  interaction: ChatInputCommandInteraction,
-) => {
-  const company = interaction.options.getString('company', true);
-
-  const createdCompany = await createCompany({
-    name: company,
-    userId: interaction.user.id,
-  });
-
-  if (createdCompany === null) {
-    await interaction.editReply(commandErrors.companyCreationFailed);
-
-    return;
-  }
-
-  await interaction.editReply(commandResponses.companyCreated);
-};
-
-const handleManageCompanyDelete = async (
-  interaction: ChatInputCommandInteraction,
-) => {
-  const company = interaction.options.getString('company', true);
-
-  const deletedCompany = await deleteCompany(company);
-
-  if (deletedCompany === null) {
-    await interaction.editReply(commandErrors.companyNotFound);
-
-    return;
-  }
-
-  await interaction.editReply(commandResponses.companyDeleted);
-};
-
-const handleManageCompanyMassAdd = async (
-  interaction: ChatInputCommandInteraction,
-) => {
-  const companies = interaction.options.getString('companies', true);
-  let parsedCompanies;
-
-  try {
-    parsedCompanies = CompaniesSchema.parse(JSON.parse(companies));
-  } catch (error) {
-    logger.error(logErrorFunctions.companiesParseError(error));
-    await interaction.editReply(commandErrors.invalidCompanies);
-
-    return;
-  }
-
-  const createdCompanies = await createCompanies(
-    parsedCompanies.map((company) => ({
-      name: company,
-      userId: interaction.user.id,
-    })),
-  );
-
-  if (createdCompanies === null) {
-    await interaction.editReply(commandErrors.companiesCreationFailed);
-
-    return;
-  }
-
-  await interaction.editReply(commandResponses.companiesCreated);
-};
-
-const handleManageCompanyDump = async (
-  interaction: ChatInputCommandInteraction,
-) => {
-  const companies = await getCompanies();
-
-  if (companies === null) {
-    await interaction.editReply(commandErrors.companiesNotFound);
-
-    return;
-  }
-
-  await interaction.editReply({
-    files: [
-      {
-        attachment: Buffer.from(JSON.stringify(companies, null, 2)),
-        name: 'companies.json',
-      },
-    ],
-  });
-};
-
 const manageHandlers = {
   'anto-add': handleManageAntoAdd,
   'anto-delete': handleManageAntoDelete,
   'anto-dump': handleManageAntoDump,
   'anto-mass-add': handleManageAntoMassAdd,
-  'company-delete': handleManageCompanyDelete,
-  'company-dump': handleManageCompanyDump,
-  'company-mass-add': handleManageCompanyMassAdd,
-  'company-set': handleManageCompanySet,
-  'infomessage-delete': handleManageInfoMessageDelete,
-  'infomessage-dump': handleManageInfoMessageDump,
-  'infomessage-get': handleManageInfoMessageGet,
-  'infomessage-set': handleMangeInfoMessageSet,
   'link-content': handleManageLinkContent,
   'link-delete': handleManageLinkDelete,
   'link-dump': handleManageLinkDump,
@@ -911,9 +665,6 @@ const manageHandlers = {
   'question-delete': handleManageQuestionDelete,
   'question-dump': handleManageQuestionDump,
   'question-set': handleManageQuestionSet,
-  'rule-delete': handleManageRuleDelete,
-  'rule-dump': handleManageRuleDump,
-  'rule-set': handleManageRuleSet,
 };
 
 export const execute = async (interaction: ChatInputCommandInteraction) => {

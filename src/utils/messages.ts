@@ -7,7 +7,7 @@ import {
 
 import { labels } from '../translations/labels.js';
 
-export const splitMessage = function* (message: string) {
+const splitMessage = function* (message: string) {
   if (message === '') {
     yield '';
 

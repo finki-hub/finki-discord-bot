@@ -1,7 +1,5 @@
 import { Cron } from 'croner';
 import {
-  type ActionRowBuilder,
-  type ButtonBuilder,
   ChannelType,
   type EmbedBuilder,
   type GuildTextBasedChannel,
@@ -233,23 +231,6 @@ export const logEmbed = async (
     logger.error(logErrorFunctions.interactionLogError(interaction.id, error));
   }
 };
-
-export const sendEmbed = async (
-  channel: GuildTextBasedChannel,
-  embed: EmbedBuilder,
-  components: Array<ActionRowBuilder<ButtonBuilder>>,
-  newlines?: number,
-) =>
-  newlines === undefined || Number.isNaN(newlines)
-    ? await channel.send({
-        components,
-        embeds: [embed],
-      })
-    : await channel.send({
-        components,
-        content: '_ _\n'.repeat(newlines),
-        embeds: [embed],
-      });
 
 export const deleteResponse = async (
   message: InteractionResponse | Message,

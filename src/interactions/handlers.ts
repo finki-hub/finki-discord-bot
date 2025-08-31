@@ -28,13 +28,11 @@ import { getMemberFromGuild } from '../utils/guild.js';
 import { hasCommandPermission } from '../utils/permissions.js';
 import {
   handleClassroomAutocomplete,
-  handleCompanyAutocomplete,
   handleCourseAutocomplete,
   handleCourseRoleAutocomplete,
   handleLinkAutocomplete,
   handleProfessorAutocomplete,
   handleQuestionAutocomplete,
-  handleRuleAutocomplete,
   handleSessionAutocomplete,
 } from './autocomplete.js';
 import {
@@ -375,13 +373,11 @@ export const handleButton = async (interaction: ButtonInteraction) => {
 
 const autocompleteInteractionHandlers = {
   classroom: handleClassroomAutocomplete,
-  company: handleCompanyAutocomplete,
   course: handleCourseAutocomplete,
   courserole: handleCourseRoleAutocomplete,
   link: handleLinkAutocomplete,
   professor: handleProfessorAutocomplete,
   question: handleQuestionAutocomplete,
-  rule: handleRuleAutocomplete,
   session: handleSessionAutocomplete,
 };
 

@@ -69,26 +69,6 @@ export const createReminder = async (reminder?: Prisma.ReminderCreateInput) => {
   }
 };
 
-export const deleteReminders = async (reminderIds?: string[]) => {
-  if (reminderIds === undefined) {
-    return null;
-  }
-
-  try {
-    return await database.reminder.deleteMany({
-      where: {
-        id: {
-          in: reminderIds,
-        },
-      },
-    });
-  } catch (error) {
-    logger.error(databaseErrorFunctions.deleteRemindersError(error));
-
-    return null;
-  }
-};
-
 export const deleteReminder = async (reminderId?: string) => {
   if (reminderId === undefined) {
     return null;

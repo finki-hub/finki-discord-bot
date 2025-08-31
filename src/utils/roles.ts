@@ -37,7 +37,7 @@ export const initializeRoles = async () => {
   logger.info(logMessages.rolesInitialized);
 };
 
-export const refreshRoles = (guild: Guild, type: RoleSets) => {
+const refreshRoles = (guild: Guild, type: RoleSets) => {
   if (roleSets[type].length === 0) {
     const roleNames =
       (type === 'courses'

@@ -168,15 +168,3 @@ export const fetchMessageUrl = async (
     return null;
   }
 };
-
-export const generatePollPercentageBar = (percentage: number) => {
-  if (percentage === 0) {
-    return '.'.repeat(20);
-  }
-
-  const progressBar =
-    '█'.repeat(Math.floor(percentage / 5)) +
-    (percentage - Math.floor(percentage) >= 0.5 ? '▌' : '');
-
-  return progressBar + '.'.repeat(Math.max(0, 20 - progressBar.length));
-};

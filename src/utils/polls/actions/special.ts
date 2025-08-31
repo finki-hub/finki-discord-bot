@@ -253,7 +253,7 @@ const executeIrregularsRemovePollAction = async (
   );
 };
 
-export const SPECIAL_POLL_ACTIONS: Record<
+const SPECIAL_POLL_ACTIONS: Record<
   SpecialPollType,
   (member: GuildMember, decision: string) => Promise<void>
 > = {
