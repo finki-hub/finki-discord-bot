@@ -374,7 +374,6 @@ export const handleButton = async (interaction: ButtonInteraction) => {
 };
 
 const autocompleteInteractionHandlers = {
-  ad: handleAdAutocomplete,
   classroom: handleClassroomAutocomplete,
   company: handleCompanyAutocomplete,
   course: handleCourseAutocomplete,
