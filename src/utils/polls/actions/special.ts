@@ -21,6 +21,7 @@ import { specialStringFunctions } from '../../../translations/special.js';
 import { getChannel } from '../../channels.js';
 import { getMemberFromGuild } from '../../guild.js';
 import { getSpecialPollInformation } from '../core/special.js';
+
 const executeVipRequestPollAction = async (
   member: GuildMember,
   decision: string,
@@ -34,10 +35,6 @@ const executeVipRequestPollAction = async (
       components: rejectComponents,
       content: specialStringFunctions.vipRequestRejected(member.user.id),
     });
-
-    await vipChannel?.send(
-      specialStringFunctions.vipAddRejected(member.user.id),
-    );
 
     return;
   }
@@ -61,10 +58,6 @@ const executeVipAddPollAction = async (
   const oathChannel = getChannel(Channel.Oath);
 
   if (decision !== labels.yes) {
-    await vipChannel?.send(
-      specialStringFunctions.vipAddRejected(member.user.id),
-    );
-
     return;
   }
 
@@ -86,10 +79,6 @@ const executeVipRemovePollAction = async (
   const vipChannel = getChannel(Channel.VIP);
 
   if (decision !== labels.yes) {
-    await vipChannel?.send(
-      specialStringFunctions.vipRemoveRejected(member.user.id),
-    );
-
     return;
   }
 
@@ -123,8 +112,6 @@ export const executeBarPollAction = async (
   const vipChannel = getChannel(Channel.VIP);
 
   if (decision !== labels.yes) {
-    await vipChannel?.send(specialStringFunctions.barRejected(member.user.id));
-
     return;
   }
 
@@ -172,10 +159,6 @@ export const executeUnbarPollAction = async (
   const vipChannel = getChannel(Channel.VIP);
 
   if (decision !== labels.yes) {
-    await vipChannel?.send(
-      specialStringFunctions.unbarRejected(member.user.id),
-    );
-
     return;
   }
 
@@ -202,10 +185,6 @@ const executeIrregularsRequestPollAction = async (
       content: specialStringFunctions.irregularsRequestRejected(member.user.id),
     });
 
-    await irregularsChannel?.send(
-      specialStringFunctions.irregularsAddRejected(member.user.id),
-    );
-
     return;
   }
 
@@ -230,10 +209,6 @@ const executeIrregularsAddPollAction = async (
   const oathChannel = getChannel(Channel.Oath);
 
   if (decision !== labels.yes) {
-    await irregularsChannel?.send(
-      specialStringFunctions.irregularsAddRejected(member.user.id),
-    );
-
     return;
   }
 
@@ -259,10 +234,6 @@ const executeIrregularsRemovePollAction = async (
   const irregularsChannel = getChannel(Channel.Irregulars);
 
   if (decision !== labels.yes) {
-    await irregularsChannel?.send(
-      specialStringFunctions.irregularsRemoveRejected(member.user.id),
-    );
-
     return;
   }
 
