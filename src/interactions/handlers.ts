@@ -27,7 +27,6 @@ import {
 import { getMemberFromGuild } from '../utils/guild.js';
 import { hasCommandPermission } from '../utils/permissions.js';
 import {
-  handleAdAutocomplete,
   handleClassroomAutocomplete,
   handleCompanyAutocomplete,
   handleCourseAutocomplete,

@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-import { AdSchema } from './Ad.js';
 import { ChannelSchema, TemporaryChannelSchema } from './Channel.js';
 import { ModelSchema } from './Model.js';
 import { RoleSchema } from './Role.js';
@@ -18,7 +17,6 @@ const ModelsSchema = z.object({
 });
 
 export const RequiredBotConfigSchema = z.object({
-  ads: z.array(AdSchema).optional(),
   channels: z.record(ChannelSchema, z.string().optional()).optional(),
   crossposting: z
     .object({

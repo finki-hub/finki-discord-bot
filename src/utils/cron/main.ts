@@ -1,7 +1,6 @@
 import { Cron } from 'croner';
 
 import {
-  getConfigProperty,
   getIntervalsProperty,
   getTemporaryChannelsProperty,
 } from '../../configuration/main.js';
@@ -9,7 +8,6 @@ import { TemporaryChannel } from '../../lib/schemas/Channel.js';
 import { logger } from '../../logger.js';
 import { labels } from '../../translations/labels.js';
 import { logMessageFunctions } from '../../translations/logs.js';
-import { createSendAdsJob } from '../ads.js';
 import {
   recreateRegularsTemporaryChannel,
   recreateVipTemporaryChannel,
@@ -60,8 +58,6 @@ export const initializeCronJobs = () => {
     TemporaryChannel.Regulars,
   );
 
-  const ads = getConfigProperty('ads');
-
   cronJobs.push(
     new Cron(
       convertMillisecondsToCronJob(sendRemindersInterval),
@@ -92,12 +88,6 @@ export const initializeCronJobs = () => {
         { name: 'recreateRegularsTemporaryChannel' },
         recreateRegularsTemporaryChannel,
       ),
-    );
-  }
-
-  for (const ad of ads ?? []) {
-    cronJobs.push(
-      new Cron(ad.cron, { name: `sendAd-${ad.name}` }, createSendAdsJob(ad)),
     );
   }
 

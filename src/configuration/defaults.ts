@@ -5,7 +5,6 @@ import {
 import { Model } from '../lib/schemas/Model.js';
 
 export const DEFAULT_CONFIGURATION = {
-  ads: undefined,
   channels: undefined,
   crossposting: {
     channels: [],
