@@ -356,13 +356,15 @@ const handleMembersStatistics = async (
     guild,
     [vipRoleId].filter((value) => value !== undefined),
   );
-  const totalManagement = await getMembersByRoleIds(
+  const totalManagement = await getMembersByRoleIdsExtended(
     guild,
     [managementRoleId].filter((value) => value !== undefined),
+    [moderatorRoleId, adminRoleId].filter((value) => value !== undefined),
   );
-  const totalModerators = await getMembersByRoleIds(
+  const totalModerators = await getMembersByRoleIdsExtended(
     guild,
     [moderatorRoleId].filter((value) => value !== undefined),
+    [adminRoleId].filter((value) => value !== undefined),
   );
   const totalAdministrators = await getMembersByRoleIds(
     guild,
