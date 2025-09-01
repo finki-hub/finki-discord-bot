@@ -129,15 +129,20 @@ const handleSpecialList = async (interaction: ChatInputCommandInteraction) => {
     getSpecialPollInformation(poll.message.content),
   );
 
-  const output = pollsInfo.map(({ pollType, userId }, index) => {
-    if (pollType === null || userId === null) {
-      return '';
-    }
+  const output =
+    pollsInfo.length === 0
+      ? labels.none
+      : pollsInfo
+          .map(({ pollType, userId }, index) => {
+            if (pollType === null || userId === null) {
+              return '';
+            }
 
-    return `${index + 1}. ${POLL_TYPE_LABELS[pollType]} ${userMention(userId)}`;
-  });
+            return `${index + 1}. ${POLL_TYPE_LABELS[pollType]} ${userMention(userId)}`;
+          })
+          .join('\n');
 
-  await safeReplyToInteraction(interaction, output.join('\n'));
+  await safeReplyToInteraction(interaction, output);
 };
 
 const handleSpecialDelete = async (
