@@ -12,10 +12,6 @@ const commandPermissions: Record<
     roles: Role[];
   }
 > = {
-  ad: {
-    permissions: [],
-    roles: [Role.Administrators],
-  },
   chat: {
     permissions: [],
     roles: [Role.Regulars],
@@ -62,7 +58,7 @@ const commandPermissions: Record<
   },
   members: {
     permissions: [],
-    roles: [Role.Administrators, Role.Moderators, Role.Management, Role.VIP],
+    roles: [Role.Management, Role.VIP],
   },
   'members count': {
     permissions: [],
@@ -77,20 +73,16 @@ const commandPermissions: Record<
     roles: [Role.Administrators],
   },
   purge: {
-    permissions: [PermissionsBitField.Flags.ManageMessages],
-    roles: [],
-  },
-  register: {
     permissions: [],
-    roles: [Role.Administrators],
+    roles: [Role.Moderators],
   },
   regulars: {
     permissions: [],
-    roles: [Role.Administrators, Role.Moderators],
+    roles: [Role.Moderators],
   },
   'regulars recreate': {
     permissions: [],
-    roles: [Role.Administrators, Role.Moderators],
+    roles: [Role.Moderators],
   },
   'reminder dump': {
     permissions: [],
@@ -110,7 +102,7 @@ const commandPermissions: Record<
   },
   'special list': {
     permissions: [],
-    roles: [Role.Administrators, Role.Moderators, Role.VIP],
+    roles: [Role.Management],
   },
   'special override': {
     permissions: [PermissionsBitField.Flags.Administrator],
@@ -125,12 +117,12 @@ const commandPermissions: Record<
     roles: [Role.Management],
   },
   Star: {
-    permissions: [PermissionsBitField.Flags.ManageMessages],
+    permissions: [],
     roles: [Role.VIP],
   },
   ticket: {
     permissions: [],
-    roles: [Role.Administrators, Role.Moderators, Role.FSS, Role.Ombudsman],
+    roles: [Role.Moderators, Role.FSS, Role.Ombudsman],
   },
   vip: {
     permissions: [],
@@ -138,7 +130,7 @@ const commandPermissions: Record<
   },
   'vip recreate': {
     permissions: [],
-    roles: [Role.Administrators, Role.Moderators],
+    roles: [Role.Moderators],
   },
 };
 
