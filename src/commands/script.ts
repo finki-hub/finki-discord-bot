@@ -2,7 +2,6 @@ import {
   ChannelType,
   type ChatInputCommandInteraction,
   InteractionContextType,
-  PermissionFlagsBits,
   SlashCommandBuilder,
 } from 'discord.js';
 
@@ -25,7 +24,6 @@ import {
 } from '../translations/tickets.js';
 
 const name = 'script';
-const permission = PermissionFlagsBits.Administrator;
 
 export const data = new SlashCommandBuilder()
   .setName(name)
@@ -46,8 +44,7 @@ export const data = new SlashCommandBuilder()
         option.setName('channel').setDescription('Канал').setRequired(true),
       ),
   )
-  .setContexts(InteractionContextType.Guild)
-  .setDefaultMemberPermissions(permission);
+  .setContexts(InteractionContextType.Guild);
 
 const handleScriptSpecial = async (
   interaction: ChatInputCommandInteraction<'cached'>,
