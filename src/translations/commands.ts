@@ -361,6 +361,7 @@ export const commandErrors = {
     'Не се избрани членови до кои може да се испрати тикетот. Обидете се на друга категорија.',
   noTickets: 'Нема тикети.',
   notImplemented: 'Оваа функционалност не е имплементирана.',
+  notIrregularsMember: 'Не сте член на Вонредните.',
   oathNoPermission: 'Заклетвата не е ваша.',
   optionNotFound: 'Опцијата не постои.',
   pollAnonymous: 'Анкетата е анонимна.',

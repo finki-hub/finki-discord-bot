@@ -533,6 +533,15 @@ export const handleVipButton = async (
     return;
   }
 
+  if (!isMemberInIrregulars(member)) {
+    await interaction.reply({
+      content: commandErrors.notIrregularsMember,
+      flags: MessageFlags.Ephemeral,
+    });
+
+    return;
+  }
+
   if (await isMemberBarred(interaction.user.id)) {
     await interaction.reply({
       content: specialStrings.requestRejected,
