@@ -1,7 +1,7 @@
 import {
   ChannelType,
   type ChatInputCommandInteraction,
-  type GuildBasedChannel,
+  InteractionContextType,
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from 'discord.js';
@@ -46,15 +46,13 @@ export const data = new SlashCommandBuilder()
         option.setName('channel').setDescription('Канал').setRequired(true),
       ),
   )
+  .setContexts(InteractionContextType.Guild)
   .setDefaultMemberPermissions(permission);
 
 const handleScriptSpecial = async (
-  interaction: ChatInputCommandInteraction,
+  interaction: ChatInputCommandInteraction<'cached'>,
 ) => {
-  const channel = interaction.options.getChannel(
-    'channel',
-    true,
-  ) as GuildBasedChannel;
+  const channel = interaction.options.getChannel('channel', true);
 
   if (!channel.isTextBased() || channel.isDMBased()) {
     await interaction.editReply(commandErrors.invalidChannel);
@@ -77,12 +75,9 @@ const handleScriptSpecial = async (
 };
 
 const handleScriptTickets = async (
-  interaction: ChatInputCommandInteraction,
+  interaction: ChatInputCommandInteraction<'cached'>,
 ) => {
-  const channel = interaction.options.getChannel(
-    'channel',
-    true,
-  ) as GuildBasedChannel;
+  const channel = interaction.options.getChannel('channel', true);
 
   if (channel.type !== ChannelType.GuildText) {
     await interaction.editReply(commandErrors.invalidChannel);
@@ -113,7 +108,9 @@ const listHandlers = {
   tickets: handleScriptTickets,
 };
 
-export const execute = async (interaction: ChatInputCommandInteraction) => {
+export const execute = async (
+  interaction: ChatInputCommandInteraction<'cached'>,
+) => {
   const subcommand = interaction.options.getSubcommand(true);
 
   if (subcommand in listHandlers) {
