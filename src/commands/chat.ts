@@ -271,7 +271,7 @@ const handleChatEmbed = async (interaction: ChatInputCommandInteraction) => {
           `${event.index} / ${event.total} | ${event.status}`,
         );
 
-        await onChunk(`[${state}] ${event.name}\n`);
+        await onChunk(`[${state}] ${event.name} (${event.model})\n`);
       });
     });
   } catch (error) {
