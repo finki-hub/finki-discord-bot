@@ -94,7 +94,7 @@ export const createLink = async (link?: CreateLink) => {
   }
 
   try {
-    const result = await fetch(`${chatbotUrl}/links/create`, {
+    const result = await fetch(`${chatbotUrl}/links`, {
       body: JSON.stringify(PreparedCreateLinkSchema.parse(link)),
       headers: {
         'Content-Type': 'application/json',
@@ -126,7 +126,7 @@ export const updateLink = async (name?: string, link?: UpdateLink) => {
   }
 
   try {
-    const result = await fetch(`${chatbotUrl}/links/update/${name}`, {
+    const result = await fetch(`${chatbotUrl}/links/${name}`, {
       body: JSON.stringify(PreparedUpdateLinkSchema.parse(link)),
       headers: {
         'Content-Type': 'application/json',
@@ -158,7 +158,7 @@ export const deleteLink = async (name?: string) => {
   }
 
   try {
-    const result = await fetch(`${chatbotUrl}/links/delete/${name}`, {
+    const result = await fetch(`${chatbotUrl}/links/${name}`, {
       method: 'DELETE',
     });
 
@@ -182,7 +182,7 @@ export const getNthLink = async (index?: number) => {
   }
 
   try {
-    const result = await fetch(`${chatbotUrl}/links/index/${index}`);
+    const result = await fetch(`${chatbotUrl}/links/nth/${index}`);
 
     if (!result.ok) {
       return null;
