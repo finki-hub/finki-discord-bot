@@ -268,7 +268,7 @@ const getAdminVotes = async (poll: Poll) => {
   const admins = await getMembersByRoleIds(guild, [adminRoleId]);
 
   const options = await Promise.all(
-    poll.answers.map(async (answer) => answer.fetchVoters()),
+    poll.answers.map(async (answer) => answer.voters.fetch()),
   );
 
   const adminVotes: Array<null | string> = [];

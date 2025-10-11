@@ -17,7 +17,7 @@ export const getPollContent = (title: string, identifier: string) =>
 
 export const getVoters = async (poll: Poll) => {
   const votes = await Promise.all(
-    poll.answers.map(async (answer) => await answer.fetchVoters()),
+    poll.answers.map(async (answer) => await answer.voters.fetch()),
   );
   const voters = votes
     .flatMap((vote) => vote.values().toArray())
