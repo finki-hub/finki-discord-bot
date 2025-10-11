@@ -5,9 +5,30 @@ import { handlePoll } from '../utils/polls/main.js';
 export const name = Events.MessagePollVoteAdd;
 
 export const execute = async (...[answer]: ClientEvents[typeof name]) => {
-  if (answer.poll.message.author.id !== answer.client.user.id) {
+  let pollAnswer = answer;
+
+  if (pollAnswer.partial) {
+    await pollAnswer.poll.fetch();
+    const fetchedAnswer = pollAnswer.poll.answers.get(pollAnswer.id);
+
+    if (!fetchedAnswer) {
+      return;
+    }
+
+    pollAnswer = fetchedAnswer;
+  }
+
+  if (!pollAnswer.poll.message.author) {
     return;
   }
 
-  await handlePoll(answer.poll);
+  if (pollAnswer.poll.message.author.id !== pollAnswer.client.user.id) {
+    return;
+  }
+
+  if (pollAnswer.poll.partial) {
+    return;
+  }
+
+  await handlePoll(pollAnswer.poll);
 };
