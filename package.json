@@ -9,7 +9,7 @@
     "chrono-node": "^2.9.0",
     "croner": "^9.1.0",
     "discord-api-types": "^0.38.31",
-    "discord.js": "^14.24.0",
+    "discord.js": "^14.24.1",
     "eventsource-parser": "^3.0.6",
     "fuse.js": "^7.1.0",
     "prisma": "^6.18.0",
