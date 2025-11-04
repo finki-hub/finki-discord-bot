@@ -313,11 +313,7 @@ const getSpecialPollAdminDecision = async (poll: Poll) => {
         return null;
       }
 
-      if (
-        adminVotes === null ||
-        adminVotes.size !== 1 ||
-        adminVotes.has(null)
-      ) {
+      if (adminVotes?.size !== 1 || adminVotes.has(null)) {
         return null;
       }
 
