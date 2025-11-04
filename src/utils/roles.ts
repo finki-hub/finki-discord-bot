@@ -100,13 +100,17 @@ export const getMembersByRoles = async (
   guild: Guild,
   rolesWithMembers: DiscordRole[],
 ) => {
-  await guild.members.fetch({ limit: 3_000 });
+  await guild.members.fetch();
+  await guild.roles.fetch();
+
+  const members = rolesWithMembers.map((role) => role.members.keys());
 
   const uniqueMembers = new Set<string>();
+  for (const iterator of members) {
+    const ids = Array.from(iterator);
 
-  for (const role of rolesWithMembers) {
-    for (const memberId of role.members.keys()) {
-      uniqueMembers.add(memberId);
+    for (const id of ids) {
+      uniqueMembers.add(id);
     }
   }
 
@@ -129,19 +133,28 @@ export const getMembersByRolesExtended = async (
   rolesWithMembers: DiscordRole[],
   rolesWithoutMembers: DiscordRole[],
 ) => {
-  await guild.members.fetch({ limit: 3_000 });
+  await guild.members.fetch();
+  await guild.roles.fetch();
 
   const uniqueMembers = new Set<string>();
 
-  for (const role of rolesWithMembers) {
-    for (const memberId of role.members.keys()) {
-      uniqueMembers.add(memberId);
+  const members = rolesWithMembers.map((role) => role.members.keys());
+
+  for (const iterator of members) {
+    const ids = Array.from(iterator);
+
+    for (const id of ids) {
+      uniqueMembers.add(id);
     }
   }
 
-  for (const role of rolesWithoutMembers) {
-    for (const memberId of role.members.keys()) {
-      uniqueMembers.delete(memberId);
+  const membersWithout = rolesWithoutMembers.map((role) => role.members.keys());
+
+  for (const iterator of membersWithout) {
+    const ids = Array.from(iterator);
+
+    for (const id of ids) {
+      uniqueMembers.delete(id);
     }
   }
 
