@@ -100,22 +100,13 @@ export const getMembersByRoles = async (
   guild: Guild,
   rolesWithMembers: DiscordRole[],
 ) => {
-  await guild.roles.fetch();
-
-  const fetchedRoles = await Promise.all(
-    rolesWithMembers.map((role) => guild.roles.fetch(role.id)),
-  );
-
-  const members = fetchedRoles
-    .filter((role) => role !== null)
-    .map((role) => role.members.keys());
+  await guild.members.fetch({ limit: 3_000 });
 
   const uniqueMembers = new Set<string>();
-  for (const iterator of members) {
-    const ids = Array.from(iterator);
 
-    for (const id of ids) {
-      uniqueMembers.add(id);
+  for (const role of rolesWithMembers) {
+    for (const memberId of role.members.keys()) {
+      uniqueMembers.add(memberId);
     }
   }
 
@@ -138,38 +129,19 @@ export const getMembersByRolesExtended = async (
   rolesWithMembers: DiscordRole[],
   rolesWithoutMembers: DiscordRole[],
 ) => {
-  await guild.roles.fetch();
-
-  const fetchedRolesWithMembers = await Promise.all(
-    rolesWithMembers.map((role) => guild.roles.fetch(role.id)),
-  );
-  const fetchedRolesWithoutMembers = await Promise.all(
-    rolesWithoutMembers.map((role) => guild.roles.fetch(role.id)),
-  );
+  await guild.members.fetch({ limit: 3_000 });
 
   const uniqueMembers = new Set<string>();
 
-  const members = fetchedRolesWithMembers
-    .filter((role) => role !== null)
-    .map((role) => role.members.keys());
-
-  for (const iterator of members) {
-    const ids = Array.from(iterator);
-
-    for (const id of ids) {
-      uniqueMembers.add(id);
+  for (const role of rolesWithMembers) {
+    for (const memberId of role.members.keys()) {
+      uniqueMembers.add(memberId);
     }
   }
 
-  const membersWithout = fetchedRolesWithoutMembers
-    .filter((role) => role !== null)
-    .map((role) => role.members.keys());
-
-  for (const iterator of membersWithout) {
-    const ids = Array.from(iterator);
-
-    for (const id of ids) {
-      uniqueMembers.delete(id);
+  for (const role of rolesWithoutMembers) {
+    for (const memberId of role.members.keys()) {
+      uniqueMembers.delete(memberId);
     }
   }
 
