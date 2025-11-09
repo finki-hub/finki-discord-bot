@@ -86,9 +86,7 @@ export const getClosestQuestions = async (options: ClosestQuestionsOptions) => {
 
   for (const [key, value] of Object.entries(sanitizedOptions)) {
     if (value !== undefined) {
-      const stringValue =
-        typeof value === 'object' ? JSON.stringify(value) : value.toString();
-      url.searchParams.append(key, stringValue);
+      url.searchParams.append(key, String(value));
     }
   }
 
@@ -208,11 +206,7 @@ export const getUnembeddedQuestions = async (
 
   for (const [key, value] of Object.entries(sanitizedOptions)) {
     if (value !== undefined) {
-      const stringValue =
-        typeof value === 'object'
-          ? JSON.stringify(value)
-          : (value as number | string).toString();
-      url.searchParams.append(key, stringValue);
+      url.searchParams.append(key, value);
     }
   }
 
