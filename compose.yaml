@@ -36,7 +36,7 @@ services:
         - "CMD-SHELL"
         - "pg_isready -U $$POSTGRES_USER"
       timeout: 30s
-    image: postgres:17
+    image: postgres:18
     ports:
       - "${POSTGRES_PORT}:5432"
     networks:
