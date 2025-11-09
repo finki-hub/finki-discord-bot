@@ -45,7 +45,7 @@ export const setConfigProperty = async <T extends BotConfigKeys>(
 export const getConfigKeys = () => Object.keys(DEFAULT_CONFIGURATION);
 
 export const getThemeColor = (): ColorResolvable =>
-  (config?.themeColor as ColorResolvable | undefined) ?? 'Random';
+  config?.themeColor ?? 'Random';
 
 export const getChannelsProperty = <
   T extends keyof FullyRequiredBotConfig['channels'],

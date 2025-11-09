@@ -8,7 +8,7 @@ import { randomBytes, randomInt } from 'node:crypto';
 
 import { getExperienceByUserId } from '../../../data/database/Experience.js';
 import {
-  LotteryPollType,
+  type LotteryPollType,
   LotteryPollTypeSchema,
 } from '../../../lib/schemas/PollType.js';
 import { logger } from '../../../logger.js';
@@ -43,26 +43,13 @@ export const getLotteryPollInformation = (pollText: string) => {
   };
 };
 
-const getLotteryPollText = (
-  pollType: LotteryPollType,
-): {
+const getLotteryPollText = (): {
   description: string;
   title: string;
-} => {
-  switch (pollType) {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    case LotteryPollType.REGULARS_LOTTERY:
-      return {
-        description: specialStrings.regularsLotteryDescription,
-        title: specialStrings.regularsLotteryTitle,
-      };
-    default:
-      return {
-        description: specialStrings.unknownLotteryPollDescription,
-        title: specialStrings.unknownLotteryPollTitle,
-      };
-  }
-};
+} => ({
+  description: specialStrings.regularsLotteryDescription,
+  title: specialStrings.regularsLotteryTitle,
+});
 
 export const createLotteryPoll = (
   pollType: LotteryPollType,
@@ -70,7 +57,7 @@ export const createLotteryPoll = (
   winnerCount: number,
   duration: number,
 ) => {
-  const { description, title } = getLotteryPollText(pollType);
+  const { description, title } = getLotteryPollText();
   const identifier = getLotteryPollIdentifier(pollType, weighted, winnerCount);
 
   return {
@@ -221,7 +208,7 @@ const markLotteryPollAsEnded = async (poll: Poll) => {
 
   await poll.message.edit(
     getPollContent(
-      getLotteryPollText(pollType).title,
+      getLotteryPollText().title,
       getLotteryPollIdentifier(pollType, weighted, winnerCount, true),
     ),
   );

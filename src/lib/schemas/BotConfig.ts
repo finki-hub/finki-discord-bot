@@ -5,6 +5,10 @@ import { ModelSchema } from './Model.js';
 import { RoleSchema } from './Role.js';
 import { TicketSchema } from './Ticket.js';
 
+const HexColorSchema = z.custom<`#${string}`>(
+  (val) => typeof val === 'string' && /^#[\da-f]{6}$/iu.test(val),
+);
+
 const TemporaryChannelConfigSchema = z.object({
   cron: z.string(),
   name: z.string(),
@@ -51,7 +55,7 @@ export const RequiredBotConfigSchema = z.object({
   temporaryChannels: z
     .record(TemporaryChannelSchema, TemporaryChannelConfigSchema)
     .optional(),
-  themeColor: z.string().optional(),
+  themeColor: HexColorSchema.optional(),
   ticketing: z
     .object({
       allowedInactivityDays: z.number().optional(),

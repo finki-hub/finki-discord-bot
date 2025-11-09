@@ -360,11 +360,13 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   const course = interaction.options.getString('course');
   const courseRole = interaction.options.getString('courserole');
 
-  const closestItem = course
-    ? getClosestCourse(course)
-    : courseRole
-      ? getClosestCourseRole(courseRole)
-      : null;
+  let closestItem: null | string = null;
+
+  if (course) {
+    closestItem = getClosestCourse(course);
+  } else if (courseRole) {
+    closestItem = getClosestCourseRole(courseRole);
+  }
 
   if (closestItem === null) {
     await interaction.editReply(commandErrors.courseNotFound);

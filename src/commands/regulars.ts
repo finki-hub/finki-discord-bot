@@ -1,7 +1,6 @@
 import {
   ChannelType,
   type ChatInputCommandInteraction,
-  type GuildTextBasedChannel,
   SlashCommandBuilder,
 } from 'discord.js';
 
@@ -139,9 +138,9 @@ const handleRegularsLottery = async (
     return;
   }
 
-  const channel = interaction.options.getChannel(
-    'channel',
-  ) as GuildTextBasedChannel | null;
+  const channel = interaction.options.getChannel('channel', false, [
+    ChannelType.GuildText,
+  ]);
   const duration = interaction.options.getInteger('duration', true);
   const weighted = interaction.options.getBoolean('weighted') ?? false;
   const winnerCount = interaction.options.getInteger('winners') ?? 1;
