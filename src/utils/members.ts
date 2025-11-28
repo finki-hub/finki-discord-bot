@@ -5,6 +5,27 @@ import { getRolesProperty } from '../configuration/main.js';
 import { getBarByUserId } from '../data/database/Bar.js';
 import { getExperienceByUserId } from '../data/database/Experience.js';
 import { Role } from '../lib/schemas/Role.js';
+import { logger } from '../logger.js';
+import {
+  logErrorFunctions,
+  logMessageFunctions,
+} from '../translations/logs.js';
+import { getGuild } from './guild.js';
+
+export const initializeMembers = async () => {
+  const guild = await getGuild();
+
+  if (guild === null) {
+    return;
+  }
+
+  try {
+    const members = await guild.members.fetch();
+    logger.info(logMessageFunctions.membersInitialized(members.size));
+  } catch (error) {
+    logger.error(logErrorFunctions.membersFetchError(error));
+  }
+};
 
 const memberHasRole = (member: GuildMember, role: Role) => {
   const roleId = getRolesProperty(role);

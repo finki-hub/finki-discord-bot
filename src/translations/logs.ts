@@ -69,6 +69,9 @@ export const logMessageFunctions = {
   loggedIn: (username: string | undefined) =>
     `Bot is ready! Logged in as ${username ?? 'an unknown user'}`,
 
+  membersInitialized: (memberCount: number) =>
+    `Initialized ${memberCount} members`,
+
   noRefreshNeeded: (property: string) => `No refresh needed for ${property}`,
 
   promptAnswered: (answer: string) => `Prompt answered: ${answer}`,
@@ -229,6 +232,8 @@ export const logErrorFunctions = {
     `Lottery poll ${pollType} with ${winnerCount} winners could not be executed`,
 
   memberNotFound: (userId: string) => `Member for ${userId} not found`,
+
+  membersFetchError: (error: unknown) => `Failed fetching members\n${error}`,
 
   messageContextMenuInteractionDeferError: (
     interaction: MessageContextMenuCommandInteraction,

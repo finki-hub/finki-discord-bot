@@ -202,8 +202,6 @@ const handleCourseRole = async (
     return;
   }
 
-  await guild.members.fetch();
-
   const roleEntry = Object.entries(courses).find(
     ([, course]) => course.toLowerCase() === courseRole?.toLowerCase(),
   );

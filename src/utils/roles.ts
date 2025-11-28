@@ -100,7 +100,6 @@ export const getMembersByRoles = async (
   guild: Guild,
   rolesWithMembers: DiscordRole[],
 ) => {
-  await guild.members.fetch();
   await guild.roles.fetch();
 
   const members = rolesWithMembers.map((role) => role.members.keys());
@@ -133,7 +132,6 @@ export const getMembersByRolesExtended = async (
   rolesWithMembers: DiscordRole[],
   rolesWithoutMembers: DiscordRole[],
 ) => {
-  await guild.members.fetch();
   await guild.roles.fetch();
 
   const uniqueMembers = new Set<string>();
