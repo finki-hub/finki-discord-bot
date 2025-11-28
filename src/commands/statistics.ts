@@ -63,8 +63,6 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     return;
   }
 
-  await guild.members.fetch();
-
   const subcommand = interaction.options.getSubcommand(true);
 
   if (
