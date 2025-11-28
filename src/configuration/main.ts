@@ -17,7 +17,9 @@ export const reloadDatabaseConfig = async () => {
   const currentConfig = await getConfig();
 
   try {
-    config = BotConfigSchema.parse(currentConfig?.value);
+    config = BotConfigSchema.parse(
+      currentConfig?.value ?? DEFAULT_CONFIGURATION,
+    );
   } catch (error) {
     config = BotConfigSchema.parse(DEFAULT_CONFIGURATION);
 
