@@ -58,3 +58,19 @@ export const getApiKey = () => {
     return null;
   }
 };
+
+export const getAocUrl = () => {
+  try {
+    return z.string().parse(env['AOC_URL']);
+  } catch {
+    return null;
+  }
+};
+
+export const getAocApiKey = () => {
+  try {
+    return z.string().parse(env['AOC_API_KEY']);
+  } catch {
+    return null;
+  }
+};

@@ -4,6 +4,7 @@ import {
   type ChatInputCommandInteraction,
   type MessageContextMenuCommandInteraction,
   MessageFlags,
+  type ModalSubmitInteraction,
   type UserContextMenuCommandInteraction,
 } from 'discord.js';
 
@@ -49,12 +50,54 @@ import {
   handleVipButton,
   handleYearButton,
 } from './button.js';
+import { handleAocSubmitBonusModal, handleAocSubmitModal } from './modal.js';
 
 const ignoredButtons = new Set(['exp', 'help', 'polls']);
+
+const noDeferCommands = new Set(['aoc submit', 'aoc submit-bonus']);
 
 export const handleChatInputCommand = async (
   interaction: ChatInputCommandInteraction,
 ) => {
+  const fullCommand =
+    `${interaction.commandName} ${interaction.options.getSubcommand(false) ?? ''}`.trim();
+  const shouldDefer = !noDeferCommands.has(fullCommand);
+
+  const command = await getCommand(interaction.commandName);
+
+  // For non-deferred commands (like modals), execute immediately to avoid timeout
+  if (!shouldDefer) {
+    if (command === undefined || !isSlashCommand(command)) {
+      await interaction.reply(commandErrors.commandNotFound);
+
+      return;
+    }
+
+    try {
+      await command.execute(interaction);
+    } catch (error) {
+      logger.error(
+        logErrorFunctions.chatInputInteractionError(interaction, error),
+      );
+    }
+
+    // Log after execution for non-deferred commands
+    logger.info(
+      `${logShortStrings.chat} ${interaction.user.tag}: ${interaction.toString()} [${
+        interaction.channel === null || interaction.channel.isDMBased()
+          ? logShortStrings.dm
+          : logShortStrings.guild
+      }]`,
+    );
+    void logEmbed(
+      await getChatInputCommandEmbed(interaction),
+      interaction,
+      Channel.Logs,
+    );
+
+    return;
+  }
+
   try {
     await interaction.deferReply();
   } catch (error) {
@@ -65,8 +108,6 @@ export const handleChatInputCommand = async (
 
     return;
   }
-
-  const command = await getCommand(interaction.commandName);
 
   logger.info(
     `${logShortStrings.chat} ${interaction.user.tag}: ${interaction.toString()} [${
@@ -99,11 +140,11 @@ export const handleChatInputCommand = async (
     return;
   }
 
-  const fullCommand = `${interaction.commandName} ${
+  const commandWithSubcommand = `${interaction.commandName} ${
     interaction.options.getSubcommand(false) ?? ''
   }`.trim();
 
-  if (!hasCommandPermission(member, fullCommand)) {
+  if (!hasCommandPermission(member, commandWithSubcommand)) {
     await interaction.editReply(commandErrors.commandNoPermission);
 
     return;
@@ -414,5 +455,55 @@ export const handleAutocomplete = async (
     await logsChannel?.send({
       content: logErrorFunctions.autocompleteExecutionError(interaction, error),
     });
+  }
+};
+
+const modalInteractionHandlers = {
+  'aoc-submit-bonus-modal': handleAocSubmitBonusModal,
+  'aoc-submit-modal': handleAocSubmitModal,
+};
+
+export const handleModalSubmit = async (
+  interaction: ModalSubmitInteraction,
+) => {
+  const modalId = interaction.customId;
+
+  logger.info(
+    `${logShortStrings.button} ${interaction.user.tag}: ${modalId} [${
+      interaction.channel === null || interaction.channel.isDMBased()
+        ? logShortStrings.dm
+        : logShortStrings.guild
+    }]`,
+  );
+
+  try {
+    await interaction.deferReply();
+  } catch (error) {
+    logger.error(
+      logErrorFunctions.modalInteractionDeferError(interaction, error),
+    );
+
+    return;
+  }
+
+  if (!Object.keys(modalInteractionHandlers).includes(modalId)) {
+    logger.warn(logErrorFunctions.commandNotFound(interaction.id));
+
+    return;
+  }
+
+  try {
+    await modalInteractionHandlers[
+      modalId as keyof typeof modalInteractionHandlers
+    ](interaction);
+  } catch (error) {
+    logger.error(logErrorFunctions.modalExecutionError(interaction, error));
+
+    const logsChannel = getChannel(Channel.Logs);
+    await logsChannel?.send({
+      content: logErrorFunctions.modalExecutionError(interaction, error),
+    });
+
+    await interaction.editReply(commandErrors.commandError);
   }
 };

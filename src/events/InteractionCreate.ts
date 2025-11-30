@@ -5,6 +5,7 @@ import {
   handleButton,
   handleChatInputCommand,
   handleMessageContextMenuCommand,
+  handleModalSubmit,
   handleUserContextMenuCommand,
 } from '../interactions/handlers.js';
 import { logger } from '../logger.js';
@@ -23,6 +24,8 @@ export const execute = async (...[interaction]: ClientEvents[typeof name]) => {
     await handleMessageContextMenuCommand(interaction);
   } else if (interaction.isAutocomplete()) {
     await handleAutocomplete(interaction);
+  } else if (interaction.isModalSubmit()) {
+    await handleModalSubmit(interaction);
   } else {
     logger.warn(logErrorFunctions.unknownInteractionError(interaction.user.id));
   }

@@ -13,6 +13,8 @@ services:
       ANALYTICS_URL: ${ANALYTICS_URL}
       API_KEY: ${API_KEY}
       TZ: ${TZ}
+      AOC_URL: ${AOC_URL}
+      AOC_API_KEY: ${AOC_API_KEY}
     image: ghcr.io/finki-hub/finki-discord-bot:latest
     networks:
       - finki_stack
