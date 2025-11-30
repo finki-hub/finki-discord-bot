@@ -15,6 +15,7 @@ on:
       - ".dockerignore"
       - "Dockerfile"
       - "esbuild.config.js"
+  workflow_dispatch:
 
 permissions:
   contents: read

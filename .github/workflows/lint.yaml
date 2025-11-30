@@ -21,6 +21,7 @@ on:
       - "package.json"
       - "package-lock.json"
       - "tsconfig.json"
+  workflow_dispatch:
 
 permissions:
   contents: read
