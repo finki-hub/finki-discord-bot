@@ -42,5 +42,8 @@ jobs:
       - name: Install Dependencies
         run: npm i
 
+      - name: Generate Prisma Client
+        run: npm run generate
+
       - name: Run ESLint
         run: npm run lint
