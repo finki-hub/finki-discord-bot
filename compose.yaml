@@ -3,6 +3,7 @@ name: finki-discord-bot-dev
 services:
   bot:
     build: .
+    pull_policy: build
     depends_on:
       database:
         condition: service_healthy
@@ -36,7 +37,7 @@ services:
         - "CMD-SHELL"
         - "pg_isready -U $$POSTGRES_USER"
       timeout: 30s
-    image: postgres:18
+    image: postgres:18-alpine
     ports:
       - "${POSTGRES_PORT}:5432"
     networks:

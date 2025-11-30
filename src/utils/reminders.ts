@@ -1,8 +1,8 @@
-import { type Reminder } from '@prisma/client';
 import { userMention } from 'discord.js';
 
 import { client } from '../client.js';
 import { deleteReminder, getReminders } from '../data/database/Reminder.js';
+import { type Reminder } from '../generated/prisma/client.js';
 import { logger } from '../logger.js';
 import { labels } from '../translations/labels.js';
 import { logErrorFunctions } from '../translations/logs.js';

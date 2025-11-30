@@ -1,5 +1,3 @@
-import type { Experience } from '@prisma/client';
-
 import {
   ActionRowBuilder,
   ButtonBuilder,
@@ -12,6 +10,7 @@ import {
   userMention,
 } from 'discord.js';
 
+import type { Experience } from '../generated/prisma/client.js';
 import type { Link } from '../lib/schemas/Link.js';
 import type { Question } from '../lib/schemas/Question.js';
 

@@ -11,17 +11,21 @@ import { logger } from '../logger.js';
 import { configErrorFunctions } from '../translations/errors.js';
 import { DEFAULT_CONFIGURATION } from './defaults.js';
 
-let config: BotConfig | undefined;
+type ConfigShape = NonNullable<BotConfig>;
+
+let config: ConfigShape | undefined;
 
 export const reloadDatabaseConfig = async () => {
   const currentConfig = await getConfig();
 
   try {
-    config = BotConfigSchema.parse(
+    const parsedConfig = BotConfigSchema.parse(
       currentConfig?.value ?? DEFAULT_CONFIGURATION,
     );
+    config = parsedConfig ?? DEFAULT_CONFIGURATION;
   } catch (error) {
-    config = BotConfigSchema.parse(DEFAULT_CONFIGURATION);
+    const parsedConfig = BotConfigSchema.parse(DEFAULT_CONFIGURATION);
+    config = parsedConfig ?? DEFAULT_CONFIGURATION;
 
     logger.warn(configErrorFunctions.invalidConfiguration(error));
   }
@@ -32,7 +36,7 @@ export const getConfigProperty = <T extends BotConfigKeys>(key: T) =>
 
 export const setConfigProperty = async <T extends BotConfigKeys>(
   key: T,
-  value: NonNullable<BotConfig>[T],
+  value: ConfigShape[T],
 ) => {
   if (config === undefined) {
     return null;

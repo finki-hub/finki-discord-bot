@@ -1,6 +1,6 @@
-import { type Reminder } from '@prisma/client';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
 
+import { type Reminder } from '../generated/prisma/client.js';
 import { truncateString } from './utils.js';
 
 export const getRemindersComponents = (reminders: Reminder[]) => {

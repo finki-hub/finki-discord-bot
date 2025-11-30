@@ -1,6 +1,6 @@
-import { type Prisma } from '@prisma/client';
 import { randomBytes } from 'node:crypto';
 
+import { type Prisma } from '../../generated/prisma/client.js';
 import { logger } from '../../logger.js';
 import { databaseErrorFunctions } from '../../translations/database.js';
 import { database } from './connection.js';

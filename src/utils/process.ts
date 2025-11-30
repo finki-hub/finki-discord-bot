@@ -1,5 +1,4 @@
-import { PrismaClient } from '@prisma/client';
-
+import { database } from '../data/database/connection.js';
 import { Channel } from '../lib/schemas/Channel.js';
 import { logger } from '../logger.js';
 import { exitMessageFunctions, exitMessages } from '../translations/logs.js';
@@ -8,9 +7,8 @@ import { getChannel } from './channels.js';
 const shutdown = async () => {
   logger.info(exitMessages.shutdownGracefully);
 
-  const prisma = new PrismaClient();
   try {
-    await prisma.$disconnect();
+    await database.$disconnect();
     logger.info(exitMessages.databaseConnectionClosed);
   } catch (error) {
     logger.error(exitMessageFunctions.databaseConnectionError(error));
@@ -48,8 +46,7 @@ export const attachProcessListeners = () => {
 
   process.on('beforeExit', async () => {
     logger.info(exitMessages.beforeExit);
-    const prisma = new PrismaClient();
-    await prisma.$disconnect();
+    await database.$disconnect();
   });
 
   process.on('exit', () => {

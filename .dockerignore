@@ -1,58 +1,12 @@
-# Node modules
 node_modules
-
-# Git
+dist
+db
+pgadmin
+logs
 .git
 .gitignore
-.gitattributes
-
-# Docker
-.dockerignore
-Dockerfile*
-compose*
-
-# Output
-dist
-
-# Logs
-logs
-bot.log
-
-# Configuration
-config
-files
-sessions
-
-# Environment
-.env*
-
-# GitHub
-.github
-*.md
-LICENSE
-README.md
-
-# Dev container
-.devcontainer
-
-# ESLint
-eslint.config.js
 .eslintcache
-
-# Database
-db
-
-# pgAdmin
-pgadmin
-
-# SonarCloud
-.sonarcloud.properties
-
-# Husky
-.husky
-
-# VS Code
-.vscode
-
-# EditorConfig
-.editorconfig
+*.log
+*.md
+sessions
+src/generated
