@@ -21,7 +21,7 @@
   "devDependencies": {
     "@types/async-lock": "^1.4.2",
     "@types/pg": "^8.15.6",
-    "esbuild": "^0.27.0",
+    "esbuild": "^0.27.1",
     "eslint": "^9.39.1",
     "eslint-config-imperium": "^2.8.0",
     "prisma": "^7.0.1",
