@@ -14,7 +14,7 @@
     "dotenv": "^17.2.3",
     "eventsource-parser": "^3.0.6",
     "fuse.js": "^7.1.0",
-    "winston": "^3.18.3",
+    "winston": "^3.19.0",
     "zod": "^4.1.13"
   },
   "description": "FINKI Discord Bot",
