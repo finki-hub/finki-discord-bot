@@ -9,7 +9,7 @@
     "async-lock": "^1.4.1",
     "chrono-node": "^2.9.0",
     "croner": "^9.1.0",
-    "discord-api-types": "^0.38.36",
+    "discord-api-types": "^0.38.37",
     "discord.js": "^14.25.1",
     "dotenv": "^17.2.3",
     "eventsource-parser": "^3.0.6",
