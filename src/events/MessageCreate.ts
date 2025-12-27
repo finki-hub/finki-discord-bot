@@ -6,7 +6,6 @@ import {
 } from '../configuration/main.js';
 import { logger } from '../logger.js';
 import { logErrorFunctions } from '../translations/logs.js';
-import { addExperience } from '../utils/experience.js';
 
 export const name = Events.MessageCreate;
 
@@ -47,6 +46,5 @@ const addReaction = async (message: Message) => {
 
 export const execute = async (...[message]: ClientEvents[typeof name]) => {
   await crosspost(message);
-  await addExperience(message);
   await addReaction(message);
 };

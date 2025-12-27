@@ -1,6 +1,5 @@
 export const labels = {
   accreditation: 'Акредитација',
-  activity: 'Активност',
   assistants: 'Асистенти',
   cabinet: 'Кабинет',
   capacity: 'Капацитет',
@@ -21,7 +20,6 @@ export const labels = {
   none: 'Нема',
   notifications: 'Нотификации',
   other: 'Друго',
-  points: 'Поени',
   position: 'Позиција',
   prerequisites: 'Предуслови',
   professors: 'Професори',

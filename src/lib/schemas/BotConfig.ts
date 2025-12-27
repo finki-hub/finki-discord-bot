@@ -23,12 +23,6 @@ export const RequiredBotConfigSchema = z.object({
     })
     .optional(),
   errorWebhook: z.url().optional(),
-  experience: z
-    .object({
-      enabled: z.boolean().optional(),
-      multipliers: z.record(z.string(), z.number()).optional(),
-    })
-    .optional(),
   guild: z.string().optional(),
   intervals: z
     .object({

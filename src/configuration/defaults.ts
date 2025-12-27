@@ -11,10 +11,6 @@ export const DEFAULT_CONFIGURATION = {
     enabled: false,
   },
   errorWebhook: undefined,
-  experience: {
-    enabled: false,
-    multipliers: undefined,
-  },
   guild: undefined,
   intervals: {
     buttonIdle: 60_000,

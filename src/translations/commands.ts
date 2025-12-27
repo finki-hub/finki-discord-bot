@@ -36,11 +36,6 @@ export const commandDescriptions = {
   'courses remove': 'Отстрани улоги за многу предмети',
   'course summary': 'Преземи информации за предмет',
   'course toggle': 'Земи или отстрани улога за предмет',
-  'experience add': 'Додади поени за активност',
-  'experience dump': 'Извлечи ги сите потсетници од базата на податоци',
-  'experience get': 'Преземи ниво и активност',
-  'experience leaderboard': 'Преземи листа на членови според активност',
-  'experience set': 'Измени поени за активност',
   faq: 'Преземи најчесто поставувано прашање',
   help: 'Преземи листа од сите достапни команди',
   home: 'Преземи линк до изворниот код',
@@ -123,16 +118,6 @@ export const commandResponseFunctions = {
     )} најгоре во листата на каналите.`,
 
   deletingMessages: (count: number | string) => `Се бришат ${count} пораки...`,
-
-  experienceAdded: (experience: number | string, userId: string) =>
-    `Додадовте ${experience} поени за активност на корисникот ${userMention(
-      userId,
-    )}.`,
-
-  experienceSet: (experience: number | string, userId: string) =>
-    `Ги поставивте поените за активност на корисникот ${userMention(
-      userId,
-    )} на ${experience}.`,
 
   ping: (ping: number | string) => `${ping} ms`,
 

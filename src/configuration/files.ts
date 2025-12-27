@@ -19,10 +19,6 @@ import {
   CourseStaffSchema,
 } from '../lib/schemas/CourseStaff.js';
 import {
-  type LevelConfig,
-  LevelConfigSchema,
-} from '../lib/schemas/LevelConfig.js';
-import {
   type RoleConfig,
   RoleConfigSchema,
 } from '../lib/schemas/RoleConfig.js';
@@ -44,7 +40,6 @@ const parseContent = (content: string, fallback: unknown = []): unknown => {
 let courses: string[] = [];
 let classrooms: Classroom[] = [];
 let information: CourseInformation[] = [];
-let levels: LevelConfig = {};
 let participants: CourseParticipants[] = [];
 let prerequisites: CoursePrerequisites[] = [];
 let professors: CourseStaff[] = [];
@@ -56,7 +51,6 @@ export const reloadConfigurationFiles = async () => {
   const coursesPromise = readFile('./config/courses.json', options);
   const classroomsPromise = readFile('./config/classrooms.json', options);
   const infoPromise = readFile('./config/information.json', options);
-  const levelsPromise = readFile('./config/levels.json', options);
   const participantsPromise = readFile('./config/participants.json', options);
   const prerequisitesPromise = readFile('./config/prerequisites.json', options);
   const professorsPromise = readFile('./config/professors.json', options);
@@ -68,7 +62,6 @@ export const reloadConfigurationFiles = async () => {
     coursesRaw,
     classroomsRaw,
     infoRaw,
-    levelsRaw,
     participantsRaw,
     prerequisitesRaw,
     professorsRaw,
@@ -79,7 +72,6 @@ export const reloadConfigurationFiles = async () => {
     coursesPromise,
     classroomsPromise,
     infoPromise,
-    levelsPromise,
     participantsPromise,
     prerequisitesPromise,
     professorsPromise,
@@ -91,7 +83,6 @@ export const reloadConfigurationFiles = async () => {
   const coursesData = parseContent(coursesRaw);
   const classroomsData = parseContent(classroomsRaw);
   const informationData = parseContent(infoRaw);
-  const levelsData = parseContent(levelsRaw, {});
   const participantsData = parseContent(participantsRaw);
   const prerequisitesData = parseContent(prerequisitesRaw);
   const professorsData = parseContent(professorsRaw);
@@ -104,7 +95,6 @@ export const reloadConfigurationFiles = async () => {
     ClassroomSchema.array().parseAsync(classroomsData);
   const infoDataPromise =
     CourseInformationSchema.array().parseAsync(informationData);
-  const levelsDataPromise = LevelConfigSchema.parseAsync(levelsData);
   const participantsDataPromise =
     CourseParticipantsSchema.array().parseAsync(participantsData);
   const prerequisitesDataPromise =
@@ -121,7 +111,6 @@ export const reloadConfigurationFiles = async () => {
     courses,
     classrooms,
     information,
-    levels,
     participants,
     prerequisites,
     professors,
@@ -132,7 +121,6 @@ export const reloadConfigurationFiles = async () => {
     coursesDataPromise,
     classroomsDataPromise,
     infoDataPromise,
-    levelsDataPromise,
     participantsDataPromise,
     prerequisitesDataPromise,
     professorsDataPromise,
@@ -147,8 +135,6 @@ export const getClassrooms = () => classrooms;
 export const getCourses = () => courses;
 
 export const getInformation = () => information;
-
-export const getLevels = () => levels;
 
 export const getParticipants = () => participants;
 

@@ -5,9 +5,6 @@ export const databaseErrorFunctions = {
 
   createAntosError: (error: unknown) => `Failed creating Anto facts\n${error}`,
 
-  createExperienceError: (error: unknown) =>
-    `Failed creating experience\n${error}`,
-
   createLinkError: (error: unknown) => `Failed creating link\n${error}`,
 
   createQuestionError: (error: unknown) => `Failed creating question\n${error}`,
@@ -32,15 +29,6 @@ export const databaseErrorFunctions = {
   deleteReminderError: (error: unknown) => `Failed deleting reminder\n${error}`,
 
   getAntosError: (error: unknown) => `Failed getting Anto facts\n${error}`,
-
-  getExperienceByUserIdError: (error: unknown) =>
-    `Failed getting experience by user ID\n${error}`,
-
-  getExperienceCountError: (error: unknown) =>
-    `Failed getting experience count\n${error}`,
-
-  getExperienceSortedError: (error: unknown) =>
-    `Failed getting sorted experience\n${error}`,
 
   getLinkError: (error: unknown) => `Failed getting link\n${error}`,
 
@@ -70,9 +58,6 @@ export const databaseErrorFunctions = {
     `Failed getting reminders by user ID\n${error}`,
 
   getRemindersError: (error: unknown) => `Failed getting reminders\n${error}`,
-
-  updateExperienceError: (error: unknown) =>
-    `Failed updating experience\n${error}`,
 
   updateLinkError: (error: unknown) => `Failed updating link\n${error}`,
 

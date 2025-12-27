@@ -65,12 +65,6 @@ export const getCrosspostingProperty = <
   key: T,
 ) => config?.crossposting?.[key];
 
-export const getExperienceProperty = <
-  T extends keyof FullyRequiredBotConfig['experience'],
->(
-  key: T,
-) => config?.experience?.[key];
-
 export const getIntervalsProperty = <
   T extends keyof FullyRequiredBotConfig['intervals'],
 >(
@@ -99,10 +93,4 @@ export const getTicketProperty = (key: string) => {
   const tickets = getTicketingProperty('tickets');
 
   return tickets?.find((ticket) => ticket.id === key);
-};
-
-export const getExperienceMultiplier = (channelId: string) => {
-  const multipliers = getExperienceProperty('multipliers');
-
-  return multipliers?.[channelId] ?? 1;
 };

@@ -6,11 +6,8 @@ import {
   type GuildMember,
   inlineCode,
   roleMention,
-  type User,
-  userMention,
 } from 'discord.js';
 
-import type { Experience } from '../generated/prisma/client.js';
 import type { Link } from '../lib/schemas/Link.js';
 import type { Question } from '../lib/schemas/Question.js';
 
@@ -38,7 +35,6 @@ import { labels } from '../translations/labels.js';
 import { paginationStringFunctions } from '../translations/pagination.js';
 import { commandMention } from '../utils/commands.js';
 import { getNormalizedUrl } from '../utils/links.js';
-import { getUsername } from '../utils/members.js';
 import { linkStaff } from './utils.js';
 
 export const getAboutEmbed = () =>
@@ -397,95 +393,6 @@ export const getStudentInfoEmbed = (member: GuildMember) => {
         value: other === '' ? labels.none : other,
       },
     )
-    .setTimestamp();
-};
-
-export const getExperienceEmbed = (experience: Experience, user: User) =>
-  new EmbedBuilder()
-    .setColor(getThemeColor())
-    .setAuthor({
-      iconURL: user.displayAvatarURL(),
-      name: user.tag,
-    })
-    .setTitle(labels.activity)
-    .addFields(
-      {
-        inline: true,
-        name: labels.level,
-        value: experience.level.toString(),
-      },
-      {
-        inline: true,
-        name: labels.points,
-        value: experience.experience.toString(),
-      },
-    )
-    .setTimestamp();
-
-export const getExperienceLeaderboardFirstPageEmbed = async (
-  experience: Experience[],
-  all: number,
-  perPage = 8,
-) => {
-  const total = experience.length;
-
-  return new EmbedBuilder()
-    .setColor(getThemeColor())
-    .setTitle(labels.activity)
-    .addFields(
-      await Promise.all(
-        experience.slice(0, perPage).map(async (exp, index) => ({
-          name: '\u200B',
-          value: `${index + 1}. ${inlineCode(await getUsername(exp.userId))} (${userMention(
-            exp.userId,
-          )}): ${labels.level}: ${exp.level} | ${labels.points}: ${
-            exp.experience
-          }`,
-        })),
-      ),
-    )
-    .setFooter({
-      text: paginationStringFunctions.membersPage(
-        1,
-        Math.max(1, Math.ceil(total / perPage)),
-        all,
-      ),
-    })
-    .setTimestamp();
-};
-
-export const getExperienceLeaderboardNextPageEmbed = async (
-  experience: Experience[],
-  page: number,
-  all: number,
-  perPage = 8,
-) => {
-  const total = experience.length;
-
-  return new EmbedBuilder()
-    .setColor(getThemeColor())
-    .setTitle(labels.activity)
-    .addFields(
-      await Promise.all(
-        experience
-          .slice(perPage * page, perPage * (page + 1))
-          .map(async (exp, index) => ({
-            name: '\u200B',
-            value: `${perPage * page + index + 1}. ${inlineCode(
-              await getUsername(exp.userId),
-            )} (${userMention(exp.userId)}): ${labels.level}: ${exp.level} | ${
-              labels.points
-            }: ${exp.experience}`,
-          })),
-      ),
-    )
-    .setFooter({
-      text: paginationStringFunctions.membersPage(
-        page + 1,
-        Math.max(1, Math.ceil(total / perPage)),
-        all,
-      ),
-    })
     .setTimestamp();
 };
 

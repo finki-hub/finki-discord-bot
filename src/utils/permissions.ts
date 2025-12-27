@@ -1,4 +1,4 @@
-import { type GuildMember, PermissionsBitField } from 'discord.js';
+import { type GuildMember } from 'discord.js';
 
 import { getRolesProperty } from '../configuration/main.js';
 import { Role } from '../lib/schemas/Role.js';
@@ -19,22 +19,6 @@ const commandPermissions: Record<
   config: {
     permissions: [],
     roles: [Role.Administrators],
-  },
-  'experience add': {
-    permissions: [],
-    roles: [Role.Administrators],
-  },
-  'experience dump': {
-    permissions: [],
-    roles: [Role.Administrators],
-  },
-  'experience set': {
-    permissions: [],
-    roles: [Role.Administrators],
-  },
-  'Get Experience': {
-    permissions: [PermissionsBitField.Flags.ManageMessages],
-    roles: [],
   },
   manage: {
     permissions: [],
