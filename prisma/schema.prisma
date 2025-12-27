@@ -15,13 +15,3 @@ model Config {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
-
-model Anto {
-  id String @id @default(uuid())
-
-  quote  String  @unique
-  userId String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}

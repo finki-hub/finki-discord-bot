@@ -1,6 +1,5 @@
 import { type GuildMember, PermissionsBitField } from 'discord.js';
 
-import { client } from '../client.js';
 import { logger } from '../logger.js';
 import {
   logErrorFunctions,
@@ -21,12 +20,6 @@ export const initializeMembers = async () => {
   } catch (error) {
     logger.error(logErrorFunctions.membersFetchError(error));
   }
-};
-
-export const getUsername = async (userId: string) => {
-  const user = await client.users.fetch(userId);
-
-  return user.tag;
 };
 
 export const isMemberAdministrator = (member: GuildMember) =>

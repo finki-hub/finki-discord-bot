@@ -37,13 +37,3 @@ export const getMemberFromGuild = async (
     return null;
   }
 };
-
-export const getChannelFromGuild = async (channelId: string, guild?: Guild) => {
-  const guildToUse = guild ?? (await getGuild());
-
-  try {
-    return (await guildToUse?.channels.fetch(channelId)) ?? null;
-  } catch {
-    return null;
-  }
-};

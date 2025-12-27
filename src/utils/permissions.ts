@@ -20,18 +20,6 @@ const commandPermissions: Record<
     permissions: [],
     roles: [Role.Administrators],
   },
-  manage: {
-    permissions: [],
-    roles: [Role.Administrators],
-  },
-  message: {
-    permissions: [],
-    roles: [Role.Administrators],
-  },
-  purge: {
-    permissions: [],
-    roles: [Role.Moderators],
-  },
   script: {
     permissions: [],
     roles: [Role.Administrators],

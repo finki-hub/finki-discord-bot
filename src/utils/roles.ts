@@ -52,14 +52,6 @@ const refreshRoles = (guild: Guild, type: RoleSets) => {
   }
 };
 
-export const getRoleFromSet = (guild: Guild, type: RoleSets, role: string) => {
-  if (roleSets[type].length === 0) {
-    refreshRoles(guild, type);
-  }
-
-  return roleSets[type].find((ro) => ro.name === role);
-};
-
 export const getRoles = (guild: Guild, type: RoleSets) => {
   if (roleSets[type].length === 0) {
     refreshRoles(guild, type);

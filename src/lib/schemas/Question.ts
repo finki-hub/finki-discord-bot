@@ -27,39 +27,3 @@ export const QuestionSchema = z
 export const QuestionsSchema = z.array(QuestionSchema);
 
 export type Question = z.infer<typeof QuestionSchema>;
-
-export const CreateQuestionSchema = z.object({
-  content: z.string(),
-  links: z.record(z.string(), z.string()).nullable(),
-  name: z.string(),
-  userId: z.string().nullable(),
-});
-
-export const PreparedCreateQuestionSchema = CreateQuestionSchema.transform(
-  (data) => ({
-    content: data.content,
-    links: data.links,
-    name: data.name,
-    user_id: data.userId,
-  }),
-);
-
-export type CreateQuestion = z.infer<typeof CreateQuestionSchema>;
-
-export const UpdateQuestionSchema = z.object({
-  content: z.string().nullable(),
-  links: z.record(z.string(), z.string()).nullable(),
-  name: z.string().nullable(),
-  userId: z.string().nullable(),
-});
-
-export const PreparedUpdateQuestionSchema = UpdateQuestionSchema.transform(
-  (data) => ({
-    content: data.content,
-    links: data.links,
-    name: data.name,
-    user_id: data.userId,
-  }),
-);
-
-export type UpdateQuestion = z.infer<typeof UpdateQuestionSchema>;

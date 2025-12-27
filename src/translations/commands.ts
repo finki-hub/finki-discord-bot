@@ -10,7 +10,6 @@ import {
 
 export const commandDescriptions = {
   about: 'За Discord ботот',
-  anto: 'Преземи Анто факт',
   'aoc bonus': 'Преземи бонус проблем од FINKI AOC',
   'aoc leaderboard': 'Преземи листа на членови според FINKI AOC',
   'aoc problem': 'Преземи проблем од FINKI AOC',
@@ -39,27 +38,11 @@ export const commandDescriptions = {
   faq: 'Преземи најчесто поставувано прашање',
   help: 'Преземи листа од сите достапни команди',
   home: 'Преземи линк до изворниот код',
-  invite: 'Преземи пристапен линк за серверот',
   link: 'Преземи најчесто баран линк',
   'list links': 'Преземи листа од сите линкови',
   'list questions': 'Преземи листа од сите прашања',
-  'manage anto-add': 'Додади Анто факт',
-  'manage anto-delete': 'Избриши Анто факт',
-  'manage anto-dump': 'Извлечи ги сите Анто факти од базата на податоци',
-  'manage anto-mass-add': 'Додади многу Анто факти',
-  'manage link-content': 'Прикажи содржина на линк',
-  'manage link-delete': 'Избриши линк',
-  'manage link-dump': 'Извлечи ги сите линкови од базата на податоци',
-  'manage link-set': 'Додади или измени линк',
-  'manage question-content': 'Прикажи содржина на прашање',
-  'manage question-delete': 'Избриши прашање',
-  'manage question-dump': 'Извлечи ги сите прашања од базата на податоци',
-  'manage question-set': 'Додади или измени прашање',
-  message: 'Испрати порака',
   office: 'Преземи информации за просторија',
-  ping: 'Прикажи време на одзив',
   prompt: 'Испрати промпт до LLM агентот',
-  purge: 'Бриши пораки',
   query: 'Испрати промпт до LLM агентот',
   question: 'Преземи најчесто поставувано прашање',
   session: 'Преземи распоред за испитна сесија или колоквиумска недела',
@@ -78,13 +61,8 @@ export const commandDescriptions = {
 export const commandResponses = {
   allSemestersCoursesAdded: 'Ги земавте предметите од сите семестри.',
   allSemestersCoursesRemoved: 'Ги отстранивте предметите од сите семестри.',
-  antoDeleted: 'Го избришавте Анто фактот.',
-  antosCreated: 'Креиравте Анто фактот.',
   configurationReloaded: 'Конфигурацијата е освежена.',
   configurationReloading: 'Се освежува конфигурацијата...',
-  faqDeleted: 'Го избришавте прашањето.',
-  linkDeleted: 'Го избришавте линкот.',
-  messageCreated: 'Испративте порака.',
   scriptExecuted: 'Ја извршивте скриптата.',
   ticketClosed: 'Тикетот е затворен.',
   timeoutImpossible: 'Не може да си поставите тајмаут.',
@@ -107,10 +85,6 @@ export const commandResponseFunctions = {
     )}: препорачано е да ги земате предметите од делот ${inlineCode(
       'Channels & Roles',
     )} најгоре во листата на каналите.`,
-
-  deletingMessages: (count: number | string) => `Се бришат ${count} пораки...`,
-
-  ping: (ping: number | string) => `${ping} ms`,
 
   semesterCoursesAdded: (semester: number | string) =>
     `Ги земавте предметите од семестар ${semester}.`,
@@ -147,9 +121,6 @@ export const commandResponseFunctions = {
 };
 
 export const commandErrors = {
-  antoCreationFailed: 'Креирањето на Анто фактот беше неуспешно.',
-  antoNotFound: 'Анто фактот не постои.',
-  antosCreationFailed: 'Креирањето на Анто фактите беше неуспешно.',
   aocLeaderboardNotFound: 'Не може да се вчита табелата на резултати.',
   aocProblemNotFound: 'Проблемот не постои.',
   aocSubmitFailed: 'Испраќањето на одговорот беше неуспешно.',
@@ -163,39 +134,25 @@ export const commandErrors = {
   courseNotFound: 'Предметот не постои.',
   coursesNotFound: 'Предметите не постојат.',
   dataFetchFailed: 'Преземањето на податоците беше неуспешно.',
-  faqCreationFailed: 'Креирањето на прашањето беше неуспешно.',
   faqNotFound: 'Прашањето не постои.',
-  faqSendFailed: 'Испраќањето на прашањето беше неуспешно.',
   guildFetchFailed: 'Преземањето на серверот беше неуспешно.',
-  invalidAntos: 'Анто фактите се во невалиден формат.',
   invalidChannel: 'Каналот е невалиден.',
-  invalidDateTime: 'Датумот и/или времето се невалидни.',
-  invalidLink: 'Линкот е невалиден.',
-  invalidLinks: 'Линковите се во невалиден формат.',
   invalidTicket: 'Тикетот не е валиден.',
   invalidTicketType: 'Дадениот тип на тикетот не е валиден.',
-  inviteCreationFailed: 'Креирањето на пристапен линк беше неуспешно.',
-  linkCreationFailed: 'Креирањето на линкот беше неуспешно.',
   linkNotFound: 'Линкот не постои.',
-  linkSendFailed: 'Испраќањето на линкот беше неуспешно.',
   linksFetchFailed: 'Преземањето на линковите беше неуспешно.',
   llmDisabled: 'Јазичниот модел е исклучен.',
   llmNotReady: 'Јазичниот модел не е спремен. Обидете се подоцна.',
   llmUnavailable: 'Јазичниот модел не е достапен. Обидете се подоцна.',
-  memberNotFound: 'Членот не постои.',
-  noAnto: 'Анто фактите не се креирани.',
   noTicketMembers:
     'Не се избрани членови до кои може да се испрати тикетот. Обидете се на друга категорија.',
   noTickets: 'Нема тикети.',
   questionsFetchFailed: 'Преземањето на прашањата беше неуспешно.',
-  serverOnlyCommand: 'Командата се повикува само во серверот.',
   sessionNotFound: 'Сесијата не постои.',
   staffNotFound: 'Професорот не постои.',
   ticketingDisabled: 'Тикетите не се овозможени.',
   unknownChatError:
     'Настана грешка при испраќање на промптот. Обидете се повторно.',
-  userBot: 'Корисникот е бот.',
-  userNotFound: 'Корисникот не постои.',
 };
 
 export const commandErrorFunctions = {

@@ -58,17 +58,6 @@ export const logMessageFunctions = {
 export const logErrorFunctions = {
   addReactionError: (error: unknown) => `Failed adding reaction\n${error}`,
 
-  antoCreateError: (error: unknown) => `Failed creating Anto fact\n${error}`,
-
-  antoDeleteError: (error: unknown) => `Failed deleting Anto fact\n${error}`,
-
-  antoRandomGetError: (error: unknown) =>
-    `Failed getting random Anto fact\n${error}`,
-
-  antosCreateError: (error: unknown) => `Failed creating Anto facts\n${error}`,
-
-  antosParseError: (error: unknown) => `Failed parsing Anto facts\n${error}`,
-
   aocLeaderboardError: (error: unknown) =>
     `Failed getting AOC leaderboard\n${error}`,
 
@@ -95,12 +84,6 @@ export const logErrorFunctions = {
 
   buttonInteractionOutsideGuildError: (customId: string) =>
     `Received button interaction ${customId} outside of a guild`,
-
-  buttonInteractionResponseError: (error: unknown) =>
-    `Failed responding to button interaction\n${error}`,
-
-  buttonInteractionRoleError: (customId: string) =>
-    `Received button interaction ${customId} for a role that does not exist`,
 
   channelFetchError: (channelId: string, error: unknown) =>
     `Failed fetching channel ${channelId}\n${error}`,
@@ -146,27 +129,13 @@ export const logErrorFunctions = {
   crosspostError: (channelId: string, error: unknown) =>
     `Failed crossposting message in channel ${channelId}\n${error}`,
 
-  faqSendError: (error: unknown) => `Failed sending question\n${error}`,
-
-  fillEmbeddingsError: (error: unknown) =>
-    `Failed filling embeddings\n${error}`,
-
   interactionUpdateError: (command: string, error: unknown) =>
     `Failed updating ${command} interaction\n${error}`,
-
-  invalidButtonInteractionError: (customId: string) =>
-    `Invalid button interaction ${customId}`,
-
-  linkSendError: (error: unknown) => `Failed sending link\n${error}`,
-
-  linksParseError: (error: unknown) => `Failed parsing links\n${error}`,
 
   logAnalyticsError: (error: unknown) =>
     `Failed logging analytics event\n${error}`,
 
   loginFailed: (error: unknown) => `Failed logging in\n${error}`,
-
-  memberNotFound: (userId: string) => `Member for ${userId} not found`,
 
   membersFetchError: (error: unknown) => `Failed fetching members\n${error}`,
 
@@ -182,9 +151,6 @@ export const logErrorFunctions = {
   ) =>
     `Failed handling message context menu interaction ${interaction.commandName}\n${error}`,
 
-  messageResolveError: (messageId: string, error: unknown) =>
-    `Failed resolving message ${messageId}\n${error}`,
-
   modalExecutionError: (interaction: ModalSubmitInteraction, error: unknown) =>
     `Failed executing modal interaction ${interaction.customId}\n${error}`,
 
@@ -192,8 +158,6 @@ export const logErrorFunctions = {
     interaction: ModalSubmitInteraction,
     error: unknown,
   ) => `Failed deferring modal interaction ${interaction.customId}\n${error}`,
-
-  promptError: (error: unknown) => `Failed sending prompt\n${error}`,
 
   removeReactionError: (error: unknown) => `Failed removing reaction\n${error}`,
 
