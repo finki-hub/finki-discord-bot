@@ -98,7 +98,6 @@ export const commandDescriptions = {
   question: 'Преземи најчесто поставувано прашање',
   'regulars add': 'Додади нов редовен член',
   'regulars lottery': 'Спроведи лотарија за влез во редовните',
-  'regulars recreate': 'Рекреирај го привремениот канал за редовни',
   'regulars remove': 'Отстрани редовен член',
   'reminder create': 'Креирај потсетник',
   'reminder delete': 'Избриши потсетник',
@@ -123,7 +122,6 @@ export const commandDescriptions = {
   'ticket list': 'Преземи листа од сите тикети',
   timeout: 'Дај си тајмаут',
   'vip add': 'Предложи нов член за ВИП',
-  'vip recreate': 'Рекреирај го привремениот канал за ВИП',
   'vip remove': 'Предложи бркање на член на ВИП',
 };
 
@@ -164,7 +162,6 @@ export const commandResponses = {
   ruleCreated: 'Креиравте правило.',
   ruleDeleted: 'Го избришавте правилото.',
   scriptExecuted: 'Ја извршивте скриптата.',
-  temporaryChannelRecreated: 'Го рекреиравте привремениот канал.',
   ticketClosed: 'Тикетот е затворен.',
   timeoutImpossible: 'Не може да си поставите тајмаут.',
   timeoutSet: 'Си поставивте тајмаут.',

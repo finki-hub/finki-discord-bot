@@ -1,13 +1,9 @@
-import { Cron } from 'croner';
 import {
-  ChannelType,
   type EmbedBuilder,
   type GuildTextBasedChannel,
   type Interaction,
   type InteractionResponse,
   type Message,
-  OverwriteType,
-  PermissionFlagsBits,
 } from 'discord.js';
 import { setTimeout } from 'node:timers/promises';
 
@@ -15,20 +11,14 @@ import { client } from '../client.js';
 import {
   getConfigProperty,
   getIntervalsProperty,
-  getRolesProperty,
-  getTemporaryChannelsProperty,
 } from '../configuration/main.js';
-import { type Channel, TemporaryChannel } from '../lib/schemas/Channel.js';
-import { Role } from '../lib/schemas/Role.js';
+import { type Channel } from '../lib/schemas/Channel.js';
 import { logger } from '../logger.js';
-import { labels } from '../translations/labels.js';
 import {
   logErrorFunctions,
   logMessageFunctions,
   logMessages,
 } from '../translations/logs.js';
-import { specialStringFunctions } from '../translations/special.js';
-import { getGuild } from './guild.js';
 
 const channels: Partial<Record<Channel, GuildTextBasedChannel | undefined>> =
   {};
@@ -62,155 +52,6 @@ export const initializeChannels = async () => {
 };
 
 export const getChannel = (type: Channel) => channels[type];
-
-const getNextRunTime = (date?: Date, locale = 'en-GB') => {
-  if (date === undefined) {
-    return labels.unknown;
-  }
-
-  return new Intl.DateTimeFormat(locale, {
-    dateStyle: 'full',
-    timeStyle: 'long',
-  }).format(date);
-};
-
-const getNextChannelRecreationTime = (
-  channelType: TemporaryChannel,
-  locale = 'en-GB',
-  offset = 1,
-) => {
-  const temporaryChannel = getTemporaryChannelsProperty(channelType);
-
-  if (temporaryChannel === undefined) {
-    return labels.unknown;
-  }
-
-  const nextRun = new Cron(temporaryChannel.cron).nextRuns(offset).at(-1);
-
-  return nextRun === undefined
-    ? labels.unknown
-    : getNextRunTime(nextRun, locale);
-};
-
-export const recreateVipTemporaryChannel = async () => {
-  const guild = await getGuild();
-  const temporaryChannel = getTemporaryChannelsProperty(TemporaryChannel.VIP);
-
-  if (temporaryChannel === undefined) {
-    return;
-  }
-
-  const existingChannel = client.channels.cache.find(
-    (ch) => ch.type !== ChannelType.DM && ch.name === temporaryChannel.name,
-  );
-
-  if (existingChannel !== undefined) {
-    await existingChannel.delete();
-  }
-
-  const administratorsRoleId = getRolesProperty(Role.Administrators);
-  const moderatorsRoleId = getRolesProperty(Role.Moderators);
-  const vipRoleId = getRolesProperty(Role.VIP);
-  const managementRoleId = getRolesProperty(Role.Management);
-
-  const rolesToAdd = [
-    administratorsRoleId,
-    moderatorsRoleId,
-    vipRoleId,
-    managementRoleId,
-  ].filter((role) => role !== undefined);
-
-  await guild?.channels.create({
-    name: temporaryChannel.name,
-    nsfw: true,
-    parent: temporaryChannel.parent ?? null,
-    permissionOverwrites: [
-      ...rolesToAdd.map((role) => ({
-        allow: [PermissionFlagsBits.ViewChannel],
-        id: role,
-        type: OverwriteType.Role,
-      })),
-      {
-        deny: [PermissionFlagsBits.ViewChannel],
-        id: guild.roles.everyone.id,
-        type: OverwriteType.Role,
-      },
-    ],
-    topic: specialStringFunctions.tempVipTopic(
-      getNextChannelRecreationTime(TemporaryChannel.VIP, 'mk-MK'),
-    ),
-    type: ChannelType.GuildText,
-  });
-
-  logger.info(
-    logMessageFunctions.tempVipScheduled(
-      getNextChannelRecreationTime(TemporaryChannel.VIP),
-    ),
-  );
-};
-
-export const recreateRegularsTemporaryChannel = async () => {
-  const guild = await getGuild();
-  const temporaryChannel = getTemporaryChannelsProperty(
-    TemporaryChannel.Regulars,
-  );
-
-  if (temporaryChannel === undefined) {
-    return;
-  }
-
-  const existingChannel = client.channels.cache.find(
-    (ch) => ch.type !== ChannelType.DM && ch.name === temporaryChannel.name,
-  );
-
-  if (existingChannel !== undefined) {
-    await existingChannel.delete();
-  }
-
-  const administratorsRoleId = getRolesProperty(Role.Administrators);
-  const moderatorsRoleId = getRolesProperty(Role.Moderators);
-  const vipRoleId = getRolesProperty(Role.VIP);
-  const irregularsRoleId = getRolesProperty(Role.Irregulars);
-  const regularsRoleId = getRolesProperty(Role.Regulars);
-  const managementRoleId = getRolesProperty(Role.Management);
-
-  const rolesToAdd = [
-    administratorsRoleId,
-    moderatorsRoleId,
-    vipRoleId,
-    irregularsRoleId,
-    regularsRoleId,
-    managementRoleId,
-  ].filter((role) => role !== undefined);
-
-  await guild?.channels.create({
-    name: temporaryChannel.name,
-    nsfw: true,
-    parent: temporaryChannel.parent ?? null,
-    permissionOverwrites: [
-      ...rolesToAdd.map((role) => ({
-        allow: [PermissionFlagsBits.ViewChannel],
-        id: role,
-        type: OverwriteType.Role,
-      })),
-      {
-        deny: [PermissionFlagsBits.ViewChannel],
-        id: guild.roles.everyone.id,
-        type: OverwriteType.Role,
-      },
-    ],
-    topic: specialStringFunctions.tempRegularsTopic(
-      getNextChannelRecreationTime(TemporaryChannel.Regulars, 'mk-MK'),
-    ),
-    type: ChannelType.GuildText,
-  });
-
-  logger.info(
-    logMessageFunctions.tempRegularsScheduled(
-      getNextChannelRecreationTime(TemporaryChannel.Regulars),
-    ),
-  );
-};
 
 export const logEmbed = async (
   embed: EmbedBuilder,

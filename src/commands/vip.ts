@@ -14,9 +14,7 @@ import { Role } from '../lib/schemas/Role.js';
 import {
   commandDescriptions,
   commandErrors,
-  commandResponses,
 } from '../translations/commands.js';
-import { recreateVipTemporaryChannel } from '../utils/channels.js';
 import { getMemberFromGuild } from '../utils/guild.js';
 import {
   isMemberAdmin,
@@ -64,11 +62,6 @@ export const data = new SlashCommandBuilder()
           .setDescription('Испрати нотификација')
           .setRequired(false),
       ),
-  )
-  .addSubcommand((command) =>
-    command
-      .setName('recreate')
-      .setDescription(commandDescriptions['vip recreate']),
   );
 
 const handleVipAdd = async (interaction: ChatInputCommandInteraction) => {
@@ -213,15 +206,8 @@ const handleVipRemove = async (interaction: ChatInputCommandInteraction) => {
   await interaction.editReply(poll);
 };
 
-const handleVipRecreate = async (interaction: ChatInputCommandInteraction) => {
-  await recreateVipTemporaryChannel();
-
-  await interaction.editReply(commandResponses.temporaryChannelRecreated);
-};
-
 const vipHandlers = {
   add: handleVipAdd,
-  recreate: handleVipRecreate,
   remove: handleVipRemove,
 };
 

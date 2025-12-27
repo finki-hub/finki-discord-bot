@@ -80,10 +80,6 @@ const commandPermissions: Record<
     permissions: [],
     roles: [Role.Moderators],
   },
-  'regulars recreate': {
-    permissions: [],
-    roles: [Role.Moderators],
-  },
   'reminder dump': {
     permissions: [],
     roles: [Role.Administrators],
@@ -127,10 +123,6 @@ const commandPermissions: Record<
   vip: {
     permissions: [],
     roles: [Role.Management],
-  },
-  'vip recreate': {
-    permissions: [],
-    roles: [Role.Moderators],
   },
 };
 

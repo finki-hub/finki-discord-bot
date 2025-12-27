@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { ChannelSchema, TemporaryChannelSchema } from './Channel.js';
+import { ChannelSchema } from './Channel.js';
 import { ModelSchema } from './Model.js';
 import { RoleSchema } from './Role.js';
 import { TicketSchema } from './Ticket.js';
@@ -8,12 +8,6 @@ import { TicketSchema } from './Ticket.js';
 const HexColorSchema = z.custom<`#${string}`>(
   (val) => typeof val === 'string' && /^#[\da-f]{6}$/iu.test(val),
 );
-
-const TemporaryChannelConfigSchema = z.object({
-  cron: z.string(),
-  name: z.string(),
-  parent: z.string().optional(),
-});
 
 const ModelsSchema = z.object({
   embeddings: ModelSchema.optional(),
@@ -52,9 +46,6 @@ export const RequiredBotConfigSchema = z.object({
     })
     .optional(),
   roles: z.record(RoleSchema, z.string()).optional(),
-  temporaryChannels: z
-    .record(TemporaryChannelSchema, TemporaryChannelConfigSchema)
-    .optional(),
   themeColor: HexColorSchema.optional(),
   ticketing: z
     .object({

@@ -85,12 +85,6 @@ export const logMessageFunctions = {
   specialPollOverriden: (type: string, userId: string, decision: string) =>
     `Special poll ${type} for ${userId} overriden with decision ${decision}`,
 
-  tempRegularsScheduled: (nextRun: string) =>
-    `Temporary regulars channel scheduled for ${nextRun}`,
-
-  tempVipScheduled: (nextRun: string) =>
-    `Temporary VIP channel scheduled for ${nextRun}`,
-
   userNotQualifiedForVip: (userTag: string) =>
     `User ${userTag} does not qualify for VIP, skipping giving him roles`,
 };

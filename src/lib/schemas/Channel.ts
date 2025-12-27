@@ -13,10 +13,3 @@ export enum Channel {
 }
 
 export const ChannelSchema = z.enum(Channel);
-
-export enum TemporaryChannel {
-  Regulars = 'regulars',
-  VIP = 'vip',
-}
-
-export const TemporaryChannelSchema = z.enum(TemporaryChannel);

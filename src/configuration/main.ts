@@ -89,12 +89,6 @@ export const getRolesProperty = <
   key: T,
 ) => config?.roles?.[key];
 
-export const getTemporaryChannelsProperty = <
-  T extends keyof FullyRequiredBotConfig['temporaryChannels'],
->(
-  key: T,
-) => config?.temporaryChannels?.[key];
-
 export const getTicketingProperty = <
   T extends keyof FullyRequiredBotConfig['ticketing'],
 >(

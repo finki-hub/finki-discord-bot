@@ -81,12 +81,6 @@ export const specialStringFunctions = {
   regularsWelcome: (userIds: string[]) =>
     `# ${userIds.length === 1 ? 'Добредојде' : 'Добредојдовте'} во Редовните, ${userIds.map(userMention).join(', ')}!`,
 
-  tempRegularsTopic: (date: string) =>
-    `Задните соби на редовните. Содржината се брише секој ден. Следно бришење е во ${date}.`,
-
-  tempVipTopic: (date: string) =>
-    `Задните соби на ВИП. Содржината се брише секој ден. Следно бришење е во ${date}.`,
-
   unbarAccepted: (userId: string) =>
     `# Забраната за корисникот ${userMention(userId)} е укината.`,
 

@@ -31,7 +31,6 @@ export const DEFAULT_CONFIGURATION = {
     remove: undefined,
   },
   roles: undefined,
-  temporaryChannels: undefined,
   themeColor: '#313183',
   ticketing: {
     allowedInactivityDays: 10,

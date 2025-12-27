@@ -1,17 +1,9 @@
 import { Cron } from 'croner';
 
-import {
-  getIntervalsProperty,
-  getTemporaryChannelsProperty,
-} from '../../configuration/main.js';
-import { TemporaryChannel } from '../../lib/schemas/Channel.js';
+import { getIntervalsProperty } from '../../configuration/main.js';
 import { logger } from '../../logger.js';
 import { labels } from '../../translations/labels.js';
 import { logMessageFunctions } from '../../translations/logs.js';
-import {
-  recreateRegularsTemporaryChannel,
-  recreateVipTemporaryChannel,
-} from '../channels.js';
 import { sendReminders } from '../reminders.js';
 import { closeInactiveTickets } from '../tickets.js';
 import { DATE_FORMATTER } from './constants.js';
@@ -51,13 +43,6 @@ export const initializeCronJobs = () => {
   const sendRemindersInterval = getIntervalsProperty('sendReminders');
   const ticketsCheckInterval = getIntervalsProperty('ticketsCheck');
 
-  const vipTemporaryChannel = getTemporaryChannelsProperty(
-    TemporaryChannel.VIP,
-  );
-  const regularsTemporaryChannel = getTemporaryChannelsProperty(
-    TemporaryChannel.Regulars,
-  );
-
   cronJobs.push(
     new Cron(
       convertMillisecondsToCronJob(sendRemindersInterval),
@@ -70,26 +55,6 @@ export const initializeCronJobs = () => {
       closeInactiveTickets,
     ),
   );
-
-  if (vipTemporaryChannel !== undefined) {
-    cronJobs.push(
-      new Cron(
-        vipTemporaryChannel.cron,
-        { name: 'recreateVipTemporaryChannel' },
-        recreateVipTemporaryChannel,
-      ),
-    );
-  }
-
-  if (regularsTemporaryChannel !== undefined) {
-    cronJobs.push(
-      new Cron(
-        regularsTemporaryChannel.cron,
-        { name: 'recreateRegularsTemporaryChannel' },
-        recreateRegularsTemporaryChannel,
-      ),
-    );
-  }
 
   for (const job of cronJobs) {
     const nextRunDate = job.nextRun();
