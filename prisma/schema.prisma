@@ -26,19 +26,6 @@ model Anto {
   updatedAt DateTime @updatedAt
 }
 
-model Experience {
-  id String @id @default(uuid())
-
-  userId      String    @unique
-  experience  BigInt    @default(0)
-  level       Int       @default(0)
-  messages    Int       @default(0)
-  lastMessage DateTime?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
 model Reminder {
   id String @id @default(uuid())
 
