@@ -37,22 +37,13 @@ import {
   handleSessionAutocomplete,
 } from './autocomplete.js';
 import {
-  handleAddCoursesButton,
-  handleColorButton,
-  handleCourseButton,
-  handleIrregularsButton,
-  handleNotificationButton,
-  handleProgramButton,
   handleReminderDeleteButton,
-  handleRemoveCoursesButton,
   handleTicketCloseButton,
   handleTicketCreateButton,
-  handleVipButton,
-  handleYearButton,
 } from './button.js';
 import { handleAocSubmitBonusModal, handleAocSubmitModal } from './modal.js';
 
-const ignoredButtons = new Set(['exp', 'help', 'polls']);
+const ignoredButtons = new Set(['exp', 'help']);
 
 const noDeferCommands = new Set(['aoc submit', 'aoc submit-bonus']);
 
@@ -328,25 +319,12 @@ export const handleMessageContextMenuCommand = async (
 };
 
 const buttonInteractionHandlers = {
-  addCourses: handleAddCoursesButton,
-  color: handleColorButton,
-  course: handleCourseButton,
-  irregulars: handleIrregularsButton,
-  notification: handleNotificationButton,
-  program: handleProgramButton,
   reminderDelete: handleReminderDeleteButton,
-  removeCourses: handleRemoveCoursesButton,
   ticketClose: handleTicketCloseButton,
   ticketCreate: handleTicketCreateButton,
-  vip: handleVipButton,
-  year: handleYearButton,
 };
 
-const ephemeralResponseButtons = new Set([
-  'addCourses',
-  'removeCourses',
-  'ticketCreate',
-]);
+const ephemeralResponseButtons = new Set(['ticketCreate']);
 
 export const handleButton = async (interaction: ButtonInteraction) => {
   const [command, ...args] = interaction.customId.split(':');

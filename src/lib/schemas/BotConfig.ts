@@ -38,7 +38,6 @@ export const RequiredBotConfigSchema = z.object({
     })
     .optional(),
   models: ModelsSchema.optional(),
-  oathEnabled: z.boolean().optional(),
   reactions: z
     .object({
       add: z.record(z.string(), z.string()).optional(),

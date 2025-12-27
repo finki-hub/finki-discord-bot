@@ -51,12 +51,3 @@ model Reminder {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
-
-model Bar {
-  id String @id @default(uuid())
-
-  userId String @unique
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}

@@ -22,5 +22,3 @@ export const IngestResponseSchema = z.object({
   inserted_id: z.string(),
   status: z.literal('ok'),
 });
-
-export type IngestResponse = z.infer<typeof IngestResponseSchema>;

@@ -7,7 +7,6 @@ import { bootMessage, logMessageFunctions } from '../translations/logs.js';
 import { getChannel, initializeChannels } from '../utils/channels.js';
 import { initializeCronJobs } from '../utils/cron/main.js';
 import { initializeMembers } from '../utils/members.js';
-import { initializeSpecialPolls } from '../utils/polls/core/special.js';
 import { initializeRoles } from '../utils/roles.js';
 
 export const name = Events.ClientReady;
@@ -17,7 +16,6 @@ export const execute = async (...[client]: ClientEvents[typeof name]) => {
   await initializeMembers();
   await initializeChannels();
   await initializeRoles();
-  await initializeSpecialPolls();
   await client.application.commands.fetch();
 
   initializeCronJobs();

@@ -5,19 +5,9 @@ import {
   SlashCommandBuilder,
 } from 'discord.js';
 
-import {
-  getSpecialRequestComponents,
-  getSpecialRequestEmbed,
-} from '../components/scripts.js';
 import { getTicketCreateComponents } from '../components/tickets.js';
 import { getTicketingProperty } from '../configuration/main.js';
-import { logger } from '../logger.js';
-import {
-  commandDescriptions,
-  commandErrors,
-  commandResponses,
-} from '../translations/commands.js';
-import { logErrorFunctions } from '../translations/logs.js';
+import { commandErrors, commandResponses } from '../translations/commands.js';
 import {
   ticketMessageFunctions,
   ticketMessages,
@@ -30,14 +20,6 @@ export const data = new SlashCommandBuilder()
   .setDescription('Script')
   .addSubcommand((command) =>
     command
-      .setName('special')
-      .setDescription(commandDescriptions['script special'])
-      .addChannelOption((option) =>
-        option.setName('channel').setDescription('Канал').setRequired(true),
-      ),
-  )
-  .addSubcommand((command) =>
-    command
       .setName('tickets')
       .setDescription('Register commands')
       .addChannelOption((option) =>
@@ -45,31 +27,6 @@ export const data = new SlashCommandBuilder()
       ),
   )
   .setContexts(InteractionContextType.Guild);
-
-const handleScriptSpecial = async (
-  interaction: ChatInputCommandInteraction<'cached'>,
-) => {
-  const channel = interaction.options.getChannel('channel', true);
-
-  if (!channel.isTextBased() || channel.isDMBased()) {
-    await interaction.editReply(commandErrors.invalidChannel);
-
-    return;
-  }
-
-  const embed = getSpecialRequestEmbed();
-  const components = getSpecialRequestComponents();
-  try {
-    await channel.send({
-      components,
-      embeds: [embed],
-    });
-    await interaction.editReply(commandResponses.scriptExecuted);
-  } catch (error) {
-    await interaction.editReply(commandErrors.scriptNotExecuted);
-    logger.error(logErrorFunctions.scriptExecutionError(error));
-  }
-};
 
 const handleScriptTickets = async (
   interaction: ChatInputCommandInteraction<'cached'>,
@@ -101,7 +58,6 @@ const handleScriptTickets = async (
 };
 
 const listHandlers = {
-  special: handleScriptSpecial,
   tickets: handleScriptTickets,
 };
 

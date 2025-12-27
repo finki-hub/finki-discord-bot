@@ -12,10 +12,6 @@ const commandPermissions: Record<
     roles: Role[];
   }
 > = {
-  chat: {
-    permissions: [],
-    roles: [Role.Regulars],
-  },
   'chat embed': {
     permissions: [],
     roles: [Role.Administrators],
@@ -40,43 +36,15 @@ const commandPermissions: Record<
     permissions: [PermissionsBitField.Flags.ManageMessages],
     roles: [],
   },
-  'irregulars add': {
-    permissions: [],
-    roles: [Role.Management],
-  },
-  'irregulars remove': {
-    permissions: [],
-    roles: [Role.Management],
-  },
-  lottery: {
-    permissions: [],
-    roles: [Role.Administrators, Role.Moderators],
-  },
   manage: {
     permissions: [],
     roles: [Role.Administrators],
-  },
-  members: {
-    permissions: [],
-    roles: [Role.Management, Role.VIP],
-  },
-  'members count': {
-    permissions: [],
-    roles: [],
   },
   message: {
     permissions: [],
     roles: [Role.Administrators],
   },
-  'poll delete': {
-    permissions: [],
-    roles: [Role.Administrators],
-  },
   purge: {
-    permissions: [],
-    roles: [Role.Moderators],
-  },
-  regulars: {
     permissions: [],
     roles: [Role.Moderators],
   },
@@ -88,41 +56,9 @@ const commandPermissions: Record<
     permissions: [],
     roles: [Role.Administrators],
   },
-  'special bar': {
-    permissions: [],
-    roles: [Role.Management],
-  },
-  'special delete': {
-    permissions: [],
-    roles: [Role.Administrators],
-  },
-  'special list': {
-    permissions: [],
-    roles: [Role.Management],
-  },
-  'special override': {
-    permissions: [PermissionsBitField.Flags.Administrator],
-    roles: [],
-  },
-  'special remaining': {
-    permissions: [],
-    roles: [Role.Management],
-  },
-  'special unbar': {
-    permissions: [],
-    roles: [Role.Management],
-  },
-  Star: {
-    permissions: [],
-    roles: [Role.VIP],
-  },
   ticket: {
     permissions: [],
-    roles: [Role.Moderators, Role.FSS, Role.Ombudsman],
-  },
-  vip: {
-    permissions: [],
-    roles: [Role.Management],
+    roles: [Role.Moderators],
   },
 };
 

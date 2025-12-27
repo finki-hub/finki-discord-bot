@@ -64,7 +64,7 @@ export const isContextMenuCommand = (
   );
 };
 
-export const getCommands = async () => {
+const getCommands = async () => {
   if (isCommandsEmpty()) {
     await refreshCommands();
   }

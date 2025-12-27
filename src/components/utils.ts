@@ -1,11 +1,9 @@
 import {
-  type ButtonInteraction,
   channelMention,
   type ChatInputCommandInteraction,
   inlineCode,
   type Interaction,
   type MessageContextMenuCommandInteraction,
-  roleMention,
   type UserContextMenuCommandInteraction,
 } from 'discord.js';
 
@@ -14,7 +12,6 @@ import { logger } from '../logger.js';
 import { embedLabels } from '../translations/embeds.js';
 import { labels } from '../translations/labels.js';
 import { logErrorFunctions } from '../translations/logs.js';
-import { getRoleFromSet } from '../utils/roles.js';
 
 export const truncateString = (
   string: null | string | undefined,
@@ -39,15 +36,6 @@ export const getChannelMention = (interaction: Interaction) => {
 
 export const getButtonCommand = (command: string) => {
   switch (command) {
-    case 'addCourses':
-      return embedLabels.addCourses;
-
-    case 'pollStats':
-      return embedLabels.pollStats;
-
-    case 'removeCourses':
-      return embedLabels.removeCourses;
-
     case 'ticketClose':
       return embedLabels.ticketClose;
 
@@ -59,54 +47,16 @@ export const getButtonCommand = (command: string) => {
   }
 };
 
-export const getButtonInfo = (
-  interaction: ButtonInteraction,
-  command: string,
-  args: string[],
-) => {
+export const getButtonInfo = (command: string, args: string[]) => {
   switch (command) {
-    case 'addCourses':
     case 'exp':
     case 'help':
-    case 'irregulars':
-    case 'poll':
-    case 'polls':
-    case 'pollStats':
-    case 'removeCourses':
     case 'ticketClose':
     case 'ticketCreate':
-    case 'vip':
       return {
         name: getButtonCommand(command),
         value:
           args[0] === undefined ? embedLabels.unknown : inlineCode(args[0]),
-      };
-
-    case 'color':
-    case 'notification':
-    case 'program':
-    case 'year':
-      return {
-        name: getButtonCommand(command),
-        value:
-          interaction.guild && args[0]
-            ? roleMention(
-                getRoleFromSet(interaction.guild, command, args[0])?.id ??
-                  embedLabels.unknown,
-              )
-            : embedLabels.unknown,
-      };
-
-    case 'course':
-      return {
-        name: getButtonCommand(command),
-        value:
-          interaction.guild && args[0]
-            ? roleMention(
-                getRoleFromSet(interaction.guild, 'courses', args[0])?.id ??
-                  embedLabels.unknown,
-              )
-            : embedLabels.unknown,
       };
 
     default:

@@ -25,7 +25,6 @@ export const DEFAULT_CONFIGURATION = {
     embeddings: Model.BGE_M3,
     inference: Model.LLAMA_3_3_70B,
   },
-  oathEnabled: false,
   reactions: {
     add: undefined,
     remove: undefined,

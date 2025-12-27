@@ -1,4 +1,4 @@
-import type { Guild, GuildMember, Interaction } from 'discord.js';
+import type { Guild, Interaction } from 'discord.js';
 
 import { client } from '../client.js';
 import { getConfigProperty } from '../configuration/main.js';
@@ -36,23 +36,6 @@ export const getMemberFromGuild = async (
   } catch {
     return null;
   }
-};
-
-export const getMembersFromGuild = async (
-  userIds: string[],
-  guild?: Guild | null,
-): Promise<GuildMember[]> => {
-  const chosenGuild = guild ?? (await getGuild());
-
-  if (chosenGuild === null) {
-    return [];
-  }
-
-  const results = await Promise.all(
-    userIds.map((userId) => getMemberFromGuild(userId, chosenGuild)),
-  );
-
-  return results.filter((member) => member !== null);
 };
 
 export const getChannelFromGuild = async (channelId: string, guild?: Guild) => {

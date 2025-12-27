@@ -153,7 +153,7 @@ export const getButtonEmbed = (
       },
       {
         inline: true,
-        ...getButtonInfo(interaction, command, args),
+        ...getButtonInfo(command, args),
       },
     )
     .setFooter({

@@ -52,8 +52,6 @@ const refreshRoles = (guild: Guild, type: RoleSets) => {
   }
 };
 
-export const getRole = (type: RoleName) => roles[type];
-
 export const getRoleFromSet = (guild: Guild, type: RoleSets, role: string) => {
   if (roleSets[type].length === 0) {
     refreshRoles(guild, type);
@@ -96,7 +94,7 @@ export const getCourseRoleByCourseName = (guild: Guild, course: string) => {
   return guild.roles.cache.find((role) => role.name === roleName[0]) ?? null;
 };
 
-export const getMembersByRoles = async (
+const getMembersByRoles = async (
   guild: Guild,
   rolesWithMembers: DiscordRole[],
 ) => {
@@ -125,56 +123,4 @@ export const getMembersByRoleIds = async (
     .filter((role) => role !== undefined);
 
   return await getMembersByRoles(guild, rolesList);
-};
-
-export const getMembersByRolesExtended = async (
-  guild: Guild,
-  rolesWithMembers: DiscordRole[],
-  rolesWithoutMembers: DiscordRole[],
-) => {
-  await guild.roles.fetch();
-
-  const uniqueMembers = new Set<string>();
-
-  const members = rolesWithMembers.map((role) => role.members.keys());
-
-  for (const iterator of members) {
-    const ids = Array.from(iterator);
-
-    for (const id of ids) {
-      uniqueMembers.add(id);
-    }
-  }
-
-  const membersWithout = rolesWithoutMembers.map((role) => role.members.keys());
-
-  for (const iterator of membersWithout) {
-    const ids = Array.from(iterator);
-
-    for (const id of ids) {
-      uniqueMembers.delete(id);
-    }
-  }
-
-  return Array.from(uniqueMembers);
-};
-
-export const getMembersByRoleIdsExtended = async (
-  guild: Guild,
-  roleIdsWithMembers: string[],
-  roleIdsWithoutMembers: string[],
-) => {
-  const rolesWithMembers = roleIdsWithMembers
-    .map((role) => guild.roles.cache.get(role))
-    .filter((role) => role !== undefined);
-
-  const rolesWithoutMembers = roleIdsWithoutMembers
-    .map((role) => guild.roles.cache.get(role))
-    .filter((role) => role !== undefined);
-
-  return await getMembersByRolesExtended(
-    guild,
-    rolesWithMembers,
-    rolesWithoutMembers,
-  );
 };

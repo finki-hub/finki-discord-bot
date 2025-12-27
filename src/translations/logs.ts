@@ -3,7 +3,6 @@
 import {
   type AutocompleteInteraction,
   type ButtonInteraction,
-  channelMention,
   type ChatInputCommandInteraction,
   inlineCode,
   type MessageContextMenuCommandInteraction,
@@ -18,40 +17,18 @@ export const logShortStrings = {
   dm: 'DM',
   guild: 'Guild',
   message: '[Message]',
-  pollStats: 'Poll Stats',
   user: '[User]',
 };
 
 export const logMessages = {
-  adsInitialized: 'Ads initialized',
   channelsInitialized: 'Channels initialized',
   commandsRegistered: 'Commands registered',
-  pollsInitialized: 'Polls initialized',
   rolesInitialized: 'Roles initialized',
 };
 
 export const logMessageFunctions = {
-  adAlreadySent: (adName: string, channelId: string) =>
-    `Ad ${adName} already sent to channel ${channelMention(
-      channelId,
-    )}, skipping`,
-
-  adDeleted: (adName: string, channelId: string, messageId: string) =>
-    `Ad ${adName} deleted from channel ${channelMention(
-      channelId,
-    )} with message ID ${messageId}`,
-
-  adExpired: (adName: string, channelId: string) =>
-    `Ad ${adName} expired in channel ${channelMention(channelId)}`,
-
-  adSent: (adName: string, channelId: string) =>
-    `Ad ${adName} sent to channel ${channelMention(channelId)}`,
-
   channelNotGuildTextBased: (channelId: string) =>
     `Channel ${channelId} is not a guild text-based channel`,
-
-  channelNotSendable: (channelId: string) =>
-    `Channel ${channelId} is not sendable`,
 
   closedTicket: (ticketThreadId: string) => `Closed ticket ${ticketThreadId}`,
 
@@ -76,17 +53,6 @@ export const logMessageFunctions = {
   noRefreshNeeded: (property: string) => `No refresh needed for ${property}`,
 
   promptAnswered: (answer: string) => `Prompt answered: ${answer}`,
-
-  sendingAd: (adName: string, channelId: string, content: string) =>
-    `Sending ad ${adName} to channel ${channelMention(
-      channelId,
-    )} with content: ${content}`,
-
-  specialPollOverriden: (type: string, userId: string, decision: string) =>
-    `Special poll ${type} for ${userId} overriden with decision ${decision}`,
-
-  userNotQualifiedForVip: (userTag: string) =>
-    `User ${userTag} does not qualify for VIP, skipping giving him roles`,
 };
 
 export const logErrorFunctions = {
@@ -130,9 +96,6 @@ export const logErrorFunctions = {
   buttonInteractionOutsideGuildError: (customId: string) =>
     `Received button interaction ${customId} outside of a guild`,
 
-  buttonInteractionPollOrOptionNotFoundError: (customId: string) =>
-    `Received button interaction ${customId} for a poll that does not exist`,
-
   buttonInteractionResponseError: (error: unknown) =>
     `Failed responding to button interaction\n${error}`,
 
@@ -170,17 +133,6 @@ export const logErrorFunctions = {
   commandsRegistrationError: (error: unknown) =>
     `Failed registering application commands\n${error}`,
 
-  companiesCreateError: (error: unknown) =>
-    `Failed creating companies\n${error}`,
-
-  companiesGetError: (error: unknown) => `Failed getting companies\n${error}`,
-
-  companiesParseError: (error: unknown) => `Failed parsing companies\n${error}`,
-
-  companyCreateError: (error: unknown) => `Failed creating company\n${error}`,
-
-  companyDeleteError: (error: unknown) => `Failed deleting company\n${error}`,
-
   configSetError: (error: unknown) => `Failed setting config\n${error}`,
 
   contextMenuCommandExecutionError: (
@@ -193,16 +145,6 @@ export const logErrorFunctions = {
 
   crosspostError: (channelId: string, error: unknown) =>
     `Failed crossposting message in channel ${channelId}\n${error}`,
-
-  embedSendError: (error: unknown) => `Failed sending embed\n${error}`,
-
-  experienceCountGetError: (error: unknown) =>
-    `Failed getting experience count\n${error}`,
-
-  experienceCreateError: (error: unknown) =>
-    `Failed creating experience\n${error}`,
-
-  experienceGetError: (error: unknown) => `Failed getting experience\n${error}`,
 
   faqSendError: (error: unknown) => `Failed sending question\n${error}`,
 
@@ -226,12 +168,6 @@ export const logErrorFunctions = {
     `Failed logging analytics event\n${error}`,
 
   loginFailed: (error: unknown) => `Failed logging in\n${error}`,
-
-  lotteryPollNotExecutedError: (
-    pollType: string,
-    winnerCount: number | string,
-  ) =>
-    `Lottery poll ${pollType} with ${winnerCount} winners could not be executed`,
 
   memberNotFound: (userId: string) => `Member for ${userId} not found`,
 
@@ -281,15 +217,6 @@ export const logErrorFunctions = {
   roleFetchError: (roleId: string, error: unknown) =>
     `Failed fetching role ${roleId}\n${error}`,
 
-  roleNotFound: (role: string) => `Role ${role} not found`,
-
-  scriptExecutionError: (error: unknown) => `Failed executing script\n${error}`,
-
-  sendAdsError: (error: unknown) => `Failed sending ads\n${error}`,
-
-  specialPollNotExecutedError: (pollType: string, userId: string) =>
-    `Special poll ${pollType} for ${userId} could not be executed`,
-
   supportedModelsError: (error: unknown) =>
     `Failed getting supported models\n${error}`,
 
@@ -328,8 +255,4 @@ export const exitMessageFunctions = {
 
   shutdownWithError: (error: string) =>
     `Bot has been shut down with error ${error}`,
-
-  uncaughtException: (error: unknown) => `Uncaught exception\n${error}`,
-
-  unhandledRejection: (error: unknown) => `Unhandled rejection\n${error}`,
 };

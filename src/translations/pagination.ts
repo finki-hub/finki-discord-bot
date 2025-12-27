@@ -4,7 +4,4 @@ export const paginationStringFunctions = {
 
   membersPage: (page: number, pages: number, total: number) =>
     `Страна: ${page} / ${pages}  •  Членови: ${total}`,
-
-  pollPage: (page: number, pages: number, total: number) =>
-    `Страна: ${page} / ${pages}  •  Анкети: ${total}`,
 };

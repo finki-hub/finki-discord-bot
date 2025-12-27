@@ -60,15 +60,11 @@ export const AocSubmitResultSchema = z
     status: data.status,
   }));
 
-export type AocSubmitResult = z.infer<typeof AocSubmitResultSchema>;
-
 export const AocSubmitBonusResultSchema = z.object({
   diploma: z.string().optional(),
   message: z.string(),
   status: z.enum(['already_solved', 'incorrect', 'correct']),
 });
-
-export type AocSubmitBonusResult = z.infer<typeof AocSubmitBonusResultSchema>;
 
 export const AocLeaderboardSchema = z
   .object({
@@ -89,5 +85,3 @@ export const AocLeaderboardSchema = z
       username: entry.username,
     })),
   }));
-
-export type AocLeaderboard = z.infer<typeof AocLeaderboardSchema>;
