@@ -58,13 +58,6 @@ export const logMessageFunctions = {
 export const logErrorFunctions = {
   addReactionError: (error: unknown) => `Failed adding reaction\n${error}`,
 
-  aocLeaderboardError: (error: unknown) =>
-    `Failed getting AOC leaderboard\n${error}`,
-
-  aocProblemError: (error: unknown) => `Failed getting AOC problem\n${error}`,
-
-  aocSubmitError: (error: unknown) => `Failed submitting AOC answer\n${error}`,
-
   autocompleteExecutionError: (
     interaction: AutocompleteInteraction,
     error: unknown,

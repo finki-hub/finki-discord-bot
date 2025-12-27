@@ -30,49 +30,12 @@ import {
   handleSessionAutocomplete,
 } from './autocomplete.js';
 import { handleTicketCloseButton, handleTicketCreateButton } from './button.js';
-import { handleAocSubmitBonusModal, handleAocSubmitModal } from './modal.js';
 
 const ignoredButtons = new Set(['help']);
-
-const noDeferCommands = new Set(['aoc submit', 'aoc submit-bonus']);
 
 export const handleChatInputCommand = async (
   interaction: ChatInputCommandInteraction,
 ) => {
-  const fullCommand =
-    `${interaction.commandName} ${interaction.options.getSubcommand(false) ?? ''}`.trim();
-  const shouldDefer = !noDeferCommands.has(fullCommand);
-
-  const command = await getCommand(interaction.commandName);
-
-  // For non-deferred commands (like modals), execute immediately to avoid timeout
-  if (!shouldDefer) {
-    if (command === undefined || !isSlashCommand(command)) {
-      await interaction.reply(commandErrors.commandNotFound);
-
-      return;
-    }
-
-    try {
-      await command.execute(interaction);
-    } catch (error) {
-      logger.error(
-        logErrorFunctions.chatInputInteractionError(interaction, error),
-      );
-    }
-
-    // Log after execution for non-deferred commands
-    logger.info(
-      `${logShortStrings.chat} ${interaction.user.tag}: ${interaction.toString()} [${
-        interaction.channel === null || interaction.channel.isDMBased()
-          ? logShortStrings.dm
-          : logShortStrings.guild
-      }]`,
-    );
-
-    return;
-  }
-
   try {
     await interaction.deferReply();
   } catch (error) {
@@ -91,6 +54,8 @@ export const handleChatInputCommand = async (
         : logShortStrings.guild
     }]`,
   );
+
+  const command = await getCommand(interaction.commandName);
 
   if (command === undefined || !isSlashCommand(command)) {
     logger.warn(logErrorFunctions.commandNotFound(interaction.id));
@@ -384,10 +349,10 @@ export const handleAutocomplete = async (
   }
 };
 
-const modalInteractionHandlers = {
-  'aoc-submit-bonus-modal': handleAocSubmitBonusModal,
-  'aoc-submit-modal': handleAocSubmitModal,
-};
+const modalInteractionHandlers: Record<
+  string,
+  (interaction: ModalSubmitInteraction) => Promise<void>
+> = {};
 
 export const handleModalSubmit = async (
   interaction: ModalSubmitInteraction,
@@ -412,16 +377,16 @@ export const handleModalSubmit = async (
     return;
   }
 
-  if (!Object.keys(modalInteractionHandlers).includes(modalId)) {
+  const handler = modalInteractionHandlers[modalId];
+
+  if (handler === undefined) {
     logger.warn(logErrorFunctions.commandNotFound(interaction.id));
 
     return;
   }
 
   try {
-    await modalInteractionHandlers[
-      modalId as keyof typeof modalInteractionHandlers
-    ](interaction);
+    await handler(interaction);
   } catch (error) {
     logger.error(logErrorFunctions.modalExecutionError(interaction, error));
 

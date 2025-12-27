@@ -10,11 +10,6 @@ import {
 
 export const commandDescriptions = {
   about: 'За Discord ботот',
-  'aoc bonus': 'Преземи бонус проблем од FINKI AOC',
-  'aoc leaderboard': 'Преземи листа на членови според FINKI AOC',
-  'aoc problem': 'Преземи проблем од FINKI AOC',
-  'aoc submit': 'Испрати решение за проблем од FINKI AOC',
-  'aoc submit-bonus': 'Испрати решение за бонус проблем од FINKI AOC',
   ask: 'Преземи најчесто поставувано прашање',
   'chat closest': 'Преземи најблиски прашања',
   'chat embed': 'Ембедирај ги документите',
@@ -121,9 +116,6 @@ export const commandResponseFunctions = {
 };
 
 export const commandErrors = {
-  aocLeaderboardNotFound: 'Не може да се вчита табелата на резултати.',
-  aocProblemNotFound: 'Проблемот не постои.',
-  aocSubmitFailed: 'Испраќањето на одговорот беше неуспешно.',
   buttonNoPermission: 'Командата не е ваша.',
   classroomNotFound: 'Просторијата не постои.',
   commandError:
