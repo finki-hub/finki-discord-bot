@@ -7,7 +7,6 @@ export const embedMessages = {
   courseStaffInfo:
     'Ова се професорите и асистентите кои го држеле предметот последните неколку години.',
   courseSummaryInfo: 'Ова се сите достапни информации за предметот.',
-  studentInformation: 'Информации за студентот',
 };
 
 export const embedMessageFunctions = {

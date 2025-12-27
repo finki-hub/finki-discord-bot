@@ -29,10 +29,7 @@ import {
   handleQuestionAutocomplete,
   handleSessionAutocomplete,
 } from './autocomplete.js';
-import {
-  handleTicketCloseButton,
-  handleTicketCreateButton,
-} from './button.js';
+import { handleTicketCloseButton, handleTicketCreateButton } from './button.js';
 import { handleAocSubmitBonusModal, handleAocSubmitModal } from './modal.js';
 
 const ignoredButtons = new Set(['help']);

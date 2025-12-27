@@ -3,16 +3,13 @@ import {
   ButtonBuilder,
   ButtonStyle,
   EmbedBuilder,
-  type GuildMember,
   inlineCode,
-  roleMention,
 } from 'discord.js';
 
 import type { Link } from '../lib/schemas/Link.js';
 import type { Question } from '../lib/schemas/Question.js';
 
 import {
-  getFromRoleConfig,
   getInformation,
   getParticipants,
   getPrerequisites,
@@ -312,89 +309,6 @@ export const getStaffEmbed = (information: Staff) =>
       },
     )
     .setTimestamp();
-
-export const getStudentInfoEmbed = (member: GuildMember) => {
-  const yearRoles = getFromRoleConfig('year') ?? [];
-  const programRoles = getFromRoleConfig('program') ?? [];
-  const colorRoles = getFromRoleConfig('color') ?? [];
-  const levelRoles = getFromRoleConfig('level') ?? [];
-
-  const yearRole = member.roles.cache.find((role) =>
-    yearRoles.includes(role.name),
-  );
-  const programRole = member.roles.cache.find((role) =>
-    programRoles.includes(role.name),
-  );
-  const colorRole = member.roles.cache.find((role) =>
-    colorRoles.includes(role.name),
-  );
-  const levelRole = member.roles.cache.find((role) =>
-    levelRoles.includes(role.name),
-  );
-  const notificationRoles = member.roles.cache
-    .filter((role) =>
-      (getFromRoleConfig('notification') ?? []).includes(role.name),
-    )
-    .map((role) => roleMention(role.id))
-    .join('\n');
-  const courseRoles = member.roles.cache
-    .filter((role) =>
-      Object.keys(getFromRoleConfig('courses') ?? []).includes(role.name),
-    )
-    .map((role) => roleMention(role.id))
-    .join('\n');
-  const other = member.roles.cache
-    .filter((role) => (getFromRoleConfig('other') ?? []).includes(role.name))
-    .map((role) => roleMention(role.id))
-    .join('\n');
-
-  return new EmbedBuilder()
-    .setColor(getThemeColor())
-    .setAuthor({
-      iconURL: member.user.displayAvatarURL(),
-      name: member.user.tag,
-    })
-    .setTitle(embedMessages.studentInformation)
-    .addFields(
-      {
-        inline: true,
-        name: labels.year,
-        value: yearRole === undefined ? labels.none : roleMention(yearRole.id),
-      },
-      {
-        inline: true,
-        name: labels.program,
-        value:
-          programRole === undefined ? labels.none : roleMention(programRole.id),
-      },
-      {
-        inline: true,
-        name: labels.color,
-        value:
-          colorRole === undefined ? labels.none : roleMention(colorRole.id),
-      },
-      {
-        inline: true,
-        name: labels.level,
-        value:
-          levelRole === undefined ? labels.none : roleMention(levelRole.id),
-      },
-      {
-        inline: true,
-        name: labels.notifications,
-        value: notificationRoles === '' ? labels.none : notificationRoles,
-      },
-      {
-        name: labels.courses,
-        value: courseRoles === '' ? labels.none : courseRoles,
-      },
-      {
-        name: labels.other,
-        value: other === '' ? labels.none : other,
-      },
-    )
-    .setTimestamp();
-};
 
 // Questions & links
 

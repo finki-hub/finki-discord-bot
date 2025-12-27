@@ -1,19 +1,6 @@
 import { getStaff } from '../configuration/files.js';
 import { labels } from '../translations/labels.js';
 
-export const truncateString = (
-  string: null | string | undefined,
-  length = 100,
-) => {
-  if (string === null || string === undefined) {
-    return '';
-  }
-
-  return string.length > length
-    ? `${string.slice(0, Math.max(0, length - 3))}...`
-    : string;
-};
-
 export const linkStaff = (professors: string) => {
   if (professors === '') {
     return labels.none;
