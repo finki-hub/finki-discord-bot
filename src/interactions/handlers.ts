@@ -30,13 +30,12 @@ import {
   handleSessionAutocomplete,
 } from './autocomplete.js';
 import {
-  handleReminderDeleteButton,
   handleTicketCloseButton,
   handleTicketCreateButton,
 } from './button.js';
 import { handleAocSubmitBonusModal, handleAocSubmitModal } from './modal.js';
 
-const ignoredButtons = new Set(['exp', 'help']);
+const ignoredButtons = new Set(['help']);
 
 const noDeferCommands = new Set(['aoc submit', 'aoc submit-bonus']);
 
@@ -280,7 +279,6 @@ export const handleMessageContextMenuCommand = async (
 };
 
 const buttonInteractionHandlers = {
-  reminderDelete: handleReminderDeleteButton,
   ticketClose: handleTicketCloseButton,
   ticketCreate: handleTicketCreateButton,
 };

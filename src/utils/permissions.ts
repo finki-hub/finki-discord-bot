@@ -32,10 +32,6 @@ const commandPermissions: Record<
     permissions: [],
     roles: [Role.Moderators],
   },
-  'reminder dump': {
-    permissions: [],
-    roles: [Role.Administrators],
-  },
   script: {
     permissions: [],
     roles: [Role.Administrators],

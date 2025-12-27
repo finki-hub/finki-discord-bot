@@ -1,78 +1,17 @@
-import { type ButtonInteraction, ChannelType, MessageFlags } from 'discord.js';
+import { type ButtonInteraction, ChannelType } from 'discord.js';
 
-import { getRemindersComponents } from '../components/reminders.js';
 import {
   getTicketingProperty,
   getTicketProperty,
 } from '../configuration/main.js';
-import {
-  deleteReminder,
-  getReminderById,
-  getRemindersByUserId,
-} from '../data/database/Reminder.js';
 import { Channel } from '../lib/schemas/Channel.js';
 import { logger } from '../logger.js';
-import { commandErrors, commandResponses } from '../translations/commands.js';
+import { commandErrors } from '../translations/commands.js';
 import { logErrorFunctions } from '../translations/logs.js';
 import { getChannel } from '../utils/channels.js';
 import { getGuild } from '../utils/guild.js';
 import { getMembersByRoleIds } from '../utils/roles.js';
 import { closeTicket, createTicket } from '../utils/tickets.js';
-
-export const handleReminderDeleteButton = async (
-  interaction: ButtonInteraction,
-  args: string[],
-) => {
-  const [reminderId, authorId] = args;
-
-  if (reminderId === undefined || authorId === undefined) {
-    await interaction.reply({
-      content: commandErrors.commandError,
-      flags: MessageFlags.Ephemeral,
-    });
-
-    return;
-  }
-
-  const reminder = await getReminderById(reminderId);
-
-  if (authorId !== interaction.user.id) {
-    await interaction.reply({
-      content: commandErrors.reminderNoPermission,
-      flags: MessageFlags.Ephemeral,
-    });
-
-    return;
-  }
-
-  if (reminder === null) {
-    const newReminders = await getRemindersByUserId(authorId);
-    const newComponents = getRemindersComponents(newReminders ?? []);
-
-    await interaction.message.edit({
-      components: newComponents,
-    });
-
-    return;
-  }
-
-  if (reminder.userId !== interaction.user.id) {
-    return;
-  }
-
-  await deleteReminder(reminderId);
-
-  await interaction.reply({
-    content: commandResponses.reminderDeleted,
-    flags: MessageFlags.Ephemeral,
-  });
-
-  const reminders = await getRemindersByUserId(interaction.user.id);
-  const components = getRemindersComponents(reminders ?? []);
-  await interaction.message.edit({
-    components,
-  });
-};
 
 export const handleTicketCreateButton = async (
   interaction: ButtonInteraction,

@@ -28,7 +28,6 @@ export const RequiredBotConfigSchema = z.object({
     .object({
       buttonIdle: z.number().optional(),
       ephemeralReply: z.number().optional(),
-      sendReminders: z.number().optional(),
       ticketsCheck: z.number().optional(),
     })
     .optional(),

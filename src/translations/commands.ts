@@ -63,10 +63,6 @@ export const commandDescriptions = {
   purge: 'Бриши пораки',
   query: 'Испрати промпт до LLM агентот',
   question: 'Преземи најчесто поставувано прашање',
-  'reminder create': 'Креирај потсетник',
-  'reminder delete': 'Избриши потсетник',
-  'reminder dump': 'Извлечи ги сите потсетници од базата на податоци',
-  'reminder list': 'Преземи листа од сите потсетници',
   session: 'Преземи распоред за испитна сесија или колоквиумска недела',
   staff: 'Преземи информации за професор',
   'statistics color': 'Прикажи статистика за улогите за бои',
@@ -85,15 +81,11 @@ export const commandResponses = {
   allSemestersCoursesRemoved: 'Ги отстранивте предметите од сите семестри.',
   antoDeleted: 'Го избришавте Анто фактот.',
   antosCreated: 'Креиравте Анто фактот.',
-  chooseRemindersToDelete:
-    'Изберете ги потсетниците кои сакате да ги избришете.',
   configurationReloaded: 'Конфигурацијата е освежена.',
   configurationReloading: 'Се освежува конфигурацијата...',
   faqDeleted: 'Го избришавте прашањето.',
   linkDeleted: 'Го избришавте линкот.',
   messageCreated: 'Испративте порака.',
-  noReminders: 'Нема потсетници.',
-  reminderDeleted: 'Го избришавте потсетникот.',
   scriptExecuted: 'Ја извршивте скриптата.',
   ticketClosed: 'Тикетот е затворен.',
   timeoutImpossible: 'Не може да си поставите тајмаут.',
@@ -120,9 +112,6 @@ export const commandResponseFunctions = {
   deletingMessages: (count: number | string) => `Се бришат ${count} пораки...`,
 
   ping: (ping: number | string) => `${ping} ms`,
-
-  reminderCreated: (timestamp: string, message: string) =>
-    `Креиравте потсетник во ${timestamp} за: ${message}.`,
 
   semesterCoursesAdded: (semester: number | string) =>
     `Ги земавте предметите од семестар ${semester}.`,
@@ -200,9 +189,6 @@ export const commandErrors = {
     'Не се избрани членови до кои може да се испрати тикетот. Обидете се на друга категорија.',
   noTickets: 'Нема тикети.',
   questionsFetchFailed: 'Преземањето на прашањата беше неуспешно.',
-  reminderCreateError: 'Креирањето на потсетникот беше неуспешно.',
-  reminderNoPermission: 'Ова не е ваш потсетник.',
-  remindersLoadError: 'Настана грешка при вчитување на потсетниците.',
   serverOnlyCommand: 'Командата се повикува само во серверот.',
   sessionNotFound: 'Сесијата не постои.',
   staffNotFound: 'Професорот не постои.',

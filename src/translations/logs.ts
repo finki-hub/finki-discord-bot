@@ -195,14 +195,6 @@ export const logErrorFunctions = {
 
   promptError: (error: unknown) => `Failed sending prompt\n${error}`,
 
-  reminderDeleteError: (reminderId: string, error: unknown) =>
-    `Failed deleting reminder ${reminderId}\n${error}`,
-
-  reminderLoadError: (error: unknown) => `Failed loading reminders\n${error}`,
-
-  reminderSendError: (reminderId: string, error: unknown) =>
-    `Failed sending reminder ${reminderId}\n${error}`,
-
   removeReactionError: (error: unknown) => `Failed removing reaction\n${error}`,
 
   responseDeleteError: (messageId: string, error: unknown) =>

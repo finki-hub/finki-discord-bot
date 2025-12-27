@@ -15,8 +15,6 @@ export const databaseErrorFunctions = {
   createQuestionLinksError: (error: unknown) =>
     `Failed creating question links\n${error}`,
 
-  createReminderError: (error: unknown) => `Failed creating reminder\n${error}`,
-
   deleteAntoError: (error: unknown) => `Failed deleting Anto fact\n${error}`,
 
   deleteLinkError: (error: unknown) => `Failed deleting link\n${error}`,
@@ -25,8 +23,6 @@ export const databaseErrorFunctions = {
 
   deleteQuestionLinksByQuestionIdError: (error: unknown) =>
     `Failed deleting question links by question ID\n${error}`,
-
-  deleteReminderError: (error: unknown) => `Failed deleting reminder\n${error}`,
 
   getAntosError: (error: unknown) => `Failed getting Anto facts\n${error}`,
 
@@ -50,14 +46,6 @@ export const databaseErrorFunctions = {
 
   getRandomAntoError: (error: unknown) =>
     `Failed getting random Anto fact\n${error}`,
-
-  getReminderByIdError: (error: unknown) =>
-    `Failed getting reminder by ID\n${error}`,
-
-  getRemindersByUserIdError: (error: unknown) =>
-    `Failed getting reminders by user ID\n${error}`,
-
-  getRemindersError: (error: unknown) => `Failed getting reminders\n${error}`,
 
   updateLinkError: (error: unknown) => `Failed updating link\n${error}`,
 

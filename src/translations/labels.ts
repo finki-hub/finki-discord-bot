@@ -26,7 +26,6 @@ export const labels = {
   profile: 'Профил',
   program: 'Смер',
   questions: 'Прашања',
-  reminder: 'Потсетник',
   title: 'Звање',
   type: 'Тип',
   unknown: '?',

@@ -4,7 +4,6 @@ import { getIntervalsProperty } from '../../configuration/main.js';
 import { logger } from '../../logger.js';
 import { labels } from '../../translations/labels.js';
 import { logMessageFunctions } from '../../translations/logs.js';
-import { sendReminders } from '../reminders.js';
 import { closeInactiveTickets } from '../tickets.js';
 import { DATE_FORMATTER } from './constants.js';
 
@@ -40,15 +39,9 @@ const convertMillisecondsToCronJob = (ms: number) => {
 export const initializeCronJobs = () => {
   const cronJobs: Cron[] = [];
 
-  const sendRemindersInterval = getIntervalsProperty('sendReminders');
   const ticketsCheckInterval = getIntervalsProperty('ticketsCheck');
 
   cronJobs.push(
-    new Cron(
-      convertMillisecondsToCronJob(sendRemindersInterval),
-      { name: 'sendReminders' },
-      sendReminders,
-    ),
     new Cron(
       convertMillisecondsToCronJob(ticketsCheckInterval),
       { name: 'closeInactiveTickets' },
