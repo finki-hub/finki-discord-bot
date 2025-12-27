@@ -50,7 +50,6 @@ export const commandDescriptions = {
   'statistics year': 'Прикажи статистика за улогите за години',
   'ticket close': 'Затвори тикет',
   'ticket list': 'Преземи листа од сите тикети',
-  timeout: 'Дај си тајмаут',
 };
 
 export const commandResponses = {
@@ -60,8 +59,6 @@ export const commandResponses = {
   configurationReloading: 'Се освежува конфигурацијата...',
   scriptExecuted: 'Ја извршивте скриптата.',
   ticketClosed: 'Тикетот е затворен.',
-  timeoutImpossible: 'Не може да си поставите тајмаут.',
-  timeoutSet: 'Си поставивте тајмаут.',
 };
 
 export const commandResponseFunctions = {
