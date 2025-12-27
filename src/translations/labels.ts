@@ -29,7 +29,6 @@ export const labels = {
   program: 'Смер',
   questions: 'Прашања',
   reminder: 'Потсетник',
-  starboard: 'Starboard',
   title: 'Звање',
   type: 'Тип',
   unknown: '?',

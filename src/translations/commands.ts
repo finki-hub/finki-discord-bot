@@ -134,8 +134,6 @@ export const commandResponseFunctions = {
       userId,
     )} на ${experience}.`,
 
-  messageStarred: (messageUrl: string) => `Пораката ${messageUrl} е обележана!`,
-
   ping: (ping: number | string) => `${ping} ms`,
 
   reminderCreated: (timestamp: string, message: string) =>
