@@ -6,7 +6,6 @@ on:
       - "main"
     paths:
       - "src/**"
-      - "prisma/**"
       - "eslint.config.js"
       - "package.json"
       - "package-lock.json"
@@ -16,7 +15,6 @@ on:
       - "main"
     paths:
       - "src/**"
-      - "prisma/**"
       - "eslint.config.js"
       - "package.json"
       - "package-lock.json"
@@ -42,9 +40,6 @@ jobs:
 
       - name: Install Dependencies
         run: npm i
-
-      - name: Generate Prisma Client
-        run: npm run generate
 
       - name: Run ESLint
         run: npm run lint

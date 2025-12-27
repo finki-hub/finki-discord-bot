@@ -1,6 +1,5 @@
 import type { ColorResolvable } from 'discord.js';
 
-import { getConfig, setConfig } from '../data/database/Config.js';
 import {
   type BotConfig,
   type BotConfigKeys,
@@ -9,18 +8,22 @@ import {
 } from '../lib/schemas/BotConfig.js';
 import { logger } from '../logger.js';
 import { configErrorFunctions } from '../translations/errors.js';
+import {
+  getConfig as getConfigFile,
+  setConfig as setConfigFile,
+} from './configFile.js';
 import { DEFAULT_CONFIGURATION } from './defaults.js';
 
 type ConfigShape = NonNullable<BotConfig>;
 
 let config: ConfigShape | undefined;
 
-export const reloadDatabaseConfig = async () => {
-  const currentConfig = await getConfig();
+export const reloadConfig = async () => {
+  const currentConfig = await getConfigFile();
 
   try {
     const parsedConfig = BotConfigSchema.parse(
-      currentConfig?.value ?? DEFAULT_CONFIGURATION,
+      currentConfig ?? DEFAULT_CONFIGURATION,
     );
     config = parsedConfig ?? DEFAULT_CONFIGURATION;
   } catch (error) {
@@ -43,9 +46,9 @@ export const setConfigProperty = async <T extends BotConfigKeys>(
   }
 
   config[key] = value;
-  const newValue = await setConfig(config);
+  const newValue = await setConfigFile(config);
 
-  return newValue?.value ?? null;
+  return newValue ?? null;
 };
 
 export const getConfigKeys = () => Object.keys(DEFAULT_CONFIGURATION);

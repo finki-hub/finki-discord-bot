@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { getChatbotUrl } from '../../configuration/environment.js';
 import { LinkSchema, LinksSchema } from '../../lib/schemas/Link.js';
 import { logger } from '../../logger.js';
-import { databaseErrorFunctions } from '../../translations/database.js';
+import { apiErrorFunctions } from '../../translations/api.js';
 
 export const getLinks = async () => {
   const chatbotUrl = getChatbotUrl();
@@ -21,7 +21,7 @@ export const getLinks = async () => {
 
     return LinksSchema.parse(await result.json());
   } catch (error) {
-    logger.error(databaseErrorFunctions.getLinksError(error));
+    logger.error(apiErrorFunctions.getLinksError(error));
 
     return null;
   }
@@ -43,7 +43,7 @@ export const getLinkNames = async () => {
 
     return z.array(z.string()).parse(await result.json());
   } catch (error) {
-    logger.error(databaseErrorFunctions.getLinkNamesError(error));
+    logger.error(apiErrorFunctions.getLinkNamesError(error));
 
     return null;
   }
@@ -69,7 +69,7 @@ export const getLink = async (name?: string) => {
 
     return LinkSchema.parse(await result.json());
   } catch (error) {
-    logger.error(databaseErrorFunctions.getLinkError(error));
+    logger.error(apiErrorFunctions.getLinkError(error));
 
     return null;
   }
@@ -91,7 +91,7 @@ export const getNthLink = async (index?: number) => {
 
     return LinkSchema.parse(await result.json());
   } catch (error) {
-    logger.error(databaseErrorFunctions.getNthLinkError(error));
+    logger.error(apiErrorFunctions.getNthLinkError(error));
 
     return null;
   }

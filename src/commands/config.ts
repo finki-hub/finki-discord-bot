@@ -5,18 +5,17 @@ import {
   SlashCommandBuilder,
 } from 'discord.js';
 
-import { reloadConfigurationFiles } from '../configuration/files.js';
+import { getConfig } from '../configuration/configFile.js';
+import { reloadData } from '../configuration/files.js';
 import {
   getConfigKeys,
   getConfigProperty,
-  reloadDatabaseConfig,
+  reloadConfig,
   setConfigProperty,
 } from '../configuration/main.js';
 import { refreshOnConfigChange } from '../configuration/refresh.js';
-import { getConfig } from '../data/database/Config.js';
 import {
   BotConfigKeysSchema,
-  BotConfigSchema,
   RequiredBotConfigSchema,
 } from '../lib/schemas/BotConfig.js';
 import {
@@ -79,7 +78,7 @@ const handleConfigGet = async (interaction: ChatInputCommandInteraction) => {
     await interaction.editReply({
       files: [
         {
-          attachment: Buffer.from(JSON.stringify(fullConfig, null, 2)),
+          attachment: Buffer.from(JSON.stringify(fullConfig ?? {}, null, 2)),
           name: 'config.json',
         },
       ],
@@ -150,19 +149,9 @@ const handleConfigSet = async (interaction: ChatInputCommandInteraction) => {
     return;
   }
 
-  const newConfig = BotConfigSchema.safeParse(rawNewConfig);
-
-  if (!newConfig.success) {
-    await interaction.editReply(
-      commandErrorFunctions.invalidConfiguration(newConfig.error),
-    );
-
-    return;
-  }
-
   const newProperty = JSON.stringify(
     {
-      [key]: newConfig.data?.[key],
+      [key]: rawNewConfig[key],
     },
     null,
     2,
@@ -189,7 +178,7 @@ const handleConfigSet = async (interaction: ChatInputCommandInteraction) => {
 const handleConfigReload = async (interaction: ChatInputCommandInteraction) => {
   await interaction.editReply(commandResponses.configurationReloading);
 
-  await Promise.all([reloadDatabaseConfig(), reloadConfigurationFiles()]);
+  await Promise.all([reloadConfig(), reloadData()]);
 
   await interaction.editReply(commandResponses.configurationReloaded);
 };

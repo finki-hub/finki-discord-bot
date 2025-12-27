@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { getChatbotUrl } from '../../configuration/environment.js';
 import { QuestionSchema, QuestionsSchema } from '../../lib/schemas/Question.js';
 import { logger } from '../../logger.js';
-import { databaseErrorFunctions } from '../../translations/database.js';
+import { apiErrorFunctions } from '../../translations/api.js';
 
 export const getQuestions = async () => {
   const chatbotUrl = getChatbotUrl();
@@ -21,7 +21,7 @@ export const getQuestions = async () => {
 
     return QuestionsSchema.parse(await result.json());
   } catch (error) {
-    logger.error(databaseErrorFunctions.getQuestionsError(error));
+    logger.error(apiErrorFunctions.getQuestionsError(error));
 
     return null;
   }
@@ -43,7 +43,7 @@ export const getQuestionNames = async () => {
 
     return z.array(z.string()).parse(await result.json());
   } catch (error) {
-    logger.error(databaseErrorFunctions.getQuestionNamesError(error));
+    logger.error(apiErrorFunctions.getQuestionNamesError(error));
 
     return null;
   }
@@ -69,7 +69,7 @@ export const getQuestion = async (name?: string) => {
 
     return QuestionSchema.parse(await result.json());
   } catch (error) {
-    logger.error(databaseErrorFunctions.getQuestionError(error));
+    logger.error(apiErrorFunctions.getQuestionError(error));
 
     return null;
   }
@@ -95,7 +95,7 @@ export const getNthQuestion = async (index?: number) => {
 
     return QuestionSchema.parse(await result.json());
   } catch (error) {
-    logger.error(databaseErrorFunctions.getNthQuestionError(error));
+    logger.error(apiErrorFunctions.getNthQuestionError(error));
 
     return null;
   }

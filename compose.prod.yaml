@@ -2,13 +2,9 @@ name: finki-discord-bot
 
 services:
   bot:
-    depends_on:
-      database:
-        condition: service_healthy
     environment:
       TOKEN: ${TOKEN}
       APPLICATION_ID: ${APPLICATION_ID}
-      DATABASE_URL: ${DATABASE_URL}
       CHATBOT_URL: ${CHATBOT_URL}
       ANALYTICS_URL: ${ANALYTICS_URL}
       API_KEY: ${API_KEY}
@@ -23,26 +19,6 @@ services:
       - ./config:/app/config
       - ./sessions:/app/sessions
       - ./logs:/app/logs
-
-  database:
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    healthcheck:
-      interval: 15s
-      retries: 3
-      start_period: 5s
-      test:
-        - "CMD-SHELL"
-        - "pg_isready -U $$POSTGRES_USER"
-      timeout: 30s
-    image: postgres:18
-    networks:
-      - finki_stack
-    restart: unless-stopped
-    volumes:
-      - ./db:/var/lib/postgresql/data
 
 networks:
   finki_stack:

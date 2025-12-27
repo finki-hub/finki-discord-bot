@@ -4,8 +4,6 @@
     "url": "https://github.com/Delemangi/finki-discord-bot/issues"
   },
   "dependencies": {
-    "@prisma/adapter-pg": "^7.2.0",
-    "@prisma/client": "^7.2.0",
     "croner": "^9.1.0",
     "discord-api-types": "^0.38.37",
     "discord.js": "^14.25.1",
@@ -17,11 +15,9 @@
   },
   "description": "FINKI Discord Bot",
   "devDependencies": {
-    "@types/pg": "^8.16.0",
     "esbuild": "^0.27.2",
     "eslint": "^9.39.2",
     "eslint-config-imperium": "^3.0.0",
-    "prisma": "^7.2.0",
     "rimraf": "^6.1.2",
     "tsx": "^4.21.0",
     "typescript": "~5.9.3"
@@ -38,14 +34,11 @@
     "url": "git+https://github.com/Delemangi/finki-discord-bot.git"
   },
   "scripts": {
-    "apply": "prisma migrate deploy",
     "build": "npm run clean && node esbuild.config.js",
     "clean": "rimraf dist",
     "dev": "tsx src/index.ts",
     "format": "eslint . --cache --fix",
-    "generate": "prisma generate",
     "lint": "tsc --noEmit && eslint . --cache",
-    "migrate": "prisma migrate dev",
     "start": "node dist/index.js",
     "start:env": "node --env-file=.env dist/index.js"
   },

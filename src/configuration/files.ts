@@ -47,7 +47,7 @@ let roles: RoleConfig = {};
 let sessions: Record<string, string> = {};
 let staff: Staff[] = [];
 
-export const reloadConfigurationFiles = async () => {
+export const reloadData = async () => {
   const coursesPromise = readFile('./config/courses.json', options);
   const classroomsPromise = readFile('./config/classrooms.json', options);
   const infoPromise = readFile('./config/information.json', options);

@@ -1,7 +1,5 @@
 node_modules
 dist
-db
-pgadmin
 logs
 .git
 .gitignore
@@ -9,4 +7,3 @@ logs
 *.log
 *.md
 sessions
-src/generated

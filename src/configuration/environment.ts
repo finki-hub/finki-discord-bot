@@ -21,14 +21,6 @@ export const getApplicationId = () => {
   }
 };
 
-export const getDatabaseUrl = () => {
-  try {
-    return z.string().parse(env['DATABASE_URL']);
-  } catch {
-    throw new Error(configErrors.noDatabaseUrl);
-  }
-};
-
 export const getChatbotUrl = () => {
   try {
     return z

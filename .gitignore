@@ -100,8 +100,6 @@ dist
 # FuseBox cache
 .fusebox/
 
-# DynamoDB Local files
-.dynamodb/
 
 # TernJS port file
 .tern-port
@@ -189,15 +187,8 @@ fabric.properties
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
 
-# Generated files
-src/generated/**
 
 # User defined folders
 sessions
 files
 config
-
-# Database
-db/
-migration/
-pgadmin/

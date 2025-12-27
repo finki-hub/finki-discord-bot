@@ -7,7 +7,6 @@ on:
       - "dev"
     paths:
       - "src/**"
-      - "prisma/**"
       - "eslint.config.js"
       - "package.json"
       - "package-lock.json"

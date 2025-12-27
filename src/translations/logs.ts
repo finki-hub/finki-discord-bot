@@ -197,15 +197,11 @@ export const bootMessage = (dateString: string) =>
 
 export const exitMessages = {
   beforeExit: 'Exiting...',
-  databaseConnectionClosed: 'Database connection closed.',
   goodbye: 'Goodbye.',
   shutdownGracefully: 'Shutting down gracefully...',
 };
 
 export const exitMessageFunctions = {
-  databaseConnectionError: (error: unknown) =>
-    `Error during shutdown\n${error}`,
-
   shutdownWithError: (error: string) =>
     `Bot has been shut down with error ${error}`,
 };

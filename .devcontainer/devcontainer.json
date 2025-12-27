@@ -1,11 +1,8 @@
 {
   "dockerComposeFile": "./compose.yaml",
-  "forwardPorts": [
-    5432
-  ],
   "name": "finki-discord-bot",
   "service": "container",
   "shutdownAction": "stopCompose",
   "workspaceFolder": "/app",
-  "postCreateCommand": "npm i && npm run generate"
+  "postCreateCommand": "npm i"
 }

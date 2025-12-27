@@ -1,7 +1,6 @@
 {
   "recommendations": [
     "EditorConfig.EditorConfig",
-    "Prisma.prisma",
     "dbaeumer.vscode-eslint",
     "eamodio.gitlens",
     "docker.docker",

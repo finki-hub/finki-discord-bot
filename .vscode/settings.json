@@ -3,9 +3,6 @@
     "editor.defaultFormatter": "dbaeumer.vscode-eslint",
     "editor.tabSize": 2
   },
-  "[prisma]": {
-    "editor.defaultFormatter": "Prisma.prisma"
-  },
   "[typescript]": {
     "editor.defaultFormatter": "dbaeumer.vscode-eslint",
     "editor.tabSize": 2

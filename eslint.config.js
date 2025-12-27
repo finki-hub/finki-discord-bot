@@ -8,14 +8,7 @@ import {
 
 export default [
   {
-    ignores: [
-      'dist/',
-      '.devcontainer/',
-      'db/',
-      'pgadmin/',
-      'logs/',
-      'src/generated/',
-    ],
+    ignores: ['dist/', '.devcontainer/', 'logs/'],
   },
   base,
   node,

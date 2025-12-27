@@ -3,28 +3,8 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile
-    depends_on:
-      - database
     restart: unless-stopped
     user: root
     volumes:
       - ..:/app
       - /app/node_modules
-
-  database:
-    env_file:
-      - ../.env
-    healthcheck:
-      interval: 30s
-      retries: 5
-      start_period: 80s
-      test:
-        - "CMD-SHELL"
-        - "pg_isready -U $$POSTGRES_USER"
-      timeout: 60s
-    image: postgres:18
-    ports:
-      - "${POSTGRES_PORT}:5432"
-    restart: unless-stopped
-    volumes:
-      - ./db:/var/lib/postgresql/data

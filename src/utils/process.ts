@@ -1,17 +1,9 @@
-import { database } from '../data/database/connection.js';
 import { logger } from '../logger.js';
 import { exitMessageFunctions, exitMessages } from '../translations/logs.js';
 import { sendErrorToWebhook } from './webhooks.js';
 
-const shutdown = async () => {
+const shutdown = () => {
   logger.info(exitMessages.shutdownGracefully);
-
-  try {
-    await database.$disconnect();
-    logger.info(exitMessages.databaseConnectionClosed);
-  } catch (error) {
-    logger.error(exitMessageFunctions.databaseConnectionError(error));
-  }
 
   // eslint-disable-next-line n/no-process-exit, unicorn/no-process-exit
   process.exit(0);
@@ -42,9 +34,8 @@ export const attachProcessListeners = () => {
     logger.warn(warning);
   });
 
-  process.on('beforeExit', async () => {
+  process.on('beforeExit', () => {
     logger.info(exitMessages.beforeExit);
-    await database.$disconnect();
   });
 
   process.on('exit', () => {
