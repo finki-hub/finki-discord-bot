@@ -1,7 +1,5 @@
 import {
-  type EmbedBuilder,
   type GuildTextBasedChannel,
-  type Interaction,
   type InteractionResponse,
   type Message,
 } from 'discord.js';
@@ -52,26 +50,6 @@ export const initializeChannels = async () => {
 };
 
 export const getChannel = (type: Channel) => channels[type];
-
-export const logEmbed = async (
-  embed: EmbedBuilder,
-  interaction: Interaction,
-  type: Channel,
-) => {
-  const channel = channels[type];
-
-  if (!channel?.isTextBased()) {
-    return;
-  }
-
-  try {
-    await channel.send({
-      embeds: [embed],
-    });
-  } catch (error) {
-    logger.error(logErrorFunctions.interactionLogError(interaction.id, error));
-  }
-};
 
 export const deleteResponse = async (
   message: InteractionResponse | Message,

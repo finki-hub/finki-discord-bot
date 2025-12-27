@@ -151,9 +151,6 @@ export const logErrorFunctions = {
   fillEmbeddingsError: (error: unknown) =>
     `Failed filling embeddings\n${error}`,
 
-  interactionLogError: (interactionId: string, error: unknown) =>
-    `Failed logging interaction ${interactionId}\n${error}`,
-
   interactionUpdateError: (command: string, error: unknown) =>
     `Failed updating ${command} interaction\n${error}`,
 
@@ -187,9 +184,6 @@ export const logErrorFunctions = {
 
   messageResolveError: (messageId: string, error: unknown) =>
     `Failed resolving message ${messageId}\n${error}`,
-
-  messageUrlFetchError: (interactionId: string, error: unknown) =>
-    `Failed fetching message URL for ${interactionId}\n${error}`,
 
   modalExecutionError: (interaction: ModalSubmitInteraction, error: unknown) =>
     `Failed executing modal interaction ${interaction.customId}\n${error}`,
@@ -237,6 +231,9 @@ export const logErrorFunctions = {
     error: unknown,
   ) =>
     `Failed handling user context menu interaction ${interaction.commandName}\n${error}`,
+
+  webhookSendError: (error: unknown) =>
+    `Failed sending error to webhook\n${error}`,
 };
 
 export const bootMessage = (dateString: string) =>

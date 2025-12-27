@@ -22,6 +22,7 @@ export const RequiredBotConfigSchema = z.object({
       enabled: z.boolean().optional(),
     })
     .optional(),
+  errorWebhook: z.url().optional(),
   experience: z
     .object({
       enabled: z.boolean().optional(),

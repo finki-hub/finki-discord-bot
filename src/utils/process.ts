@@ -1,8 +1,7 @@
 import { database } from '../data/database/connection.js';
-import { Channel } from '../lib/schemas/Channel.js';
 import { logger } from '../logger.js';
 import { exitMessageFunctions, exitMessages } from '../translations/logs.js';
-import { getChannel } from './channels.js';
+import { sendErrorToWebhook } from './webhooks.js';
 
 const shutdown = async () => {
   logger.info(exitMessages.shutdownGracefully);
@@ -18,14 +17,13 @@ const shutdown = async () => {
   process.exit(0);
 };
 
-const logErrorToChannel = async (thrownError?: Error) => {
-  const logsChannel = getChannel(Channel.Logs);
+const logErrorToWebhook = async (thrownError?: Error) => {
   try {
-    await (thrownError
-      ? logsChannel?.send(
-          exitMessageFunctions.shutdownWithError(thrownError.message),
-        )
-      : logsChannel?.send(exitMessages.shutdownGracefully));
+    await sendErrorToWebhook(
+      thrownError
+        ? exitMessageFunctions.shutdownWithError(thrownError.message)
+        : exitMessages.shutdownGracefully,
+    );
   } catch {
     // Do nothing
   }
@@ -37,7 +35,7 @@ export const attachProcessListeners = () => {
   process.on('SIGTERM', () => shutdown());
 
   process.on('uncaughtException', async (error) => {
-    await logErrorToChannel(error);
+    await logErrorToWebhook(error);
   });
 
   process.on('warning', (warning) => {

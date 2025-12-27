@@ -10,6 +10,7 @@ export const DEFAULT_CONFIGURATION = {
     channels: [],
     enabled: false,
   },
+  errorWebhook: undefined,
   experience: {
     enabled: false,
     multipliers: undefined,

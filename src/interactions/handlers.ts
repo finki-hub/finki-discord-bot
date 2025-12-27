@@ -8,18 +8,10 @@ import {
   type UserContextMenuCommandInteraction,
 } from 'discord.js';
 
-import {
-  getAutocompleteEmbed,
-  getButtonEmbed,
-  getChatInputCommandEmbed,
-  getMessageContextMenuCommandEmbed,
-  getUserContextMenuCommandEmbed,
-} from '../components/logs.js';
-import { Channel } from '../lib/schemas/Channel.js';
 import { logger } from '../logger.js';
 import { commandErrors } from '../translations/commands.js';
 import { logErrorFunctions, logShortStrings } from '../translations/logs.js';
-import { deleteResponse, getChannel, logEmbed } from '../utils/channels.js';
+import { deleteResponse } from '../utils/channels.js';
 import {
   getCommand,
   isContextMenuCommand,
@@ -27,6 +19,7 @@ import {
 } from '../utils/commands.js';
 import { getMemberFromGuild } from '../utils/guild.js';
 import { hasCommandPermission } from '../utils/permissions.js';
+import { sendErrorToWebhook } from '../utils/webhooks.js';
 import {
   handleClassroomAutocomplete,
   handleCourseAutocomplete,
@@ -80,11 +73,6 @@ export const handleChatInputCommand = async (
           : logShortStrings.guild
       }]`,
     );
-    void logEmbed(
-      await getChatInputCommandEmbed(interaction),
-      interaction,
-      Channel.Logs,
-    );
 
     return;
   }
@@ -106,11 +94,6 @@ export const handleChatInputCommand = async (
         ? logShortStrings.dm
         : logShortStrings.guild
     }]`,
-  );
-  await logEmbed(
-    await getChatInputCommandEmbed(interaction),
-    interaction,
-    Channel.Logs,
   );
 
   if (command === undefined || !isSlashCommand(command)) {
@@ -148,13 +131,9 @@ export const handleChatInputCommand = async (
       logErrorFunctions.chatInputInteractionError(interaction, error),
     );
 
-    const logsChannel = getChannel(Channel.Logs);
-    await logsChannel?.send({
-      content: logErrorFunctions.chatInputCommandExecutionError(
-        interaction,
-        error,
-      ),
-    });
+    await sendErrorToWebhook(
+      logErrorFunctions.chatInputCommandExecutionError(interaction, error),
+    );
 
     await (interaction.deferred
       ? interaction.editReply(commandErrors.commandError)
@@ -190,11 +169,6 @@ export const handleUserContextMenuCommand = async (
         : logShortStrings.guild
     }]`,
   );
-  await logEmbed(
-    await getUserContextMenuCommandEmbed(interaction),
-    interaction,
-    Channel.Logs,
-  );
 
   if (command === undefined || !isContextMenuCommand(command)) {
     logger.warn(logErrorFunctions.commandNotFound(interaction.id));
@@ -226,13 +200,9 @@ export const handleUserContextMenuCommand = async (
       logErrorFunctions.userContextMenuInteractionError(interaction, error),
     );
 
-    const logsChannel = getChannel(Channel.Logs);
-    await logsChannel?.send({
-      content: logErrorFunctions.contextMenuCommandExecutionError(
-        interaction,
-        error,
-      ),
-    });
+    await sendErrorToWebhook(
+      logErrorFunctions.contextMenuCommandExecutionError(interaction, error),
+    );
 
     await (interaction.deferred
       ? interaction.editReply(commandErrors.commandError)
@@ -268,11 +238,6 @@ export const handleMessageContextMenuCommand = async (
         : logShortStrings.guild
     }]`,
   );
-  await logEmbed(
-    await getMessageContextMenuCommandEmbed(interaction),
-    interaction,
-    Channel.Logs,
-  );
 
   if (command === undefined || !isContextMenuCommand(command)) {
     logger.warn(logErrorFunctions.commandNotFound(interaction.id));
@@ -304,13 +269,9 @@ export const handleMessageContextMenuCommand = async (
       logErrorFunctions.messageContextMenuInteractionError(interaction, error),
     );
 
-    const logsChannel = getChannel(Channel.Logs);
-    await logsChannel?.send({
-      content: logErrorFunctions.contextMenuCommandExecutionError(
-        interaction,
-        error,
-      ),
-    });
+    await sendErrorToWebhook(
+      logErrorFunctions.contextMenuCommandExecutionError(interaction, error),
+    );
 
     await (interaction.deferred
       ? interaction.editReply(commandErrors.commandError)
@@ -337,11 +298,6 @@ export const handleButton = async (interaction: ButtonInteraction) => {
         ? logShortStrings.dm
         : logShortStrings.guild
     }]`,
-  );
-  await logEmbed(
-    getButtonEmbed(interaction, command, args),
-    interaction,
-    Channel.Logs,
   );
 
   if (command === undefined) {
@@ -376,10 +332,9 @@ export const handleButton = async (interaction: ButtonInteraction) => {
   } catch (error) {
     logger.error(logErrorFunctions.buttonExecutionError(interaction, error));
 
-    const logsChannel = getChannel(Channel.Logs);
-    await logsChannel?.send({
-      content: logErrorFunctions.buttonExecutionError(interaction, error),
-    });
+    await sendErrorToWebhook(
+      logErrorFunctions.buttonExecutionError(interaction, error),
+    );
 
     await (interaction.deferred
       ? interaction.editReply(commandErrors.commandError)
@@ -412,7 +367,6 @@ export const handleAutocomplete = async (
         : logShortStrings.guild
     }]`,
   );
-  await logEmbed(getAutocompleteEmbed(interaction), interaction, Channel.Logs);
 
   try {
     if (Object.keys(autocompleteInteractionHandlers).includes(option.name)) {
@@ -429,10 +383,9 @@ export const handleAutocomplete = async (
 
     await interaction.respond([]);
 
-    const logsChannel = getChannel(Channel.Logs);
-    await logsChannel?.send({
-      content: logErrorFunctions.autocompleteExecutionError(interaction, error),
-    });
+    await sendErrorToWebhook(
+      logErrorFunctions.autocompleteExecutionError(interaction, error),
+    );
   }
 };
 
@@ -477,10 +430,9 @@ export const handleModalSubmit = async (
   } catch (error) {
     logger.error(logErrorFunctions.modalExecutionError(interaction, error));
 
-    const logsChannel = getChannel(Channel.Logs);
-    await logsChannel?.send({
-      content: logErrorFunctions.modalExecutionError(interaction, error),
-    });
+    await sendErrorToWebhook(
+      logErrorFunctions.modalExecutionError(interaction, error),
+    );
 
     await interaction.editReply(commandErrors.commandError);
   }

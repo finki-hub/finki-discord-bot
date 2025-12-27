@@ -17,21 +17,3 @@ export const embedMessageFunctions = {
   allQuestions: (command: string) =>
     `Ова се сите достапни прашања. Користете ${command} за да ги добиете одговорите.`,
 };
-
-export const embedLabels = {
-  author: 'Author',
-  autocompleteInteraction: 'Autocomplete Command',
-  buttonInteraction: 'Button Command',
-  channel: 'Channel',
-  chatInputInteraction: 'Chat Input Command',
-  command: 'Command',
-  empty: 'Empty',
-  messageContextMenuInteraction: 'Message Context Menu Command',
-  option: 'Option',
-  target: 'Target',
-  ticketClose: 'Ticket Close',
-  ticketCreate: 'Ticket Create',
-  unknown: 'Unknown',
-  userContextMenuInteraction: 'User Context Menu Command',
-  value: 'Value',
-};
