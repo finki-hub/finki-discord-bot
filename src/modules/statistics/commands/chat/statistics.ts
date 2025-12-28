@@ -17,6 +17,7 @@ import {
   commandDescriptions,
   commandErrors,
   commandResponseFunctions,
+  commandResponses,
 } from '@/translations/commands.js';
 
 export const name = 'statistics';
@@ -76,6 +77,11 @@ const handleStatisticsRole = async (
   const output = roles.map(
     (role) => `${roleMention(role.id)}: ${role.members.size}`,
   );
+
+  if (output.length === 0) {
+    await interaction.editReply(commandResponses.statisticsNotAvailable);
+    return;
+  }
 
   await safeReplyToInteraction(interaction, output.join('\n'));
 };
@@ -150,7 +156,7 @@ const handleStatisticsServer = async (
     ),
   ];
 
-  await interaction.editReply(output.join('\n'));
+  await safeReplyToInteraction(interaction, output.join('\n'));
 };
 
 const statisticsHandlers = {

@@ -58,6 +58,7 @@ export const commandResponses = {
   configurationReloaded: 'Конфигурацијата е освежена.',
   configurationReloading: 'Се освежува конфигурацијата...',
   scriptExecuted: 'Ја извршивте скриптата.',
+  statisticsNotAvailable: 'Статистики не се достапни.',
   ticketClosed: 'Тикетот е затворен.',
 };
 
