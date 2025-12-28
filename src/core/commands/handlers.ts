@@ -10,6 +10,7 @@ import {
   type UserContextMenuCommandInteraction,
 } from 'discord.js';
 
+import { getFullCommandName } from '@/common/commands/utils.js';
 import { logger } from '@/common/logger/index.js';
 import { getMemberFromGuild } from '@/common/utils/guild.js';
 import { commandErrors } from '@/translations/commands.js';
@@ -42,8 +43,10 @@ const isMissingPermissionsError = (error: unknown): boolean =>
 export const handleChatInputCommand = async (
   interaction: ChatInputCommandInteraction,
 ) => {
+  const commandWithSubcommand = getFullCommandName(interaction);
+
   logger.info(
-    `[Chat] ${interaction.user.tag}: ${interaction.commandName} [${interaction.guild?.name ?? 'DM'}]`,
+    `[Chat] ${interaction.user.tag}: ${commandWithSubcommand} [${interaction.guild?.name ?? 'DM'}]`,
   );
 
   const command = getChatCommand(interaction.commandName);
@@ -56,11 +59,6 @@ export const handleChatInputCommand = async (
     });
     return;
   }
-
-  const subcommand = interaction.options.getSubcommand(false);
-  const commandWithSubcommand = subcommand
-    ? `${interaction.commandName} ${subcommand}`
-    : interaction.commandName;
 
   const member = await getMemberFromGuild(
     interaction.user.id,
