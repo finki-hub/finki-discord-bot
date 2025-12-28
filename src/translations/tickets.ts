@@ -1,6 +1,6 @@
 import { userMention } from 'discord.js';
 
-import type { Ticket } from '../lib/schemas/Ticket.js';
+import type { Ticket } from '../modules/ticket/schemas/Ticket.js';
 
 export const ticketMessages = {
   createTicket: `# Тикети\nДоколку имате некакво прашање, проблем, предлог, поплака или слично, може да испратите **приватен** тикет до надлежните луѓе. Изберете го типот на тикетот и напишете го Вашето образложение. Ќе добиете одговор во најбрз можен рок.\n\nМожете да испратите тикет до:`,

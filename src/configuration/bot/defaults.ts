@@ -1,0 +1,31 @@
+import {
+  type BotConfig,
+  type BotConfigKeys,
+} from '@/modules/admin/schemas/BotConfig.js';
+import { Model } from '@/modules/chat/schemas/Model.js';
+
+export const DEFAULT_CONFIGURATION = {
+  channels: undefined,
+  crossposting: {
+    channels: [],
+    enabled: false,
+  },
+  errorWebhook: undefined,
+  guild: undefined,
+  intervals: {
+    buttonIdle: 60_000,
+    ephemeralReply: 5_000,
+    ticketsCheck: 900_000,
+  },
+  models: {
+    embeddings: Model.BGE_M3,
+    inference: Model.LLAMA_3_3_70B,
+  },
+  roles: undefined,
+  themeColor: '#313183',
+  ticketing: {
+    allowedInactivityDays: 10,
+    enabled: false,
+    tickets: undefined,
+  },
+} as const satisfies BotConfig satisfies Record<BotConfigKeys, unknown>;
