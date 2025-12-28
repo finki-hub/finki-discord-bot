@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const ClassroomSchema = z
+export const RoomSchema = z
   .object({
     capacity: z.union([z.number(), z.string()]),
     classroom: z.union([z.number(), z.string()]),
@@ -11,4 +11,4 @@ export const ClassroomSchema = z
   })
   .strict();
 
-export type Classroom = z.infer<typeof ClassroomSchema>;
+export type Room = z.infer<typeof RoomSchema>;

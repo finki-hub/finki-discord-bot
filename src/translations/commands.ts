@@ -16,7 +16,6 @@ export const commandDescriptions = {
   'chat models': 'Преземи листа на јазични модели',
   'chat query': 'Испрати промпт до LLM агентот',
   'chat unembedded': 'Преземи неембедирани документи',
-  room: 'Преземи информации за просторија',
   'config get': 'Преземи конфигурација',
   'config reload': 'Освежи ги конфигурациите',
   'config set': 'Измени конфигурација',
@@ -40,6 +39,7 @@ export const commandDescriptions = {
   prompt: 'Испрати промпт до LLM агентот',
   query: 'Испрати промпт до LLM агентот',
   question: 'Преземи најчесто поставувано прашање',
+  room: 'Преземи информации за просторија',
   session: 'Преземи распоред за испитна сесија или колоквиумска недела',
   staff: 'Преземи информации за професор',
   'statistics color': 'Прикажи статистика за улогите за бои',
@@ -114,7 +114,6 @@ export const commandResponseFunctions = {
 
 export const commandErrors = {
   buttonNoPermission: 'Командата не е ваша.',
-  classroomNotFound: 'Просторијата не постои.',
   commandError:
     'Настана грешка при извршување на командата. Обидете се повторно, или пријавете ја грешката.',
   commandNoPermission: 'Немате дозвола да ја извршите командата.',
@@ -137,6 +136,7 @@ export const commandErrors = {
     'Не се избрани членови до кои може да се испрати тикетот. Обидете се на друга категорија.',
   noTickets: 'Нема тикети.',
   questionsFetchFailed: 'Преземањето на прашањата беше неуспешно.',
+  roomNotFound: 'Просторијата не постои.',
   sessionNotFound: 'Сесијата не постои.',
   staffNotFound: 'Професорот не постои.',
   ticketingDisabled: 'Тикетите не се овозможени.',

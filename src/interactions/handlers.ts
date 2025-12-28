@@ -21,12 +21,12 @@ import { getMemberFromGuild } from '../utils/guild.js';
 import { hasCommandPermission } from '../utils/permissions.js';
 import { sendErrorToWebhook } from '../utils/webhooks.js';
 import {
-  handleClassroomAutocomplete,
   handleCourseAutocomplete,
   handleCourseRoleAutocomplete,
   handleLinkAutocomplete,
   handleProfessorAutocomplete,
   handleQuestionAutocomplete,
+  handleRoomAutocomplete,
   handleSessionAutocomplete,
 } from './autocomplete.js';
 import { handleTicketCloseButton, handleTicketCreateButton } from './button.js';
@@ -306,12 +306,12 @@ export const handleButton = async (interaction: ButtonInteraction) => {
 };
 
 const autocompleteInteractionHandlers = {
-  classroom: handleClassroomAutocomplete,
   course: handleCourseAutocomplete,
   courserole: handleCourseRoleAutocomplete,
   link: handleLinkAutocomplete,
   professor: handleProfessorAutocomplete,
   question: handleQuestionAutocomplete,
+  room: handleRoomAutocomplete,
   session: handleSessionAutocomplete,
 };
 

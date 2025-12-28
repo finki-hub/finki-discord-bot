@@ -1,9 +1,9 @@
 import { type AutocompleteInteraction } from 'discord.js';
 
 import {
-  getClassrooms,
   getCourses,
   getFromRoleConfig,
+  getRooms,
   getSessions,
   getStaff,
 } from '../configuration/files.js';
@@ -18,7 +18,7 @@ let transformedCourses: Array<[string, string]> | null = null;
 let transformedProfessors: Array<[string, string]> | null = null;
 let transformedCourseRoles: Array<[string, string]> | null = null;
 let transformedSessions: Array<[string, string]> | null = null;
-let transformedClassrooms: Array<[string, string]> | null = null;
+let transformedRooms: Array<[string, string]> | null = null;
 
 export const handleCourseAutocomplete = async (
   interaction: AutocompleteInteraction,
@@ -142,20 +142,18 @@ export const handleSessionAutocomplete = async (
   }
 };
 
-export const handleClassroomAutocomplete = async (
+export const handleRoomAutocomplete = async (
   interaction: AutocompleteInteraction,
 ) => {
-  transformedClassrooms ??= Object.entries(
+  transformedRooms ??= Object.entries(
     transformOptions(
-      getClassrooms().map(
-        (classroom) => `${classroom.classroom} (${classroom.location})`,
-      ),
+      getRooms().map((room) => `${room.classroom} (${room.location})`),
     ),
   );
 
   try {
     await interaction.respond(
-      createOptions(transformedClassrooms, interaction.options.getFocused()),
+      createOptions(transformedRooms, interaction.options.getFocused()),
     );
   } catch (error) {
     logger.error(

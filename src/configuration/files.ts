@@ -1,7 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import { z } from 'zod';
 
-import { type Classroom, ClassroomSchema } from '../lib/schemas/Classroom.js';
 import {
   type CourseInformation,
   CourseInformationSchema,
@@ -22,6 +21,7 @@ import {
   type RoleConfig,
   RoleConfigSchema,
 } from '../lib/schemas/RoleConfig.js';
+import { type Room, RoomSchema } from '../lib/schemas/Room.js';
 import { type Staff, StaffSchema } from '../lib/schemas/Staff.js';
 
 const options = {
@@ -38,7 +38,7 @@ const parseContent = (content: string, fallback: unknown = []): unknown => {
 };
 
 let courses: string[] = [];
-let classrooms: Classroom[] = [];
+let rooms: Room[] = [];
 let information: CourseInformation[] = [];
 let participants: CourseParticipants[] = [];
 let prerequisites: CoursePrerequisites[] = [];
@@ -49,7 +49,7 @@ let staff: Staff[] = [];
 
 export const reloadData = async () => {
   const coursesPromise = readFile('./config/courses.json', options);
-  const classroomsPromise = readFile('./config/classrooms.json', options);
+  const roomsPromise = readFile('./config/classrooms.json', options);
   const infoPromise = readFile('./config/information.json', options);
   const participantsPromise = readFile('./config/participants.json', options);
   const prerequisitesPromise = readFile('./config/prerequisites.json', options);
@@ -60,7 +60,7 @@ export const reloadData = async () => {
 
   const [
     coursesRaw,
-    classroomsRaw,
+    roomsRaw,
     infoRaw,
     participantsRaw,
     prerequisitesRaw,
@@ -70,7 +70,7 @@ export const reloadData = async () => {
     staffRaw,
   ] = await Promise.all([
     coursesPromise,
-    classroomsPromise,
+    roomsPromise,
     infoPromise,
     participantsPromise,
     prerequisitesPromise,
@@ -81,7 +81,7 @@ export const reloadData = async () => {
   ]);
 
   const coursesData = parseContent(coursesRaw);
-  const classroomsData = parseContent(classroomsRaw);
+  const roomsData = parseContent(roomsRaw);
   const informationData = parseContent(infoRaw);
   const participantsData = parseContent(participantsRaw);
   const prerequisitesData = parseContent(prerequisitesRaw);
@@ -91,8 +91,7 @@ export const reloadData = async () => {
   const staffData = parseContent(staffRaw);
 
   const coursesDataPromise = z.string().array().parseAsync(coursesData);
-  const classroomsDataPromise =
-    ClassroomSchema.array().parseAsync(classroomsData);
+  const roomsDataPromise = RoomSchema.array().parseAsync(roomsData);
   const infoDataPromise =
     CourseInformationSchema.array().parseAsync(informationData);
   const participantsDataPromise =
@@ -109,7 +108,7 @@ export const reloadData = async () => {
 
   [
     courses,
-    classrooms,
+    rooms,
     information,
     participants,
     prerequisites,
@@ -119,7 +118,7 @@ export const reloadData = async () => {
     staff,
   ] = await Promise.all([
     coursesDataPromise,
-    classroomsDataPromise,
+    roomsDataPromise,
     infoDataPromise,
     participantsDataPromise,
     prerequisitesDataPromise,
@@ -130,7 +129,7 @@ export const reloadData = async () => {
   ]);
 };
 
-export const getClassrooms = () => classrooms;
+export const getRooms = () => rooms;
 
 export const getCourses = () => courses;
 

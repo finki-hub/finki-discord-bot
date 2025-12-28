@@ -16,11 +16,11 @@ import {
   getProfessors,
 } from '../configuration/files.js';
 import { getThemeColor } from '../configuration/main.js';
-import { type Classroom } from '../lib/schemas/Classroom.js';
 import { type CourseInformation } from '../lib/schemas/CourseInformation.js';
 import { type CourseParticipants } from '../lib/schemas/CourseParticipants.js';
 import { type CoursePrerequisites } from '../lib/schemas/CoursePrerequisites.js';
 import { type CourseStaff } from '../lib/schemas/CourseStaff.js';
+import { type Room } from '../lib/schemas/Room.js';
 import { type Staff } from '../lib/schemas/Staff.js';
 import { aboutMessage, botName } from '../translations/about.js';
 import { commandDescriptions } from '../translations/commands.js';
@@ -43,7 +43,7 @@ export const getAboutEmbed = () =>
     )
     .setTimestamp();
 
-export const getClassroomEmbed = (information: Classroom) =>
+export const getRoomEmbed = (information: Room) =>
   new EmbedBuilder()
     .setColor(getThemeColor())
     .setTitle(`${information.classroom.toString()} (${information.location})`)

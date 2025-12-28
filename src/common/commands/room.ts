@@ -3,8 +3,8 @@ import {
   SlashCommandBuilder,
 } from 'discord.js';
 
-import { getClassroomEmbed } from '../../components/commands.js';
-import { getClassrooms } from '../../configuration/files.js';
+import { getRoomEmbed } from '../../components/commands.js';
+import { getRooms } from '../../configuration/files.js';
 import { type Command } from '../../lib/types/Command.js';
 import {
   commandDescriptions,
@@ -12,7 +12,7 @@ import {
   commandResponseFunctions,
 } from '../../translations/commands.js';
 import { logCommandEvent } from '../../utils/analytics.js';
-import { getClosestClassroom } from '../../utils/search.js';
+import { getClosestRoom } from '../../utils/search.js';
 
 export const getCommonCommand = (
   name: keyof typeof commandDescriptions,
@@ -22,7 +22,7 @@ export const getCommonCommand = (
     .setDescription(commandDescriptions[name])
     .addStringOption((option) =>
       option
-        .setName('classroom')
+        .setName('room')
         .setDescription('Просторија')
         .setRequired(true)
         .setAutocomplete(true),
@@ -32,40 +32,36 @@ export const getCommonCommand = (
     ),
 
   execute: async (interaction: ChatInputCommandInteraction) => {
-    const classroom = interaction.options.getString('classroom', true);
+    const room = interaction.options.getString('room', true);
     const user = interaction.options.getUser('user');
 
-    const closestClassroom = getClosestClassroom(classroom) ?? classroom;
+    const closestRoom = getClosestRoom(room) ?? room;
 
-    const charPos = closestClassroom.indexOf('(');
-    const classroomName =
-      charPos === -1
-        ? closestClassroom
-        : closestClassroom.slice(0, charPos).trim();
-    const classrooms = getClassrooms().filter(
-      (cl) =>
-        cl.classroom.toString().toLowerCase() === classroomName.toLowerCase(),
+    const charPos = closestRoom.indexOf('(');
+    const roomName =
+      charPos === -1 ? closestRoom : closestRoom.slice(0, charPos).trim();
+    const rooms = getRooms().filter(
+      (cl) => cl.classroom.toString().toLowerCase() === roomName.toLowerCase(),
     );
 
-    if (classrooms.length === 0) {
+    if (rooms.length === 0) {
       await interaction.editReply({
-        content: commandErrors.classroomNotFound,
+        content: commandErrors.roomNotFound,
       });
 
       return;
     }
 
-    const embeds = classrooms.map((cl) => getClassroomEmbed(cl));
+    const embeds = rooms.map((cl) => getRoomEmbed(cl));
     await interaction.editReply({
       content: user ? commandResponseFunctions.commandFor(user.id) : null,
       embeds,
     });
 
     await logCommandEvent(interaction, name, {
-      classroom: closestClassroom,
-      keyword: classroom,
-      matchedClassrooms: classrooms,
+      keyword: room,
+      matchedRooms: rooms,
+      room: closestRoom,
     });
   },
 });
-

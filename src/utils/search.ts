@@ -1,9 +1,9 @@
 import Fuse from 'fuse.js';
 
 import {
-  getClassrooms,
   getCourses,
   getFromRoleConfig,
+  getRooms,
   getSessions,
   getStaff,
 } from '../configuration/files.js';
@@ -211,32 +211,30 @@ export const getClosestSession = (session: string) => {
   return closestSession ?? null;
 };
 
-export const getClosestClassroom = (classroom: string) => {
-  const classrooms = getClassrooms().map(
-    (c) => `${c.classroom} (${c.location})`,
-  );
+export const getClosestRoom = (room: string) => {
+  const rooms = getRooms().map((c) => `${c.classroom} (${c.location})`);
 
   // Latin -> Cyrillic
-  const transformedClassroomNames = transformOptions(classrooms);
+  const transformedRoomNames = transformOptions(rooms);
 
-  const fuse = new Fuse(Object.keys(transformedClassroomNames), {
+  const fuse = new Fuse(Object.keys(transformedRoomNames), {
     includeScore: true,
     threshold: 0.4,
   });
 
-  const result = fuse.search(classroom);
+  const result = fuse.search(room);
 
   if (result.length === 0) {
     return null;
   }
 
-  const closestLatinClassroom = result[0]?.item;
+  const closestLatinRoom = result[0]?.item;
 
-  if (closestLatinClassroom === undefined) {
+  if (closestLatinRoom === undefined) {
     return null;
   }
 
-  const closestClassroom = transformedClassroomNames[closestLatinClassroom];
+  const closestRoom = transformedRoomNames[closestLatinRoom];
 
-  return closestClassroom ?? null;
+  return closestRoom ?? null;
 };
