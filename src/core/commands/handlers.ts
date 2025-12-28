@@ -2,6 +2,7 @@ import {
   type AutocompleteInteraction,
   type ButtonInteraction,
   type ChatInputCommandInteraction,
+  DiscordAPIError,
   inlineCode,
   type MessageContextMenuCommandInteraction,
   MessageFlags,
@@ -33,6 +34,10 @@ const isExpectedAutocompleteError = (error: unknown): boolean => {
     message.includes('Unknown interaction')
   );
 };
+
+const isMissingPermissionsError = (error: unknown): boolean =>
+  error instanceof DiscordAPIError &&
+  (error.code === 50_013 || error.message.includes('Missing Permissions'));
 
 export const handleChatInputCommand = async (
   interaction: ChatInputCommandInteraction,
@@ -101,10 +106,14 @@ export const handleChatInputCommand = async (
       `Failed executing chat input command ${inlineCode(interaction.commandName)}\n${String(error)}`,
     );
 
+    const errorMessage = isMissingPermissionsError(error)
+      ? commandErrors.botMissingPermissions
+      : commandErrors.commandError;
+
     await (interaction.deferred || interaction.replied
-      ? interaction.editReply(commandErrors.commandError)
+      ? interaction.editReply(errorMessage)
       : interaction.reply({
-          content: commandErrors.commandError,
+          content: errorMessage,
           flags: MessageFlags.Ephemeral,
         }));
   }
@@ -160,15 +169,19 @@ export const handleButton = async (interaction: ButtonInteraction) => {
       `Failed executing button interaction ${interaction.customId}\n${String(error)}`,
     );
 
+    const errorMessage = isMissingPermissionsError(error)
+      ? commandErrors.botMissingPermissions
+      : commandErrors.commandError;
+
     await (interaction.deferred || interaction.replied
       ? interaction
           .editReply({
-            content: commandErrors.commandError,
+            content: errorMessage,
           })
           .catch(() => {})
       : interaction
           .reply({
-            content: commandErrors.commandError,
+            content: errorMessage,
             flags: MessageFlags.Ephemeral,
           })
           .catch(() => {}));
@@ -247,12 +260,16 @@ export const handleUserContextMenuCommand = async (
       `Failed executing context menu command ${inlineCode(interaction.commandName)}\n${String(error)}`,
     );
 
+    const errorMessage = isMissingPermissionsError(error)
+      ? commandErrors.botMissingPermissions
+      : commandErrors.commandError;
+
     await (interaction.deferred || interaction.replied
       ? interaction.editReply({
-          content: commandErrors.commandError,
+          content: errorMessage,
         })
       : interaction.reply({
-          content: commandErrors.commandError,
+          content: errorMessage,
           flags: MessageFlags.Ephemeral,
         }));
   }
@@ -303,12 +320,16 @@ export const handleMessageContextMenuCommand = async (
       `Failed executing context menu command ${inlineCode(interaction.commandName)}\n${String(error)}`,
     );
 
+    const errorMessage = isMissingPermissionsError(error)
+      ? commandErrors.botMissingPermissions
+      : commandErrors.commandError;
+
     await (interaction.deferred || interaction.replied
       ? interaction.editReply({
-          content: commandErrors.commandError,
+          content: errorMessage,
         })
       : interaction.reply({
-          content: commandErrors.commandError,
+          content: errorMessage,
           flags: MessageFlags.Ephemeral,
         }));
   }

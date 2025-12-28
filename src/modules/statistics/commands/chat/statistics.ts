@@ -97,8 +97,22 @@ const handleStatisticsServer = async (
   await guild.roles.fetch();
   await guild.emojis.fetch();
   await guild.stickers.fetch();
-  await guild.invites.fetch();
-  await guild.soundboardSounds.fetch();
+
+  let invitesFetched = false;
+  try {
+    await guild.invites.fetch();
+    invitesFetched = true;
+  } catch {
+    // Missing permission
+  }
+
+  let soundboardSoundsFetched = false;
+  try {
+    await guild.soundboardSounds.fetch();
+    soundboardSoundsFetched = true;
+  } catch {
+    // Missing permission
+  }
 
   const output = [
     commandResponseFunctions.serverMembersStat(
@@ -126,10 +140,14 @@ const handleStatisticsServer = async (
       getMaxStickersByBoostLevel(boostLevel),
     ),
     commandResponseFunctions.serverSoundboardSoundsStat(
-      guild.soundboardSounds.cache.size,
-      getMaxSoundboardSoundsByBoostLevel(boostLevel),
+      soundboardSoundsFetched ? guild.soundboardSounds.cache.size : '-',
+      soundboardSoundsFetched
+        ? getMaxSoundboardSoundsByBoostLevel(boostLevel)
+        : '-',
     ),
-    commandResponseFunctions.serverInvitesStat(guild.invites.cache.size),
+    commandResponseFunctions.serverInvitesStat(
+      invitesFetched ? guild.invites.cache.size : '-',
+    ),
   ];
 
   await interaction.editReply(output.join('\n'));

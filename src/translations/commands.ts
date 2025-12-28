@@ -96,7 +96,7 @@ export const commandResponseFunctions = {
   serverEmojiStat: (emojiCount: number, maxCount: number) =>
     `Емоџиња: ${emojiCount} / ${maxCount}`,
 
-  serverInvitesStat: (inviteCount: number) => `Покани: ${inviteCount}`,
+  serverInvitesStat: (inviteCount: number | string) => `Покани: ${inviteCount}`,
 
   serverMembersStat: (memberCount: number, maxMembers: null | number) =>
     maxMembers === null
@@ -105,14 +105,18 @@ export const commandResponseFunctions = {
 
   serverRolesStat: (roleCount: number) => `Улоги: ${roleCount} / 250`,
 
-  serverSoundboardSoundsStat: (soundCount: number, maxCount: number) =>
-    `Звуци: ${soundCount} / ${maxCount}`,
+  serverSoundboardSoundsStat: (
+    soundCount: number | string,
+    maxCount: number | string,
+  ) => `Звуци: ${soundCount} / ${maxCount}`,
 
   serverStickersStat: (stickerCount: number, maxCount: number) =>
     `Стикери: ${stickerCount} / ${maxCount}`,
 };
 
 export const commandErrors = {
+  botMissingPermissions:
+    'Ботот нема потребни дозволи за да ја изврши оваа команда. Контактирајте ги администраторите.',
   buttonNoPermission: 'Командата не е ваша.',
   commandError:
     'Настана грешка при извршување на командата. Обидете се повторно, или пријавете ја грешката.',
