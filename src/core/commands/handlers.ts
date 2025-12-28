@@ -100,15 +100,10 @@ export const handleChatInputCommand = async (
       `Failed executing chat input command ${inlineCode(interaction.commandName)}\n${String(error)}`,
     );
 
-    const errorMessage =
-      interaction.deferred || interaction.replied
-        ? commandErrors.commandError
-        : commandErrors.commandError;
-
     await (interaction.deferred || interaction.replied
-      ? interaction.editReply(errorMessage)
+      ? interaction.editReply(commandErrors.commandError)
       : interaction.reply({
-          content: errorMessage,
+          content: commandErrors.commandError,
           flags: MessageFlags.Ephemeral,
         }));
   }
