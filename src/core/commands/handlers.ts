@@ -104,7 +104,7 @@ export const handleChatInputCommand = async (
     await command.execute(interaction);
   } catch (error) {
     logger.error(
-      `Failed executing chat input command ${inlineCode(interaction.commandName)}\n${String(error)}`,
+      `Failed executing chat input command ${inlineCode(commandWithSubcommand)}\n${String(error)}`,
     );
 
     const errorMessage = isMissingPermissionsError(error)
