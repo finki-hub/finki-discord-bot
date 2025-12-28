@@ -43,51 +43,35 @@ export const execute = async (
   const commandsPerPage = 8;
   const pages = Math.ceil(commands.length / commandsPerPage);
 
+  const getCurrentPage = () =>
+    Number(interaction.message.embeds[0]?.footer?.text.match(/\d+/gu)?.[0]) - 1;
+
   let page = 0;
   switch (action) {
-    case 'first':
-      page = 0;
-
-      break;
-
     case 'last':
       page = pages - 1;
-
       break;
 
-    case 'next': {
-      const currentPage =
-        Number(
-          interaction.message.embeds[0]?.footer?.text.match(/\d+/gu)?.[0],
-        ) - 1;
-      page = Math.min(currentPage + 1, pages - 1);
-
+    case 'next':
+      page = Math.min(getCurrentPage() + 1, pages - 1);
       break;
-    }
-    case 'previous': {
-      const currentPage =
-        Number(
-          interaction.message.embeds[0]?.footer?.text.match(/\d+/gu)?.[0],
-        ) - 1;
-      page = Math.max(currentPage - 1, 0);
 
+    case 'previous':
+      page = Math.max(getCurrentPage() - 1, 0);
       break;
-    }
+
     default:
-      page = 0;
       break;
   }
 
-  let buttons;
-  if (page === 0 && (pages === 0 || pages === 1)) {
-    buttons = getPaginationComponents('help');
-  } else if (page === 0) {
-    buttons = getPaginationComponents('help', 'start');
-  } else if (page === pages - 1) {
-    buttons = getPaginationComponents('help', 'end');
-  } else {
-    buttons = getPaginationComponents('help', 'middle');
-  }
+  const getPaginationPosition = (): 'end' | 'middle' | 'none' | 'start' => {
+    if (pages === 0 || pages === 1) return 'none';
+    if (page === 0) return 'start';
+    if (page === pages - 1) return 'end';
+    return 'middle';
+  };
+
+  const buttons = getPaginationComponents('help', getPaginationPosition());
 
   const embed = getHelpEmbed(commands, page, commandsPerPage);
 
