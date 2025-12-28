@@ -192,6 +192,9 @@ export const getUnembeddedQuestions = async (
   const chatbotUrl = getChatbotUrl();
 
   if (chatbotUrl === null) {
+    logger.error(
+      'Failed getting unembedded questions: chatbot URL not configured',
+    );
     return null;
   }
 
@@ -213,6 +216,9 @@ export const getUnembeddedQuestions = async (
     });
 
     if (!result.ok || !result.body || result.status !== 200) {
+      logger.error(
+        `Failed getting unembedded questions: HTTP ${result.status} ${result.statusText}`,
+      );
       return null;
     }
 

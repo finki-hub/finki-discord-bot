@@ -34,6 +34,7 @@ const loadModule = async (moduleName: string) => {
     if (Error.isError(error) && error.message.includes('Cannot find module')) {
       return null;
     }
+    logger.error(`Failed loading module ${moduleName}\n${String(error)}`);
     throw error;
   }
 };

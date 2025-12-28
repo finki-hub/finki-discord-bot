@@ -1,19 +1,19 @@
 import type { LogEntry } from 'winston';
 
+import { WebhookClient } from 'discord.js';
 // eslint-disable-next-line n/no-extraneous-import
 import TransportStream from 'winston-transport';
 
 import { getConfigProperty } from '@/configuration/bot/index.js';
 
 export class WebhookTransport extends TransportStream {
-  private readonly errorWebhookUrl: string | undefined;
+  private webhookClient: null | WebhookClient = null;
+  private webhookUrl: string | undefined = undefined;
 
   constructor() {
     super({
       level: 'warn',
     });
-
-    this.errorWebhookUrl = getConfigProperty('errorWebhook');
   }
 
   override log(info: LogEntry, callback: () => void): void {
@@ -21,13 +21,9 @@ export class WebhookTransport extends TransportStream {
       this.emit('logged', info);
     });
 
-    if (this.errorWebhookUrl === undefined) {
-      callback();
-      return;
-    }
-
     if (info.level === 'error' || info.level === 'warn') {
-      void this.sendToWebhook(info.message).finally(() => {
+      const message = this.formatMessage(info);
+      void this.sendToWebhook(message).finally(() => {
         callback();
       });
       return;
@@ -36,23 +32,61 @@ export class WebhookTransport extends TransportStream {
     callback();
   }
 
-  private async sendToWebhook(message: string): Promise<void> {
-    if (this.errorWebhookUrl === undefined) {
+  // eslint-disable-next-line class-methods-use-this
+  private formatMessage(info: LogEntry): string {
+    const timestamp =
+      typeof info['timestamp'] === 'string'
+        ? info['timestamp']
+        : new Date().toISOString().replace('T', ' ').slice(0, 19);
+    const level = info.level;
+    const message = info.message;
+    const stack =
+      'stack' in info && typeof info['stack'] === 'string'
+        ? info['stack']
+        : undefined;
+
+    return `${timestamp} - ${level}: ${stack ?? message}`;
+  }
+
+  private initializeWebhook(): void {
+    const errorWebhookUrl = getConfigProperty('errorWebhook');
+
+    if (errorWebhookUrl === undefined) {
+      this.webhookClient = null;
+      this.webhookUrl = undefined;
+      return;
+    }
+
+    // Only recreate if URL changed
+    if (this.webhookUrl === errorWebhookUrl && this.webhookClient !== null) {
       return;
     }
 
     try {
-      await fetch(this.errorWebhookUrl, {
-        body: JSON.stringify({
-          content: message,
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        method: 'POST',
+      this.webhookClient = new WebhookClient({ url: errorWebhookUrl });
+      this.webhookUrl = errorWebhookUrl;
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Failed initializing error webhook:', error);
+      this.webhookClient = null;
+      this.webhookUrl = undefined;
+    }
+  }
+
+  private async sendToWebhook(message: string): Promise<void> {
+    this.initializeWebhook();
+
+    if (this.webhookClient === null) {
+      return;
+    }
+
+    try {
+      await this.webhookClient.send({
+        content: message,
       });
-    } catch {
-      // Silently fail to avoid infinite loops if webhook fails
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Failed sending to error webhook:', error);
     }
   }
 }

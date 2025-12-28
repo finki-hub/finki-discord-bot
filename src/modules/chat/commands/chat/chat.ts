@@ -5,6 +5,7 @@ import {
   SlashCommandBuilder,
 } from 'discord.js';
 
+import { logger } from '@/common/logger/index.js';
 import { Role } from '@/common/schemas/Role.js';
 import {
   safeReplyToInteraction,
@@ -290,6 +291,10 @@ const handleChatEmbed = async (interaction: ChatInputCommandInteraction) => {
     const isLLMUnavailable =
       Error.isError(error) && error.message === 'LLM_UNAVAILABLE';
 
+    if (!isLLMUnavailable) {
+      logger.error(`Failed executing chat embed command\n${String(error)}`);
+    }
+
     const errorMessage = isLLMUnavailable
       ? commandErrors.llmUnavailable
       : commandErrors.unknownChatError;
@@ -318,6 +323,9 @@ const handleChatUnembedded = async (
   const unembeddedQuestions = await getUnembeddedQuestions(options);
 
   if (unembeddedQuestions === null) {
+    logger.error(
+      `Failed getting unembedded questions for embeddings model: ${options.embeddings_model ?? 'default'}`,
+    );
     await interaction.editReply(commandErrors.dataFetchFailed);
 
     return;

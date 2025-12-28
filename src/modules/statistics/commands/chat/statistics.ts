@@ -4,6 +4,7 @@ import {
   SlashCommandBuilder,
 } from 'discord.js';
 
+import { logger } from '@/common/logger/index.js';
 import { getRoles } from '@/common/services/roles.js';
 import { type RoleSets } from '@/common/types/RoleSets.js';
 import { getGuild } from '@/common/utils/guild.js';
@@ -108,16 +109,20 @@ const handleStatisticsServer = async (
   try {
     await guild.invites.fetch();
     invitesFetched = true;
-  } catch {
-    // Missing permission
+  } catch (error) {
+    logger.debug(
+      `Failed fetching invites for statistics (missing permission)\n${String(error)}`,
+    );
   }
 
   let soundboardSoundsFetched = false;
   try {
     await guild.soundboardSounds.fetch();
     soundboardSoundsFetched = true;
-  } catch {
-    // Missing permission
+  } catch (error) {
+    logger.debug(
+      `Failed fetching soundboard sounds for statistics (missing permission)\n${String(error)}`,
+    );
   }
 
   const output = [
