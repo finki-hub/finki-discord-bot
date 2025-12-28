@@ -38,7 +38,10 @@ const isExpectedAutocompleteError = (error: unknown): boolean => {
 
 const isMissingPermissionsError = (error: unknown): boolean =>
   error instanceof DiscordAPIError &&
-  (error.code === 50_013 || error.message.includes('Missing Permissions'));
+  (error.code === 50_001 ||
+    error.code === 50_013 ||
+    error.message.includes('Missing Permissions') ||
+    error.message.includes('Missing Access'));
 
 export const handleChatInputCommand = async (
   interaction: ChatInputCommandInteraction,
