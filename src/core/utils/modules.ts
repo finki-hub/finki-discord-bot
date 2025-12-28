@@ -25,6 +25,57 @@ export const getModules = async () => {
   }
 };
 
+const loadModule = async (moduleName: string) => {
+  try {
+    const initFile = `../../modules/${moduleName}/index.js`;
+    const moduleExport: unknown = await import(initFile);
+    return ModuleSchema.safeParse(moduleExport);
+  } catch (error) {
+    if (Error.isError(error) && error.message.includes('Cannot find module')) {
+      return null;
+    }
+    throw error;
+  }
+};
+
+const getModulesWithInit = async (modules: string[]): Promise<string[]> => {
+  const modulesWithInit = [];
+
+  for (const module of modules) {
+    const parseResult = await loadModule(module);
+
+    if (parseResult === null) {
+      logger.debug(`Module ${module} has no index file`);
+    } else if (parseResult.success) {
+      modulesWithInit.push(module);
+    } else {
+      logger.debug(`Module ${module} has no init function`);
+    }
+  }
+
+  return modulesWithInit;
+};
+
+const initializeModule = async (moduleName: string): Promise<boolean> => {
+  try {
+    logger.debug(`Calling init function for module ${moduleName}...`);
+
+    const parseResult = await loadModule(moduleName);
+    if (!parseResult?.success) {
+      return false;
+    }
+
+    const moduleData = parseResult.data;
+    const initResult = moduleData.init();
+    await Promise.resolve(initResult);
+    logger.info(`Module ${moduleName} initialized successfully.`);
+    return true;
+  } catch (error) {
+    logger.warn(`Failed initializing module ${moduleName}\n${String(error)}`);
+    return false;
+  }
+};
+
 export const initializeModules = async () => {
   const modules = await getModules();
 
@@ -33,39 +84,7 @@ export const initializeModules = async () => {
     return;
   }
 
-  const modulesWithInit: string[] = [];
-  const modulesWithoutInit: string[] = [];
-
-  for (const module of modules) {
-    try {
-      const initFile = `../../modules/${module}/index.js`;
-
-      const moduleExport: unknown = await import(initFile);
-      const parseResult = ModuleSchema.safeParse(moduleExport);
-
-      if (parseResult.success) {
-        modulesWithInit.push(module);
-      } else {
-        modulesWithoutInit.push(module);
-        logger.debug(`Module ${module} has no init function`);
-      }
-    } catch (error) {
-      if (
-        Error.isError(error) &&
-        error.message.includes('Cannot find module')
-      ) {
-        modulesWithoutInit.push(module);
-        logger.debug(`Module ${module} has no index file`);
-        continue;
-      }
-    }
-  }
-
-  if (modulesWithoutInit.length > 0) {
-    logger.debug(
-      `Modules without init functions: ${modulesWithoutInit.join(', ')}`,
-    );
-  }
+  const modulesWithInit = await getModulesWithInit(modules);
 
   const totalModules = modules.length;
   let initializedCount = totalModules;
@@ -76,22 +95,8 @@ export const initializeModules = async () => {
     );
 
     for (const module of modulesWithInit) {
-      try {
-        logger.debug(`Calling init function for module ${module}...`);
-
-        const initFile = `../../modules/${module}/index.js`;
-
-        const moduleExport: unknown = await import(initFile);
-        const parseResult = ModuleSchema.safeParse(moduleExport);
-
-        if (parseResult.success) {
-          const moduleData = parseResult.data;
-          const initResult = moduleData.init();
-          await Promise.resolve(initResult);
-          logger.info(`Module ${module} initialized successfully.`);
-        }
-      } catch (error) {
-        logger.warn(`Failed initializing module ${module}\n${String(error)}`);
+      const success = await initializeModule(module);
+      if (!success) {
         initializedCount--;
       }
     }

@@ -51,6 +51,156 @@ const getModuleCommands = async (module: string) => {
   }
 };
 
+type CommandType = 'autocomplete' | 'button' | 'chat' | 'context';
+
+const getCommandType = (parentPath: string): CommandType | null => {
+  const normalizedPath = parentPath.replaceAll('\\', '/');
+
+  if (normalizedPath.endsWith('/chat') || normalizedPath.includes('/chat/')) {
+    return 'chat';
+  }
+  if (
+    normalizedPath.endsWith('/button') ||
+    normalizedPath.includes('/button/')
+  ) {
+    return 'button';
+  }
+  if (
+    normalizedPath.endsWith('/autocomplete') ||
+    normalizedPath.includes('/autocomplete/')
+  ) {
+    return 'autocomplete';
+  }
+  if (
+    normalizedPath.endsWith('/context') ||
+    normalizedPath.includes('/context/')
+  ) {
+    return 'context';
+  }
+
+  return null;
+};
+
+const getCommandName = (
+  commandData:
+    | AutocompleteCommand
+    | ButtonCommand
+    | ChatCommand
+    | ContextMenuCommand
+    | { data?: { name: string }; name?: string },
+): null | string => {
+  if ('data' in commandData && commandData.data?.name) {
+    return commandData.data.name;
+  }
+  if ('name' in commandData && commandData.name) {
+    return commandData.name;
+  }
+  return null;
+};
+
+const checkAndSetCommand = <T>(params: {
+  collection: Collection<string, T>;
+  commandData: T;
+  commandName: string;
+  module: string;
+}): boolean => {
+  const { collection, commandData, commandName, module } = params;
+
+  if (collection.has(commandName)) {
+    logger.warn(
+      `Command with name ${commandName} already exists (from ${module})`,
+    );
+    return false;
+  }
+  collection.set(commandName, commandData);
+  return true;
+};
+
+const registerCommand = (params: {
+  commandData: unknown;
+  commandName: string;
+  commandType: CommandType;
+  module: string;
+}): boolean => {
+  const { commandData, commandName, commandType, module } = params;
+
+  if (commandType === 'autocomplete') {
+    return checkAndSetCommand({
+      collection: autocompleteCommands,
+      commandData: commandData as AutocompleteCommand,
+      commandName,
+      module,
+    });
+  }
+
+  if (commandType === 'button') {
+    return checkAndSetCommand({
+      collection: buttonCommands,
+      commandData: commandData as ButtonCommand,
+      commandName,
+      module,
+    });
+  }
+
+  if (commandType === 'chat') {
+    return checkAndSetCommand({
+      collection: chatCommands,
+      commandData: commandData as ChatCommand,
+      commandName,
+      module,
+    });
+  }
+
+  return checkAndSetCommand({
+    collection: contextCommands,
+    commandData: commandData as ContextMenuCommand,
+    commandName,
+    module,
+  });
+};
+
+const loadCommand = async (
+  command: Dirent,
+  module: string,
+): Promise<boolean> => {
+  try {
+    const importPath = getCommandImportPath(command);
+    const commandData = (await import(importPath)) as
+      | AutocompleteCommand
+      | ButtonCommand
+      | ChatCommand
+      | ContextMenuCommand
+      | { data?: { name: string }; name?: string };
+
+    const commandName = getCommandName(commandData);
+    if (!commandName) {
+      logger.warn(
+        `Command ${command.name} in module ${module} is missing 'name' property`,
+      );
+      return false;
+    }
+
+    const parentPath = command.parentPath.replaceAll('\\', '/');
+    const commandType = getCommandType(parentPath);
+
+    if (!commandType) {
+      throw new Error(`Unknown command type for ${command.name}`);
+    }
+
+    return registerCommand({
+      commandData,
+      commandName,
+      commandType,
+      module,
+    });
+  } catch (error) {
+    logger.error(
+      `Failed loading command ${command.name} from module ${module}\n${String(error)}`,
+    );
+    return false;
+  }
+};
+
 const refreshCommands = async () => {
   chatCommands.clear();
   buttonCommands.clear();
@@ -70,85 +220,9 @@ const refreshCommands = async () => {
     }
 
     for (const command of commands) {
-      try {
-        const importPath = getCommandImportPath(command);
-
-        const commandData = (await import(importPath)) as
-          | AutocompleteCommand
-          | ButtonCommand
-          | ChatCommand
-          | ContextMenuCommand
-          | { data?: { name: string }; name?: string };
-
-        const commandName =
-          'data' in commandData && commandData.data?.name
-            ? commandData.data.name
-            : commandData.name;
-
-        if (!commandName) {
-          logger.warn(
-            `Command ${command.name} in module ${module} is missing 'name' property`,
-          );
-          continue;
-        }
-
-        const parentPath = command.parentPath.replaceAll('\\', '/');
-
-        if (parentPath.endsWith('/chat') || parentPath.includes('/chat/')) {
-          if (chatCommands.has(commandName)) {
-            logger.warn(
-              `Command with name ${commandName} already exists (from ${module})`,
-            );
-            continue;
-          }
-          chatCommands.set(commandName, commandData as ChatCommand);
-          totalCommands++;
-        } else if (
-          parentPath.endsWith('/button') ||
-          parentPath.includes('/button/')
-        ) {
-          if (buttonCommands.has(commandName)) {
-            logger.warn(
-              `Command with name ${commandName} already exists (from ${module})`,
-            );
-            continue;
-          }
-          buttonCommands.set(commandName, commandData as ButtonCommand);
-          totalCommands++;
-        } else if (
-          parentPath.endsWith('/autocomplete') ||
-          parentPath.includes('/autocomplete/')
-        ) {
-          if (autocompleteCommands.has(commandName)) {
-            logger.warn(
-              `Command with name ${commandName} already exists (from ${module})`,
-            );
-            continue;
-          }
-          autocompleteCommands.set(
-            commandName,
-            commandData as AutocompleteCommand,
-          );
-          totalCommands++;
-        } else if (
-          parentPath.endsWith('/context') ||
-          parentPath.includes('/context/')
-        ) {
-          if (contextCommands.has(commandName)) {
-            logger.warn(
-              `Command with name ${commandName} already exists (from ${module})`,
-            );
-            continue;
-          }
-          contextCommands.set(commandName, commandData as ContextMenuCommand);
-          totalCommands++;
-        } else {
-          throw new Error(`Unknown command type for ${command.name}`);
-        }
-      } catch (error) {
-        logger.error(
-          `Failed loading command ${command.name} from module ${module}\n${String(error)}`,
-        );
+      const success = await loadCommand(command, module);
+      if (success) {
+        totalCommands++;
       }
     }
   }
