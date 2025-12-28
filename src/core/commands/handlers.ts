@@ -34,6 +34,10 @@ const isExpectedAutocompleteError = (error: unknown): boolean => {
 export const handleChatInputCommand = async (
   interaction: ChatInputCommandInteraction,
 ) => {
+  logger.info(
+    `[Chat] ${interaction.user.tag}: ${interaction.commandName} [${interaction.guild?.name ?? 'DM'}]`,
+  );
+
   const command = getChatCommand(interaction.commandName);
 
   if (command === undefined) {
@@ -111,6 +115,10 @@ export const handleChatInputCommand = async (
 };
 
 export const handleButton = async (interaction: ButtonInteraction) => {
+  logger.info(
+    `[Button] ${interaction.user.tag}: ${interaction.customId} [${interaction.guild?.name ?? 'DM'}]`,
+  );
+
   const [commandName, ...args] = interaction.customId.split(':');
 
   if (!commandName) {
@@ -185,6 +193,10 @@ export const handleButton = async (interaction: ButtonInteraction) => {
 export const handleAutocomplete = async (
   interaction: AutocompleteInteraction,
 ) => {
+  logger.info(
+    `[Autocomplete] ${interaction.user.tag}: ${interaction.commandName} [${interaction.guild?.name ?? 'DM'}]`,
+  );
+
   const command = getAutocompleteCommand(interaction.commandName);
 
   if (command === undefined) {
@@ -208,6 +220,10 @@ export const handleAutocomplete = async (
 export const handleUserContextMenuCommand = async (
   interaction: UserContextMenuCommandInteraction,
 ) => {
+  logger.info(
+    `[Context] ${interaction.user.tag}: ${interaction.commandName} [${interaction.guild?.name ?? 'DM'}]`,
+  );
+
   const command = getContextMenuCommand(interaction.commandName);
 
   const member = await getMemberFromGuild(
@@ -268,6 +284,10 @@ export const handleUserContextMenuCommand = async (
 export const handleMessageContextMenuCommand = async (
   interaction: MessageContextMenuCommandInteraction,
 ) => {
+  logger.info(
+    `[Context] ${interaction.user.tag}: ${interaction.commandName} [${interaction.guild?.name ?? 'DM'}]`,
+  );
+
   const command = getContextMenuCommand(interaction.commandName);
 
   const member = await getMemberFromGuild(
@@ -328,6 +348,9 @@ export const handleMessageContextMenuCommand = async (
 export const handleModalSubmit = async (
   interaction: ModalSubmitInteraction,
 ) => {
+  logger.info(
+    `[Modal] ${interaction.user.tag}: ${interaction.customId} [${interaction.guild?.name ?? 'DM'}]`,
+  );
   logger.warn(
     `Received unhandled modal submit interaction: ${interaction.customId}`,
   );
