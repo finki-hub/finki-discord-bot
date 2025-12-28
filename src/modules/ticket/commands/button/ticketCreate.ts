@@ -1,6 +1,5 @@
 import { type ButtonInteraction, ChannelType } from 'discord.js';
 
-import { logger } from '@/common/logger/index.js';
 import { Channel } from '@/common/schemas/Channel.js';
 import { getChannel } from '@/common/services/channels.js';
 import { getMembersByRoleIds } from '@/common/services/roles.js';
@@ -42,10 +41,7 @@ export const execute = async (
   }
 
   if (guild === null) {
-    logger.warn(
-      `Received button interaction ${interaction.customId} outside of a guild`,
-    );
-
+    await interaction.editReply(commandErrors.commandGuildOnly);
     return;
   }
 

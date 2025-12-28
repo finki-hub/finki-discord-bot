@@ -198,7 +198,7 @@ const handleCourseRole = async (
   }
 
   if (guild === null) {
-    await interaction.editReply(commandErrors.guildFetchFailed);
+    await interaction.editReply(commandErrors.commandGuildOnly);
 
     return;
   }
@@ -304,7 +304,7 @@ const handleCourseToggle = async (
   const guild = await getGuild(interaction);
 
   if (guild === null) {
-    await interaction.editReply(commandErrors.guildFetchFailed);
+    await interaction.editReply(commandErrors.commandGuildOnly);
 
     return;
   }

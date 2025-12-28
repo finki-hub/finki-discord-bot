@@ -27,14 +27,15 @@ export const execute = async (
   }
 
   const guild = await getGuild(interaction);
+  const member = guild
+    ? await getMemberFromGuild(interaction.user.id, guild)
+    : null;
 
-  if (guild === null) {
-    return;
-  }
-
-  const member = await getMemberFromGuild(interaction.user.id, guild);
-
-  if (member === null) {
+  if (guild === null || member === null) {
+    await interaction.reply({
+      content: commandErrors.commandGuildOnly,
+      flags: MessageFlags.Ephemeral,
+    });
     return;
   }
 

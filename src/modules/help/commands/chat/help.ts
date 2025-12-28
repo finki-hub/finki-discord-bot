@@ -20,7 +20,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   const guild = await getGuild(interaction);
 
   if (guild === null) {
-    await interaction.editReply(commandErrors.guildFetchFailed);
+    await interaction.editReply(commandErrors.commandGuildOnly);
 
     return;
   }

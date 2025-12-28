@@ -116,6 +116,7 @@ export const commandErrors = {
   buttonNoPermission: 'Командата не е ваша.',
   commandError:
     'Настана грешка при извршување на командата. Обидете се повторно, или пријавете ја грешката.',
+  commandGuildOnly: 'Оваа команда може да се користи само на сервер.',
   commandNoPermission: 'Немате дозвола да ја извршите командата.',
   commandNotFound: 'Командата не постои.',
   configurationSavingFailed: 'Зачувувањето на конфигурацијата беше неуспешно.',
@@ -123,7 +124,6 @@ export const commandErrors = {
   coursesNotFound: 'Предметите не постојат.',
   dataFetchFailed: 'Преземањето на податоците беше неуспешно.',
   faqNotFound: 'Прашањето не постои.',
-  guildFetchFailed: 'Преземањето на серверот беше неуспешно.',
   invalidChannel: 'Каналот е невалиден.',
   invalidTicket: 'Тикетот не е валиден.',
   invalidTicketType: 'Дадениот тип на тикетот не е валиден.',

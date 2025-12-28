@@ -4,6 +4,32 @@ import { getRolesProperty } from '@/configuration/bot/index.js';
 import { getChatCommand } from '@/core/commands/modules.js';
 import { commandDescriptions } from '@/translations/commands.js';
 
+export const commandRequiresPermissions = (command: string): boolean => {
+  const parts = command.split(' ');
+  const topCommand = parts[0];
+  const subcommand = parts[1];
+  const commandObj = topCommand ? getChatCommand(topCommand) : undefined;
+
+  if (commandObj?.permissions === undefined) {
+    return false;
+  }
+
+  const permissions = commandObj.permissions;
+
+  if (subcommand && permissions.subcommands?.[subcommand]) {
+    const subcommandPerms = permissions.subcommands[subcommand];
+    return (
+      (subcommandPerms.permissions?.length ?? 0) > 0 ||
+      (subcommandPerms.roles?.length ?? 0) > 0
+    );
+  }
+
+  return (
+    (permissions.permissions?.length ?? 0) > 0 ||
+    (permissions.roles?.length ?? 0) > 0
+  );
+};
+
 const getCommandPermission = (
   command: string,
 ): [bigint[], Array<string | undefined>] => {

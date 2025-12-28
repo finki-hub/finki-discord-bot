@@ -64,7 +64,7 @@ const handleStatisticsRole = async (
   const guild = await getGuild(interaction);
 
   if (guild === null) {
-    await interaction.editReply(commandErrors.guildFetchFailed);
+    await interaction.editReply(commandErrors.commandGuildOnly);
 
     return;
   }
@@ -86,7 +86,7 @@ const handleStatisticsServer = async (
   const guild = await getGuild(interaction);
 
   if (guild === null) {
-    await interaction.editReply(commandErrors.guildFetchFailed);
+    await interaction.editReply(commandErrors.commandGuildOnly);
 
     return;
   }

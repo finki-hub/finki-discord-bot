@@ -81,7 +81,7 @@ const handleCoursesAdd = async (interaction: ChatInputCommandInteraction) => {
   const guild = await getGuild(interaction);
 
   if (guild === null) {
-    await interaction.editReply(commandErrors.guildFetchFailed);
+    await interaction.editReply(commandErrors.commandGuildOnly);
 
     return;
   }
@@ -107,7 +107,7 @@ const handleCoursesRemove = async (
   const guild = await getGuild(interaction);
 
   if (guild === null) {
-    await interaction.editReply(commandErrors.guildFetchFailed);
+    await interaction.editReply(commandErrors.commandGuildOnly);
 
     return;
   }
