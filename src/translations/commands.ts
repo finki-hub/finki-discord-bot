@@ -57,6 +57,7 @@ export const commandResponses = {
   allSemestersCoursesRemoved: 'Ги отстранивте предметите од сите семестри.',
   configurationReloaded: 'Конфигурацијата е освежена.',
   configurationReloading: 'Се освежува конфигурацијата...',
+  home: 'https://github.com/Delemangi/finki-discord-bot',
   scriptExecuted: 'Ја извршивте скриптата.',
   statisticsNotAvailable: 'Статистики не се достапни.',
   ticketClosed: 'Тикетот е затворен.',
