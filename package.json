@@ -24,7 +24,7 @@
     "typescript": "~5.9.3"
   },
   "engines": {
-    "node": "^20 || ^22 || ^24"
+    "node": "^24"
   },
   "homepage": "https://github.com/Delemangi/finki-discord-bot",
   "license": "MIT",
