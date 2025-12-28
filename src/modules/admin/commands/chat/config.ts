@@ -5,7 +5,8 @@ import {
   SlashCommandBuilder,
 } from 'discord.js';
 
-import { createSlashCommandChoices } from '@/common/commands/slashCommand.js';
+import { createChatCommandChoices } from '@/common/commands/chat.js';
+import { executeSubcommand } from '@/common/commands/subcommands.js';
 import { logger } from '@/common/logger/index.js';
 import { Role } from '@/common/schemas/Role.js';
 import { getConfig } from '@/configuration/bot/file.js';
@@ -47,7 +48,7 @@ export const data = new SlashCommandBuilder()
           .setName('key')
           .setDescription('Клуч на конфигурација')
           .setRequired(false)
-          .addChoices(...createSlashCommandChoices(getConfigKeys())),
+          .addChoices(...createChatCommandChoices(getConfigKeys())),
       ),
   )
   .addSubcommand((subcommand) =>
@@ -59,7 +60,7 @@ export const data = new SlashCommandBuilder()
           .setName('key')
           .setDescription('Клуч на конфигурација')
           .setRequired(true)
-          .addChoices(...createSlashCommandChoices(getConfigKeys())),
+          .addChoices(...createChatCommandChoices(getConfigKeys())),
       )
       .addStringOption((option) =>
         option
@@ -193,8 +194,6 @@ const handleConfigReload = async (interaction: ChatInputCommandInteraction) => {
     await interaction.editReply(commandErrors.configurationSavingFailed);
   }
 };
-
-import { executeSubcommand } from '@/common/commands/subcommands.js';
 
 const configHandlers = {
   get: handleConfigGet,

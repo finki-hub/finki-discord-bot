@@ -54,7 +54,8 @@ export const setConfigProperty = async <T extends BotConfigKeys>(
   return newValue ?? null;
 };
 
-export const getConfigKeys = () => Object.keys(DEFAULT_CONFIGURATION);
+export const getConfigKeys = (): readonly string[] =>
+  Object.keys(DEFAULT_CONFIGURATION);
 
 export const getThemeColor = (): ColorResolvable =>
   config?.themeColor ?? 'Random';

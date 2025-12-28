@@ -1,4 +1,4 @@
-export const createSlashCommandChoices = (choices: readonly string[]) =>
+export const createChatCommandChoices = (choices: readonly string[]) =>
   choices.map((choice) => ({
     name: choice,
     value: choice,
