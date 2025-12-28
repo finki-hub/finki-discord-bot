@@ -191,4 +191,5 @@ fabric.properties
 # User defined folders
 sessions
 files
-config
+config/*
+!config/bot.json.example
