@@ -306,13 +306,13 @@ const handleChatEmbed = async (interaction: ChatInputCommandInteraction) => {
 const handleChatUnembedded = async (
   interaction: ChatInputCommandInteraction,
 ) => {
-  const embeddingsModel = interaction.options.getString(
-    'embeddings-model',
-    true,
-  );
+  const embeddingsModel =
+    interaction.options.getString('embeddings-model', false) ?? undefined;
+
+  const models = getConfigProperty('models');
 
   const options = UnembeddedQuestionsOptionsSchema.parse({
-    embeddingsModel,
+    embeddingsModel: embeddingsModel ?? models.embeddings ?? undefined,
   });
 
   const unembeddedQuestions = await getUnembeddedQuestions(options);
