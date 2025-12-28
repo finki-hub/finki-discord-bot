@@ -1,5 +1,6 @@
 import {
   type ChatInputCommandInteraction,
+  MessageFlags,
   SlashCommandBuilder,
 } from 'discord.js';
 
@@ -20,7 +21,10 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   const guild = await getGuild(interaction);
 
   if (guild === null) {
-    await interaction.editReply(commandErrors.commandGuildOnly);
+    await interaction.reply({
+      content: commandErrors.commandGuildOnly,
+      flags: MessageFlags.Ephemeral,
+    });
 
     return;
   }
@@ -31,7 +35,10 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   );
 
   if (member === null) {
-    await interaction.editReply(commandErrors.commandNoPermission);
+    await interaction.reply({
+      content: commandErrors.commandNoPermission,
+      flags: MessageFlags.Ephemeral,
+    });
     return;
   }
 
@@ -47,7 +54,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
       : getPaginationComponents('help', 'start'),
   ];
 
-  await interaction.editReply({
+  await interaction.reply({
     components,
     embeds: [embed],
   });
