@@ -61,10 +61,11 @@ export const getCommonCommand = (
       embeds,
     });
 
-    await logCommandEvent(interaction, 'classroom', {
+    await logCommandEvent(interaction, name, {
       classroom: closestClassroom,
       keyword: classroom,
       matchedClassrooms: classrooms,
     });
   },
 });
+

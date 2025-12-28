@@ -1,5 +1,6 @@
 import { getCommonCommand } from '../common/commands/room.js';
 
-const { data, execute } = getCommonCommand('office');
+const { data, execute } = getCommonCommand('room');
 
 export { data, execute };
+
