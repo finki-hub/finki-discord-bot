@@ -215,11 +215,14 @@ export const handleAutocomplete = async (
   }
 };
 
-export const handleUserContextMenuCommand = async (
-  interaction: UserContextMenuCommandInteraction,
+const executeContextMenuCommand = async (
+  interaction:
+    | MessageContextMenuCommandInteraction
+    | UserContextMenuCommandInteraction,
+  logPrefix: string,
 ) => {
   logger.info(
-    `[Context] ${interaction.user.tag}: ${interaction.commandName} [${interaction.guild?.name ?? 'DM'}]`,
+    `${logPrefix} ${interaction.user.tag}: ${interaction.commandName} [${interaction.guild?.name ?? 'DM'}]`,
   );
 
   const command = getContextMenuCommand(interaction.commandName);
@@ -275,64 +278,16 @@ export const handleUserContextMenuCommand = async (
   }
 };
 
+export const handleUserContextMenuCommand = async (
+  interaction: UserContextMenuCommandInteraction,
+) => {
+  await executeContextMenuCommand(interaction, '[User Context]');
+};
+
 export const handleMessageContextMenuCommand = async (
   interaction: MessageContextMenuCommandInteraction,
 ) => {
-  logger.info(
-    `[Context] ${interaction.user.tag}: ${interaction.commandName} [${interaction.guild?.name ?? 'DM'}]`,
-  );
-
-  const command = getContextMenuCommand(interaction.commandName);
-
-  if (command === undefined) {
-    logger.warn(`Command for interaction ${interaction.commandName} not found`);
-    await interaction.reply({
-      content: commandErrors.commandError,
-      flags: MessageFlags.Ephemeral,
-    });
-    return;
-  }
-
-  const member = await getMemberFromGuild(
-    interaction.user.id,
-    interaction.guild,
-  );
-
-  if (
-    member !== null &&
-    !hasCommandPermission(member, interaction.commandName)
-  ) {
-    await interaction.reply({
-      content: commandErrors.commandNoPermission,
-      flags: MessageFlags.Ephemeral,
-    });
-    return;
-  }
-
-  try {
-    if (!nonDeferredCommands.has(command.name)) {
-      await interaction.deferReply();
-    }
-
-    await command.execute(interaction);
-  } catch (error) {
-    logger.error(
-      `Failed executing context menu command ${inlineCode(interaction.commandName)}\n${String(error)}`,
-    );
-
-    const errorMessage = isMissingPermissionsError(error)
-      ? commandErrors.botMissingPermissions
-      : commandErrors.commandError;
-
-    await (interaction.deferred || interaction.replied
-      ? interaction.editReply({
-          content: errorMessage,
-        })
-      : interaction.reply({
-          content: errorMessage,
-          flags: MessageFlags.Ephemeral,
-        }));
-  }
+  await executeContextMenuCommand(interaction, '[Message Context]');
 };
 
 export const handleModalSubmit = async (
