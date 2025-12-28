@@ -32,17 +32,6 @@ export const getChatbotUrl = () => {
   }
 };
 
-export const getAnalyticsUrl = () => {
-  try {
-    return z
-      .string()
-      .transform((url) => (url.endsWith('/') ? url.slice(0, -1) : url))
-      .parse(env['ANALYTICS_URL']);
-  } catch {
-    return null;
-  }
-};
-
 export const getApiKey = () => {
   try {
     return z.string().parse(env['API_KEY']);

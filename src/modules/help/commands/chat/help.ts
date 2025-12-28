@@ -1,15 +1,10 @@
 import {
   type ChatInputCommandInteraction,
-  ComponentType,
-  MessageFlags,
   SlashCommandBuilder,
 } from 'discord.js';
 
 import { getPaginationComponents } from '@/common/components/pagination.js';
-import { logger } from '@/common/logger/index.js';
 import { getGuild, getMemberFromGuild } from '@/common/utils/guild.js';
-import { deleteResponse } from '@/common/utils/messages.js';
-import { getIntervalsProperty } from '@/configuration/bot/index.js';
 import { client } from '@/core/client.js';
 import { getCommandsWithPermission } from '@/core/utils/permissions.js';
 import { getHelpEmbed } from '@/modules/help/components/embeds.js';
@@ -51,95 +46,9 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
       ? getPaginationComponents('help')
       : getPaginationComponents('help', 'start'),
   ];
-  const message = await interaction.editReply({
+
+  await interaction.editReply({
     components,
     embeds: [embed],
-  });
-  const buttonIdle = getIntervalsProperty('buttonIdle');
-  const collector = message.createMessageComponentCollector({
-    componentType: ComponentType.Button,
-    idle: buttonIdle,
-  });
-
-  collector.on('collect', async (buttonInteraction) => {
-    if (
-      buttonInteraction.user.id !==
-      buttonInteraction.message.interactionMetadata?.user.id
-    ) {
-      const mess = await buttonInteraction.reply({
-        content: commandErrors.buttonNoPermission,
-        flags: MessageFlags.Ephemeral,
-      });
-      void deleteResponse(mess);
-
-      return;
-    }
-
-    const id = buttonInteraction.customId.split(':')[1];
-
-    if (id === undefined) {
-      return;
-    }
-
-    let buttons;
-    let page =
-      Number(
-        buttonInteraction.message.embeds[0]?.footer?.text.match(/\d+/gu)?.[0],
-      ) - 1;
-
-    switch (id) {
-      case 'first':
-        page = 0;
-        break;
-
-      case 'last':
-        page = pages - 1;
-        break;
-
-      case 'next':
-        page++;
-        break;
-
-      case 'previous':
-        page--;
-        break;
-
-      default:
-        page = 0;
-        break;
-    }
-
-    if (page === 0 && (pages === 0 || pages === 1)) {
-      buttons = getPaginationComponents('help');
-    } else if (page === 0) {
-      buttons = getPaginationComponents('help', 'start');
-    } else if (page === pages - 1) {
-      buttons = getPaginationComponents('help', 'end');
-    } else {
-      buttons = getPaginationComponents('help', 'middle');
-    }
-
-    const nextEmbed = getHelpEmbed(commands, page, commandsPerPage);
-
-    try {
-      await buttonInteraction.update({
-        components: [buttons],
-        embeds: [nextEmbed],
-      });
-    } catch (error) {
-      logger.error(
-        `Failed updating ${buttonInteraction.customId} interaction\n${String(error)}`,
-      );
-    }
-  });
-
-  collector.on('end', async () => {
-    try {
-      await interaction.editReply({
-        components: [getPaginationComponents('help')],
-      });
-    } catch (error) {
-      logger.error(`Failed ending ${name} collector\n${String(error)}`);
-    }
   });
 };

@@ -5,7 +5,6 @@ import {
 import { access } from 'node:fs/promises';
 
 import { getSessions } from '@/configuration/data/index.js';
-import { logCommandEvent } from '@/modules/analytics/utils/analytics.js';
 import { getClosestSession } from '@/modules/session/utils/search.js';
 import {
   commandDescriptions,
@@ -58,12 +57,5 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   await interaction.editReply({
     content: user ? commandResponseFunctions.commandFor(user.id) : null,
     files: [path],
-  });
-
-  await logCommandEvent(interaction, {
-    basePayload: {
-      session: information[0],
-    },
-    eventType: 'session',
   });
 };

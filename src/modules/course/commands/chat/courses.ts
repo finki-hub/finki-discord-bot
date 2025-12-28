@@ -4,10 +4,8 @@ import {
   SlashCommandBuilder,
 } from 'discord.js';
 
-import { getFullCommandName } from '@/common/commands/utils.js';
 import { getCourseRolesBySemester, getRoles } from '@/common/services/roles.js';
 import { getGuild } from '@/common/utils/guild.js';
-import { logCommandEvent } from '@/modules/analytics/utils/analytics.js';
 import { getCoursesPrerequisiteEmbed } from '@/modules/course/components/embeds.js';
 import { getClosestCourse } from '@/modules/course/utils/search.js';
 import {
@@ -139,11 +137,4 @@ const coursesHandlers = {
 
 export const execute = async (interaction: ChatInputCommandInteraction) => {
   await executeSubcommand(interaction, coursesHandlers);
-
-  await logCommandEvent(interaction, {
-    basePayload: {
-      options: interaction.options.data,
-    },
-    eventType: getFullCommandName(interaction),
-  });
 };

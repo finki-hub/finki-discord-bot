@@ -4,7 +4,6 @@ import {
 } from 'discord.js';
 
 import { getStaff } from '@/configuration/data/index.js';
-import { logCommandEvent } from '@/modules/analytics/utils/analytics.js';
 import { getStaffEmbed } from '@/modules/staff/components/embeds.js';
 import { getClosestStaff } from '@/modules/staff/utils/search.js';
 import {
@@ -49,13 +48,5 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   await interaction.editReply({
     content: user ? commandResponseFunctions.commandFor(user.id) : null,
     embeds: [embed],
-  });
-
-  await logCommandEvent(interaction, {
-    basePayload: {
-      keyword: professor,
-      staff: information,
-    },
-    eventType: 'staff',
   });
 };

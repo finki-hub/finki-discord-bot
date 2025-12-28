@@ -1,11 +1,11 @@
 import {
   type ChatInputCommandInteraction,
+  MessageFlags,
   SlashCommandBuilder,
 } from 'discord.js';
 
 import { safeStreamReplyToInteraction } from '@/common/utils/messages.js';
 import { getConfigProperty } from '@/configuration/bot/index.js';
-import { logCommandEvent } from '@/modules/analytics/utils/analytics.js';
 import { commandDescriptions, commandErrors } from '@/translations/commands.js';
 
 import { SendPromptOptionsSchema } from '../schemas/Chat.js';
@@ -50,13 +50,10 @@ export const getCommonCommand = (name: keyof typeof commandDescriptions) => ({
       useAgent,
     });
 
-    let answer = '';
-
     try {
       await safeStreamReplyToInteraction(interaction, async (onChunk) => {
         await sendPrompt(options, async (chunk) => {
           await onChunk(chunk);
-          answer += chunk;
         });
       });
     } catch (error) {
@@ -71,16 +68,8 @@ export const getCommonCommand = (name: keyof typeof commandDescriptions) => ({
         ? interaction.editReply(errorMessage)
         : interaction.reply({
             content: errorMessage,
-            ephemeral: true,
+            flags: MessageFlags.Ephemeral,
           }));
     }
-
-    await logCommandEvent(interaction, {
-      basePayload: {
-        answer,
-        options,
-      },
-      eventType: 'prompt',
-    });
   },
 });

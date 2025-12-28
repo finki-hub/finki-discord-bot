@@ -1,6 +1,7 @@
 import {
   type ChatInputCommandInteraction,
   inlineCode,
+  MessageFlags,
   SlashCommandBuilder,
 } from 'discord.js';
 
@@ -297,7 +298,7 @@ const handleChatEmbed = async (interaction: ChatInputCommandInteraction) => {
       ? interaction.editReply(errorMessage)
       : interaction.reply({
           content: errorMessage,
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         }));
   }
 };

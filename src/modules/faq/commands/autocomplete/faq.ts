@@ -11,10 +11,12 @@ export const execute = async (interaction: AutocompleteInteraction) => {
 
   if (focused.name === 'question') {
     const questionNames = await getQuestionNames();
+
     if (questionNames === null) {
       await interaction.respond([]);
       return;
     }
+
     await interaction.respond(
       createAutocompleteOptions(
         Object.entries(createTransliterationSearchMap(questionNames)),

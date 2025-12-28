@@ -7,9 +7,8 @@ import { apiErrorFunctions } from '@/translations/api.js';
 import { LinkSchema, LinksSchema } from '../schemas/Link.js';
 import { QuestionSchema, QuestionsSchema } from '../schemas/Question.js';
 
-// Cache for question/link names with TTL (5 minutes)
-const CACHE_TTL = 5 * 60 * 1_000; // 5 minutes in milliseconds
-const MAX_FETCH_TIMEOUT = 2_000; // 2 seconds max for autocomplete
+const CACHE_TTL = 60 * 1_000;
+const MAX_FETCH_TIMEOUT = 2_000;
 
 let questionNamesCache: null | {
   data: null | string[];
@@ -21,7 +20,6 @@ let linkNamesCache: null | {
   timestamp: number;
 } = null;
 
-// Helper to add timeout to fetch
 const fetchWithTimeout = async (
   url: string,
   timeout: number = MAX_FETCH_TIMEOUT,
@@ -67,7 +65,6 @@ export const getQuestions = async () => {
 };
 
 export const getQuestionNames = async (useCache = true) => {
-  // Return cached data if available and not expired
   if (useCache && questionNamesCache !== null) {
     const age = Date.now() - questionNamesCache.timestamp;
     if (age < CACHE_TTL && questionNamesCache.data !== null) {
@@ -78,7 +75,6 @@ export const getQuestionNames = async (useCache = true) => {
   const chatbotUrl = getChatbotUrl();
 
   if (chatbotUrl === null) {
-    // Return stale cache if available
     if (questionNamesCache !== null && questionNamesCache.data !== null) {
       return questionNamesCache.data;
     }
@@ -92,7 +88,6 @@ export const getQuestionNames = async (useCache = true) => {
     );
 
     if (!result.ok) {
-      // Return stale cache if available
       if (questionNamesCache !== null && questionNamesCache.data !== null) {
         return questionNamesCache.data;
       }
@@ -101,7 +96,6 @@ export const getQuestionNames = async (useCache = true) => {
 
     const data = z.array(z.string()).parse(await result.json());
 
-    // Update cache
     questionNamesCache = {
       data,
       timestamp: Date.now(),
@@ -111,7 +105,6 @@ export const getQuestionNames = async (useCache = true) => {
   } catch (error) {
     logger.error(apiErrorFunctions.getQuestionNamesError(error));
 
-    // Return stale cache if available
     if (questionNamesCache !== null && questionNamesCache.data !== null) {
       return questionNamesCache.data;
     }
@@ -195,7 +188,6 @@ export const getLinks = async () => {
 };
 
 export const getLinkNames = async (useCache = true) => {
-  // Return cached data if available and not expired
   if (useCache && linkNamesCache !== null) {
     const age = Date.now() - linkNamesCache.timestamp;
     if (age < CACHE_TTL && linkNamesCache.data !== null) {
@@ -206,7 +198,6 @@ export const getLinkNames = async (useCache = true) => {
   const chatbotUrl = getChatbotUrl();
 
   if (chatbotUrl === null) {
-    // Return stale cache if available
     if (linkNamesCache !== null && linkNamesCache.data !== null) {
       return linkNamesCache.data;
     }
@@ -220,7 +211,6 @@ export const getLinkNames = async (useCache = true) => {
     );
 
     if (!result.ok) {
-      // Return stale cache if available
       if (linkNamesCache !== null && linkNamesCache.data !== null) {
         return linkNamesCache.data;
       }
@@ -229,7 +219,6 @@ export const getLinkNames = async (useCache = true) => {
 
     const data = z.array(z.string()).parse(await result.json());
 
-    // Update cache
     linkNamesCache = {
       data,
       timestamp: Date.now(),
@@ -239,7 +228,6 @@ export const getLinkNames = async (useCache = true) => {
   } catch (error) {
     logger.error(apiErrorFunctions.getLinkNamesError(error));
 
-    // Return stale cache if available
     if (linkNamesCache !== null && linkNamesCache.data !== null) {
       return linkNamesCache.data;
     }

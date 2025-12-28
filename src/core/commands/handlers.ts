@@ -4,6 +4,7 @@ import {
   type ChatInputCommandInteraction,
   inlineCode,
   type MessageContextMenuCommandInteraction,
+  MessageFlags,
   type ModalSubmitInteraction,
   type UserContextMenuCommandInteraction,
 } from 'discord.js';
@@ -20,26 +21,14 @@ import {
   getContextMenuCommand,
 } from './modules.js';
 
-// Commands that don't require deferReply
-const nonDeferredCommands = new Set<string>();
+const nonDeferredCommands = new Set<string>(['help']);
 
-// Helper to safely respond to autocomplete interactions
-// Silently handles "already acknowledged" errors which are expected in some cases
-const safeAutocompleteRespond = async (
-  interaction: AutocompleteInteraction,
-  choices: Array<{ name: string; value: string }>,
-) => {
-  try {
-    await interaction.respond(choices);
-  } catch (error) {
-    // Ignore if already responded or timed out - this is expected in some cases
-    const errorMessage = Error.isError(error) ? error.message : String(error);
-    if (!errorMessage.includes('already been acknowledged')) {
-      logger.error(
-        `Failed responding to autocomplete interaction by ${interaction.user.tag}\n${String(error)}`,
-      );
-    }
-  }
+const isExpectedAutocompleteError = (error: unknown): boolean => {
+  const message = Error.isError(error) ? error.message : String(error);
+  return (
+    message.includes('already been acknowledged') ||
+    message.includes('Unknown interaction')
+  );
 };
 
 export const handleChatInputCommand = async (
@@ -51,7 +40,7 @@ export const handleChatInputCommand = async (
     logger.warn(`Command for interaction ${interaction.commandName} not found`);
     await interaction.reply({
       content: commandErrors.commandError,
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
     return;
   }
@@ -67,7 +56,7 @@ export const handleChatInputCommand = async (
     );
     await interaction.reply({
       content: commandErrors.commandError,
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
     return;
   }
@@ -80,7 +69,7 @@ export const handleChatInputCommand = async (
   if (!hasCommandPermission(member, commandWithSubcommand)) {
     await interaction.reply({
       content: commandErrors.commandNoPermission,
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
     return;
   }
@@ -94,7 +83,7 @@ export const handleChatInputCommand = async (
       );
       await interaction.reply({
         content: commandErrors.commandError,
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
       return;
     }
@@ -116,7 +105,7 @@ export const handleChatInputCommand = async (
       ? interaction.editReply(errorMessage)
       : interaction.reply({
           content: errorMessage,
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         }));
   }
 };
@@ -128,7 +117,7 @@ export const handleButton = async (interaction: ButtonInteraction) => {
     logger.error(`Command for interaction ${interaction.id} not found`);
     await interaction.reply({
       content: commandErrors.commandError,
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
     return;
   }
@@ -139,7 +128,7 @@ export const handleButton = async (interaction: ButtonInteraction) => {
     logger.error(`Command for interaction ${interaction.id} not found`);
     await interaction.reply({
       content: commandErrors.commandError,
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
     return;
   }
@@ -155,7 +144,7 @@ export const handleButton = async (interaction: ButtonInteraction) => {
     );
     await interaction.reply({
       content: commandErrors.commandError,
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
     return;
   }
@@ -163,14 +152,14 @@ export const handleButton = async (interaction: ButtonInteraction) => {
   if (!hasCommandPermission(member, command.name)) {
     await interaction.reply({
       content: commandErrors.commandNoPermission,
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
     return;
   }
 
   try {
     if (!nonDeferredCommands.has(command.name)) {
-      await interaction.deferReply({ ephemeral: true });
+      await interaction.deferReply({ flags: MessageFlags.Ephemeral });
     }
     await command.execute(interaction, args);
   } catch (error) {
@@ -179,13 +168,17 @@ export const handleButton = async (interaction: ButtonInteraction) => {
     );
 
     await (interaction.deferred || interaction.replied
-      ? interaction.editReply({
-          content: commandErrors.commandError,
-        })
-      : interaction.reply({
-          content: commandErrors.commandError,
-          ephemeral: true,
-        }));
+      ? interaction
+          .editReply({
+            content: commandErrors.commandError,
+          })
+          .catch(() => {})
+      : interaction
+          .reply({
+            content: commandErrors.commandError,
+            flags: MessageFlags.Ephemeral,
+          })
+          .catch(() => {}));
   }
 };
 
@@ -195,35 +188,20 @@ export const handleAutocomplete = async (
   const command = getAutocompleteCommand(interaction.commandName);
 
   if (command === undefined) {
-    await safeAutocompleteRespond(interaction, []);
+    await interaction.respond([]).catch(() => {});
     return;
   }
 
-  let responded = false;
-  const originalRespond = interaction.respond.bind(interaction);
-
-  // Wrap the interaction to track if respond was called
-  const wrappedInteraction = Object.assign(interaction, {
-    respond: async (
-      choices: Array<{ name: string; value: string }>,
-    ): Promise<void> => {
-      responded = true;
-      await originalRespond(choices);
-    },
-  });
-
   try {
-    await command.execute(wrappedInteraction);
+    await command.execute(interaction);
   } catch (error) {
-    logger.error(
-      `Failed executing autocomplete interaction ${interaction.options.getFocused(true).name}\n${String(error)}`,
-    );
-  } finally {
-    // Ensure we always respond, even if the command didn't or returned early
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (!responded) {
-      await safeAutocompleteRespond(interaction, []);
+    if (!isExpectedAutocompleteError(error)) {
+      logger.error(
+        `Failed executing autocomplete interaction ${interaction.commandName}\n${String(error)}`,
+      );
     }
+  } finally {
+    await interaction.respond([]).catch(() => {});
   }
 };
 
@@ -243,7 +221,7 @@ export const handleUserContextMenuCommand = async (
     );
     await interaction.reply({
       content: commandErrors.commandError,
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
     return;
   }
@@ -252,7 +230,7 @@ export const handleUserContextMenuCommand = async (
     logger.warn(`Command for interaction ${interaction.commandName} not found`);
     await interaction.reply({
       content: commandErrors.commandError,
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
     return;
   }
@@ -260,7 +238,7 @@ export const handleUserContextMenuCommand = async (
   if (!hasCommandPermission(member, interaction.commandName)) {
     await interaction.reply({
       content: commandErrors.commandNoPermission,
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
     return;
   }
@@ -282,7 +260,7 @@ export const handleUserContextMenuCommand = async (
         })
       : interaction.reply({
           content: commandErrors.commandError,
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         }));
   }
 };
@@ -303,7 +281,7 @@ export const handleMessageContextMenuCommand = async (
     );
     await interaction.reply({
       content: commandErrors.commandError,
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
     return;
   }
@@ -312,7 +290,7 @@ export const handleMessageContextMenuCommand = async (
     logger.warn(`Command for interaction ${interaction.commandName} not found`);
     await interaction.reply({
       content: commandErrors.commandError,
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
     return;
   }
@@ -320,7 +298,7 @@ export const handleMessageContextMenuCommand = async (
   if (!hasCommandPermission(member, interaction.commandName)) {
     await interaction.reply({
       content: commandErrors.commandNoPermission,
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
     return;
   }
@@ -342,7 +320,7 @@ export const handleMessageContextMenuCommand = async (
         })
       : interaction.reply({
           content: commandErrors.commandError,
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         }));
   }
 };
@@ -355,6 +333,6 @@ export const handleModalSubmit = async (
   );
   await interaction.reply({
     content: commandErrors.commandError,
-    ephemeral: true,
+    flags: MessageFlags.Ephemeral,
   });
 };

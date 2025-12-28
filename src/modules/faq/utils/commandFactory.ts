@@ -3,7 +3,6 @@ import {
   SlashCommandBuilder,
 } from 'discord.js';
 
-import { logCommandEvent } from '@/modules/analytics/utils/analytics.js';
 import {
   commandDescriptions,
   commandErrors,
@@ -49,15 +48,6 @@ export const getCommonCommand = (name: keyof typeof commandDescriptions) => ({
       components,
       content: user ? commandResponseFunctions.commandFor(user.id) : null,
       embeds: [embed],
-    });
-
-    await logCommandEvent(interaction, {
-      basePayload: {
-        content: question.content,
-        keyword,
-        question: question.name,
-      },
-      eventType: 'faq',
     });
   },
 });

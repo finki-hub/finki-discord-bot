@@ -1,9 +1,10 @@
-import { type ButtonInteraction } from 'discord.js';
+import { type ButtonInteraction, MessageFlags } from 'discord.js';
 
 import { getPaginationComponents } from '@/common/components/pagination.js';
 import { getGuild, getMemberFromGuild } from '@/common/utils/guild.js';
 import { getCommandsWithPermission } from '@/core/utils/permissions.js';
 import { getHelpEmbed } from '@/modules/help/components/embeds.js';
+import { commandErrors } from '@/translations/commands.js';
 
 export const name = 'help';
 
@@ -12,6 +13,19 @@ export const execute = async (
   args: string[],
 ) => {
   const [action] = args;
+
+  if (
+    interaction.message.interactionMetadata?.user.id !== undefined &&
+    interaction.user.id !== interaction.message.interactionMetadata.user.id
+  ) {
+    await interaction.reply({
+      content: commandErrors.buttonNoPermission,
+      flags: MessageFlags.Ephemeral,
+    });
+
+    return;
+  }
+
   const guild = await getGuild(interaction);
 
   if (guild === null) {
@@ -58,7 +72,9 @@ export const execute = async (
 
       break;
     }
-    // No default
+    default:
+      page = 0;
+      break;
   }
 
   let buttons;
@@ -74,8 +90,19 @@ export const execute = async (
 
   const embed = getHelpEmbed(commands, page, commandsPerPage);
 
-  await interaction.update({
-    components: [buttons],
-    embeds: [embed],
-  });
+  try {
+    await interaction.update({
+      components: [buttons],
+      embeds: [embed],
+    });
+  } catch (error) {
+    const errorMessage = Error.isError(error) ? error.message : String(error);
+    if (
+      errorMessage.includes('Unknown interaction') ||
+      errorMessage.includes('already been acknowledged')
+    ) {
+      return;
+    }
+    throw error;
+  }
 };

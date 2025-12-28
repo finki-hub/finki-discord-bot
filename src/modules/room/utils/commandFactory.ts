@@ -4,7 +4,6 @@ import {
 } from 'discord.js';
 
 import { getRooms } from '@/configuration/data/index.js';
-import { logCommandEvent } from '@/modules/analytics/utils/analytics.js';
 import {
   commandDescriptions,
   commandErrors,
@@ -54,15 +53,6 @@ export const getCommonCommand = (name: keyof typeof commandDescriptions) => ({
     await interaction.editReply({
       content: user ? commandResponseFunctions.commandFor(user.id) : null,
       embeds,
-    });
-
-    await logCommandEvent(interaction, {
-      basePayload: {
-        keyword: room,
-        matchedRooms: rooms,
-        room: closestRoom,
-      },
-      eventType: name,
     });
   },
 });

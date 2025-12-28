@@ -6,7 +6,6 @@ services:
       TOKEN: ${TOKEN}
       APPLICATION_ID: ${APPLICATION_ID}
       CHATBOT_URL: ${CHATBOT_URL}
-      ANALYTICS_URL: ${ANALYTICS_URL}
       API_KEY: ${API_KEY}
       TZ: ${TZ}
     image: ghcr.io/finki-hub/finki-discord-bot:latest
