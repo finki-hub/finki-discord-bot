@@ -42,6 +42,20 @@ const fetchWithTimeout = async (
   }
 };
 
+const getValidCacheData = (
+  cache: null | { data: null | string[]; timestamp: number },
+  ttl: number,
+): null | string[] => {
+  if (cache === null) return null;
+  const age = Date.now() - cache.timestamp;
+  if (age >= ttl || cache.data === null) return null;
+  return cache.data;
+};
+
+const getCachedData = (
+  cache: null | { data: null | string[]; timestamp: number },
+): null | string[] => cache?.data ?? null;
+
 export const getQuestions = async () => {
   const chatbotUrl = getChatbotUrl();
 
@@ -65,20 +79,15 @@ export const getQuestions = async () => {
 };
 
 export const getQuestionNames = async (useCache = true) => {
-  if (useCache && questionNamesCache !== null) {
-    const age = Date.now() - questionNamesCache.timestamp;
-    if (age < CACHE_TTL && questionNamesCache.data !== null) {
-      return questionNamesCache.data;
-    }
+  if (useCache) {
+    const cached = getValidCacheData(questionNamesCache, CACHE_TTL);
+    if (cached !== null) return cached;
   }
 
   const chatbotUrl = getChatbotUrl();
 
   if (chatbotUrl === null) {
-    if (questionNamesCache !== null && questionNamesCache.data !== null) {
-      return questionNamesCache.data;
-    }
-    return null;
+    return getCachedData(questionNamesCache);
   }
 
   try {
@@ -88,10 +97,7 @@ export const getQuestionNames = async (useCache = true) => {
     );
 
     if (!result.ok) {
-      if (questionNamesCache !== null && questionNamesCache.data !== null) {
-        return questionNamesCache.data;
-      }
-      return null;
+      return getCachedData(questionNamesCache);
     }
 
     const data = z.array(z.string()).parse(await result.json());
@@ -104,12 +110,7 @@ export const getQuestionNames = async (useCache = true) => {
     return data;
   } catch (error) {
     logger.error(apiErrorFunctions.getQuestionNamesError(error));
-
-    if (questionNamesCache !== null && questionNamesCache.data !== null) {
-      return questionNamesCache.data;
-    }
-
-    return null;
+    return getCachedData(questionNamesCache);
   }
 };
 
@@ -188,20 +189,15 @@ export const getLinks = async () => {
 };
 
 export const getLinkNames = async (useCache = true) => {
-  if (useCache && linkNamesCache !== null) {
-    const age = Date.now() - linkNamesCache.timestamp;
-    if (age < CACHE_TTL && linkNamesCache.data !== null) {
-      return linkNamesCache.data;
-    }
+  if (useCache) {
+    const cached = getValidCacheData(linkNamesCache, CACHE_TTL);
+    if (cached !== null) return cached;
   }
 
   const chatbotUrl = getChatbotUrl();
 
   if (chatbotUrl === null) {
-    if (linkNamesCache !== null && linkNamesCache.data !== null) {
-      return linkNamesCache.data;
-    }
-    return null;
+    return getCachedData(linkNamesCache);
   }
 
   try {
@@ -211,10 +207,7 @@ export const getLinkNames = async (useCache = true) => {
     );
 
     if (!result.ok) {
-      if (linkNamesCache !== null && linkNamesCache.data !== null) {
-        return linkNamesCache.data;
-      }
-      return null;
+      return getCachedData(linkNamesCache);
     }
 
     const data = z.array(z.string()).parse(await result.json());
@@ -227,12 +220,7 @@ export const getLinkNames = async (useCache = true) => {
     return data;
   } catch (error) {
     logger.error(apiErrorFunctions.getLinkNamesError(error));
-
-    if (linkNamesCache !== null && linkNamesCache.data !== null) {
-      return linkNamesCache.data;
-    }
-
-    return null;
+    return getCachedData(linkNamesCache);
   }
 };
 
