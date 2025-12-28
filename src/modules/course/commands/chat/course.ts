@@ -5,6 +5,8 @@ import {
   SlashCommandBuilder,
 } from 'discord.js';
 
+import { executeSubcommand } from '@/common/commands/subcommands.js';
+import { logger } from '@/common/logger/index.js';
 import { getCourseRoleByCourseName } from '@/common/services/roles.js';
 import { getGuild } from '@/common/utils/guild.js';
 import {
@@ -139,13 +141,13 @@ export const data = new SlashCommandBuilder()
 
 const handleCourseParticipants = async (
   interaction: ChatInputCommandInteraction,
-  course: null | string,
+  closestItem: string,
 ) => {
   const user = interaction.options.getUser('user');
 
   const information = getParticipants().find(
     (participants) =>
-      participants.course.toLowerCase() === course?.toLowerCase(),
+      participants.course.toLowerCase() === closestItem.toLowerCase(),
   );
 
   if (information === undefined) {
@@ -163,12 +165,12 @@ const handleCourseParticipants = async (
 
 const handleCourseProfessors = async (
   interaction: ChatInputCommandInteraction,
-  course: null | string,
+  closestItem: string,
 ) => {
   const user = interaction.options.getUser('user');
 
   const information = getProfessors().find(
-    (staff) => staff.course.toLowerCase() === course?.toLowerCase(),
+    (staff) => staff.course.toLowerCase() === closestItem.toLowerCase(),
   );
 
   if (information === undefined) {
@@ -186,7 +188,7 @@ const handleCourseProfessors = async (
 
 const handleCourseRole = async (
   interaction: ChatInputCommandInteraction,
-  courseRole: null | string,
+  closestItem: string,
 ) => {
   const guild = await getGuild(interaction);
   const courses = getFromRoleConfig('courses');
@@ -204,7 +206,7 @@ const handleCourseRole = async (
   }
 
   const roleEntry = Object.entries(courses).find(
-    ([, course]) => course.toLowerCase() === courseRole?.toLowerCase(),
+    ([, course]) => course.toLowerCase() === closestItem.toLowerCase(),
   );
 
   if (roleEntry === undefined) {
@@ -213,12 +215,29 @@ const handleCourseRole = async (
     return;
   }
 
-  const role = guild.roles.cache.find(
+  const cachedRole = guild.roles.cache.find(
     (ro) => ro.name.toLowerCase() === roleEntry[0].toLowerCase(),
   );
 
-  if (role === undefined) {
+  if (cachedRole === undefined) {
     await interaction.editReply(commandErrors.courseNotFound);
+
+    return;
+  }
+
+  let role = cachedRole;
+
+  try {
+    // Fetch role to ensure members are loaded
+    const fetchedRole = await guild.roles.fetch(cachedRole.id);
+    if (fetchedRole !== null) {
+      role = fetchedRole;
+    }
+  } catch (error) {
+    logger.error(
+      `Failed fetching role ${cachedRole.id} for course role command\n${String(error)}`,
+    );
+    await interaction.editReply(commandErrors.commandError);
 
     return;
   }
@@ -233,13 +252,13 @@ const handleCourseRole = async (
 
 const handleCoursePrerequisite = async (
   interaction: ChatInputCommandInteraction,
-  course: null | string,
+  closestItem: string,
 ) => {
   const user = interaction.options.getUser('user');
 
   const information = getPrerequisites().find(
     (prerequisites) =>
-      prerequisites.course.toLowerCase() === course?.toLowerCase(),
+      prerequisites.course.toLowerCase() === closestItem.toLowerCase(),
   );
 
   if (information === undefined) {
@@ -257,12 +276,12 @@ const handleCoursePrerequisite = async (
 
 const handleCourseInfo = async (
   interaction: ChatInputCommandInteraction,
-  course: null | string,
+  closestItem: string,
 ) => {
   const user = interaction.options.getUser('user');
 
   const information = getInformation().find(
-    (info) => info.course.toLowerCase() === course?.toLowerCase(),
+    (info) => info.course.toLowerCase() === closestItem.toLowerCase(),
   );
 
   if (information === undefined) {
@@ -280,17 +299,17 @@ const handleCourseInfo = async (
 
 const handleCourseSummary = async (
   interaction: ChatInputCommandInteraction,
-  course: null | string,
+  closestItem: string,
 ) => {
-  const user = interaction.options.getUser('user');
-
-  if (course === null || !getCourses().includes(course)) {
+  if (!getCourses().includes(closestItem)) {
     await interaction.editReply(commandErrors.courseNotFound);
 
     return;
   }
 
-  const embeds = getCourseSummaryEmbed(course);
+  const user = interaction.options.getUser('user');
+
+  const embeds = getCourseSummaryEmbed(closestItem);
   await interaction.editReply({
     content: user ? commandResponseFunctions.commandFor(user.id) : null,
     embeds,
@@ -299,7 +318,7 @@ const handleCourseSummary = async (
 
 const handleCourseToggle = async (
   interaction: ChatInputCommandInteraction,
-  course: null | string,
+  closestItem: string,
 ) => {
   const guild = await getGuild(interaction);
 
@@ -309,14 +328,8 @@ const handleCourseToggle = async (
     return;
   }
 
-  if (course === null) {
-    await interaction.editReply(commandErrors.courseNotFound);
-
-    return;
-  }
-
   const member = interaction.member as GuildMember;
-  const role = getCourseRoleByCourseName(guild, course);
+  const role = getCourseRoleByCourseName(guild, closestItem);
 
   if (role === null) {
     await interaction.editReply(commandErrors.courseNotFound);
@@ -345,8 +358,6 @@ const handleCourseToggle = async (
   });
 };
 
-import { executeSubcommand } from '@/common/commands/subcommands.js';
-
 const courseHandlers = {
   info: handleCourseInfo,
   participants: handleCourseParticipants,
@@ -363,9 +374,9 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
 
   let closestItem: null | string = null;
 
-  if (course) {
+  if (course !== null) {
     closestItem = getClosestCourse(course);
-  } else if (courseRole) {
+  } else if (courseRole !== null) {
     closestItem = getClosestCourseRole(courseRole);
   }
 
@@ -375,18 +386,5 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     return;
   }
 
-  // Wrap handlers to pass closestItem as second parameter
-  const wrappedHandlers = Object.fromEntries(
-    Object.entries(courseHandlers).map(([key, handler]) => [
-      key,
-      async (interactionParam: ChatInputCommandInteraction) => {
-        await handler(interactionParam, closestItem);
-      },
-    ]),
-  ) as Record<
-    string,
-    (interaction: ChatInputCommandInteraction) => Promise<void>
-  >;
-
-  await executeSubcommand(interaction, wrappedHandlers);
+  await executeSubcommand(interaction, courseHandlers, closestItem);
 };
