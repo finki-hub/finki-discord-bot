@@ -1,18 +1,18 @@
 import { logger } from '@/common/logger/index.js';
 import { initializeChannels } from '@/common/services/channels.js';
-import { initializeRoles } from '@/common/services/roles.js';
 import { type BotConfigKeys } from '@/modules/admin/schemas/BotConfig.js';
 
-export const refreshOnConfigChange = async (property: BotConfigKeys) => {
-  logger.info(`Config property ${property} changed, refreshing...`);
+export const refreshOnConfigChange = async (
+  property: BotConfigKeys,
+  guildId: string,
+) => {
+  logger.info(
+    `Config property ${property} changed for guild ${guildId}, refreshing...`,
+  );
 
   switch (property) {
     case 'channels':
-      await initializeChannels();
-      break;
-
-    case 'roles':
-      await initializeRoles();
+      await initializeChannels(guildId);
       break;
 
     default:

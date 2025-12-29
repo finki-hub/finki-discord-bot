@@ -6,7 +6,6 @@ import { getRooms } from '@/configuration/data/index.js';
 export const getClosestRoom = (room: string) => {
   const rooms = getRooms().map((c) => `${c.classroom} (${c.location})`);
 
-  // Latin -> Cyrillic
   const transformedRoomNames = createTransliterationSearchMap(rooms);
 
   const fuse = new Fuse(Object.keys(transformedRoomNames), {

@@ -3,24 +3,20 @@ import { dirname, join } from 'node:path';
 
 import { logger } from '@/common/logger/index.js';
 import {
-  type BotConfig,
-  BotConfigSchema,
+  type MultiGuildConfig,
+  MultiGuildConfigSchema,
 } from '@/modules/admin/schemas/BotConfig.js';
 import { configErrorFunctions } from '@/translations/errors.js';
 
-import { DEFAULT_CONFIGURATION } from './defaults.js';
-
 const CONFIG_FILE_PATH = join(process.cwd(), 'config', 'bot.json');
 
-// Convert undefined values to null for JSON serialization
-const serializeConfig = (config: BotConfig): string =>
+const serializeConfig = (config: MultiGuildConfig): string =>
   JSON.stringify(
     config,
     (_, value: unknown) => (value === undefined ? null : value),
     2,
   );
 
-// Convert null values back to undefined for Zod parsing
 const deserializeConfig = (parsed: unknown): unknown => {
   if (parsed === null || typeof parsed !== 'object') {
     return parsed;
@@ -45,32 +41,31 @@ const deserializeConfig = (parsed: unknown): unknown => {
   return result;
 };
 
-export const getConfig = async (): Promise<BotConfig | null> => {
+export const getConfig = async (): Promise<MultiGuildConfig | null> => {
   try {
     const fileContent = await readFile(CONFIG_FILE_PATH, 'utf8');
     const parsed: unknown = JSON.parse(fileContent);
     const deserialized = deserializeConfig(parsed);
 
-    return BotConfigSchema.parse(deserialized);
+    return MultiGuildConfigSchema.parse(deserialized);
   } catch (error) {
     if (Error.isError(error) && error.name === 'SyntaxError') {
       return null;
     }
 
-    // ENOENT means file doesn't exist - create it with default configuration
     if (Error.isError(error) && 'code' in error && error.code === 'ENOENT') {
       try {
-        // Ensure config directory exists
         await mkdir(dirname(CONFIG_FILE_PATH), { recursive: true });
 
-        // Create file with default configuration
-        const defaultConfig = BotConfigSchema.parse(DEFAULT_CONFIGURATION);
-        const jsonContent = serializeConfig(defaultConfig);
+        const emptyConfig: MultiGuildConfig = {};
+        const jsonContent = serializeConfig(emptyConfig);
         await writeFile(CONFIG_FILE_PATH, jsonContent, 'utf8');
 
-        logger.info('Created config/bot.json with default configuration');
+        logger.info(
+          'Created config/bot.json with empty multi-guild configuration',
+        );
 
-        return defaultConfig;
+        return emptyConfig;
       } catch (createError) {
         logger.error(
           `Failed creating config file with defaults\n${String(createError)}`,
@@ -86,14 +81,15 @@ export const getConfig = async (): Promise<BotConfig | null> => {
 };
 
 export const setConfig = async (
-  config: BotConfig,
-): Promise<BotConfig | null> => {
+  config: MultiGuildConfig,
+): Promise<MultiGuildConfig | null> => {
   try {
-    const validated = BotConfigSchema.parse(config);
+    const validated = MultiGuildConfigSchema.parse(config);
     const jsonContent = serializeConfig(validated);
 
-    // Ensure config directory exists
-    await mkdir(dirname(CONFIG_FILE_PATH), { recursive: true });
+    await mkdir(dirname(CONFIG_FILE_PATH), {
+      recursive: true,
+    });
 
     await writeFile(CONFIG_FILE_PATH, jsonContent, 'utf8');
 

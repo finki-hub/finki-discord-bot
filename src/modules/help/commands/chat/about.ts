@@ -4,7 +4,7 @@ import {
 } from 'discord.js';
 
 import { getAboutEmbed } from '@/modules/help/components/embeds.js';
-import { commandDescriptions } from '@/translations/commands.js';
+import { commandDescriptions, commandErrors } from '@/translations/commands.js';
 
 export const name = 'about';
 

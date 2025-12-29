@@ -24,7 +24,6 @@ export const getClosestQuestion = async (question: number | string) => {
     return null;
   }
 
-  // Latin -> Cyrillic
   const transformedQuestionNames = createTransliterationSearchMap(questions);
 
   const fuse = new Fuse(Object.keys(transformedQuestionNames), {
@@ -62,7 +61,6 @@ export const getClosestLink = async (link: number | string) => {
     return null;
   }
 
-  // Latin -> Cyrillic
   const transformedLinkNames = createTransliterationSearchMap(links);
 
   const fuse = new Fuse(Object.keys(transformedLinkNames), {

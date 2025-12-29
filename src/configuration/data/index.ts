@@ -21,8 +21,6 @@ import {
 import { type Room, RoomSchema } from '@/modules/room/schemas/Room.js';
 import { type Staff, StaffSchema } from '@/modules/staff/schemas/Staff.js';
 
-import { type RoleConfig, RoleConfigSchema } from './schemas/RoleConfig.js';
-
 const options = {
   encoding: 'utf8',
   flag: 'a+',
@@ -42,7 +40,6 @@ let information: CourseInformation[] = [];
 let participants: CourseParticipants[] = [];
 let prerequisites: CoursePrerequisites[] = [];
 let professors: CourseStaff[] = [];
-let roles: RoleConfig = {};
 let sessions: Record<string, string> = {};
 let staff: Staff[] = [];
 
@@ -57,7 +54,6 @@ export const reloadData = async () => {
       options,
     );
     const professorsPromise = readFile('./config/professors.json', options);
-    const rolesPromise = readFile('./config/roles.json', options);
     const sessionsPromise = readFile('./config/sessions.json', options);
     const staffPromise = readFile('./config/staff.json', options);
 
@@ -68,7 +64,6 @@ export const reloadData = async () => {
       participantsRaw,
       prerequisitesRaw,
       professorsRaw,
-      rolesRaw,
       sessionsRaw,
       staffRaw,
     ] = await Promise.all([
@@ -78,7 +73,6 @@ export const reloadData = async () => {
       participantsPromise,
       prerequisitesPromise,
       professorsPromise,
-      rolesPromise,
       sessionsPromise,
       staffPromise,
     ]).catch((error: unknown) => {
@@ -92,7 +86,6 @@ export const reloadData = async () => {
     const participantsData = parseContent(participantsRaw);
     const prerequisitesData = parseContent(prerequisitesRaw);
     const professorsData = parseContent(professorsRaw);
-    const rolesData = parseContent(rolesRaw, {});
     const sessionsData = parseContent(sessionsRaw, {});
     const staffData = parseContent(staffRaw);
 
@@ -106,7 +99,6 @@ export const reloadData = async () => {
       CoursePrerequisitesSchema.array().parseAsync(prerequisitesData);
     const professorsDataPromise =
       CourseStaffSchema.array().parseAsync(professorsData);
-    const rolesDataPromise = RoleConfigSchema.parseAsync(rolesData);
     const sessionsDataPromise = z
       .record(z.string(), z.string())
       .parseAsync(sessionsData);
@@ -119,7 +111,6 @@ export const reloadData = async () => {
       participants,
       prerequisites,
       professors,
-      roles,
       sessions,
       staff,
     ] = await Promise.all([
@@ -129,7 +120,6 @@ export const reloadData = async () => {
       participantsDataPromise,
       prerequisitesDataPromise,
       professorsDataPromise,
-      rolesDataPromise,
       sessionsDataPromise,
       staffDataPromise,
     ]).catch((error: unknown) => {
@@ -155,9 +145,6 @@ export const getParticipants = () => participants;
 export const getProfessors = () => professors;
 
 export const getPrerequisites = () => prerequisites;
-
-export const getFromRoleConfig = <T extends keyof RoleConfig>(key: T) =>
-  roles[key];
 
 export const getSessions = () => sessions;
 

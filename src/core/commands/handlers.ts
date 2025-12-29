@@ -55,33 +55,43 @@ export const handleChatInputCommand = async (
   const command = getChatCommand(interaction.commandName);
 
   if (command === undefined) {
-    logger.warn(`Command for interaction ${interaction.commandName} not found`);
+    logger.warn(
+      `Command for interaction ${interaction.commandName} not found`,
+      {
+        guildId: interaction.guild?.id,
+      },
+    );
     await interaction.reply({
       content: commandErrors.commandError,
       flags: MessageFlags.Ephemeral,
     });
+
     return;
   }
 
-  const member = await getMemberFromGuild(
-    interaction.user.id,
-    interaction.guild,
-  );
+  const member =
+    interaction.guild === null
+      ? null
+      : await getMemberFromGuild(interaction.user.id, interaction.guild);
 
   if (member === null) {
     if (commandRequiresPermissions(commandWithSubcommand)) {
-      logger.warn('Guild-only command used in DMs');
+      logger.warn('Guild-only command used in DMs', {
+        guildId: interaction.guild?.id,
+      });
       await interaction.reply({
         content: commandErrors.commandGuildOnly,
         flags: MessageFlags.Ephemeral,
       });
+
       return;
     }
-  } else if (!hasCommandPermission(member, commandWithSubcommand)) {
+  } else if (!(await hasCommandPermission(member, commandWithSubcommand))) {
     await interaction.reply({
       content: commandErrors.commandNoPermission,
       flags: MessageFlags.Ephemeral,
     });
+
     return;
   }
 
@@ -91,11 +101,15 @@ export const handleChatInputCommand = async (
     } catch (error) {
       logger.error(
         `Failed deferring chat input interaction ${interaction.commandName}\n${String(error)}`,
+        {
+          guildId: interaction.guild?.id,
+        },
       );
       await interaction.reply({
         content: commandErrors.commandError,
         flags: MessageFlags.Ephemeral,
       });
+
       return;
     }
   }
@@ -105,6 +119,7 @@ export const handleChatInputCommand = async (
   } catch (error) {
     logger.error(
       `Failed executing chat input command ${inlineCode(commandWithSubcommand)}\n${String(error)}`,
+      { guildId: interaction.guild?.id },
     );
 
     const errorMessage = isMissingPermissionsError(error)
@@ -128,35 +143,54 @@ export const handleButton = async (interaction: ButtonInteraction) => {
   const [commandName, ...args] = interaction.customId.split(':');
 
   if (!commandName) {
-    logger.error(`Command for interaction ${interaction.id} not found`);
+    logger.error(`Command for interaction ${interaction.id} not found`, {
+      guildId: interaction.guild?.id,
+    });
     await interaction.reply({
       content: commandErrors.commandError,
       flags: MessageFlags.Ephemeral,
     });
+
     return;
   }
 
   const command = getButtonCommand(commandName);
 
   if (command === undefined) {
-    logger.error(`Command for interaction ${interaction.id} not found`);
+    logger.error(`Command for interaction ${interaction.id} not found`, {
+      guildId: interaction.guild?.id,
+    });
     await interaction.reply({
       content: commandErrors.commandError,
       flags: MessageFlags.Ephemeral,
     });
+
     return;
   }
 
-  const member = await getMemberFromGuild(
-    interaction.user.id,
-    interaction.guild,
-  );
+  const member =
+    interaction.guild === null
+      ? null
+      : await getMemberFromGuild(interaction.user.id, interaction.guild);
 
-  if (member !== null && !hasCommandPermission(member, command.name)) {
+  if (member === null) {
+    if (commandRequiresPermissions(command.name)) {
+      logger.warn('Guild-only command used in DMs', {
+        guildId: interaction.guild?.id,
+      });
+      await interaction.reply({
+        content: commandErrors.commandGuildOnly,
+        flags: MessageFlags.Ephemeral,
+      });
+
+      return;
+    }
+  } else if (!(await hasCommandPermission(member, command.name))) {
     await interaction.reply({
       content: commandErrors.commandNoPermission,
       flags: MessageFlags.Ephemeral,
     });
+
     return;
   }
 
@@ -168,6 +202,9 @@ export const handleButton = async (interaction: ButtonInteraction) => {
   } catch (error) {
     logger.error(
       `Failed executing button interaction ${interaction.customId}\n${String(error)}`,
+      {
+        guildId: interaction.guild?.id,
+      },
     );
 
     const errorMessage = isMissingPermissionsError(error)
@@ -200,6 +237,7 @@ export const handleAutocomplete = async (
 
   if (command === undefined) {
     await interaction.respond([]).catch(() => {});
+
     return;
   }
 
@@ -209,6 +247,9 @@ export const handleAutocomplete = async (
     if (!isExpectedAutocompleteError(error)) {
       logger.error(
         `Failed executing autocomplete interaction ${interaction.commandName}\n${String(error)}`,
+        {
+          guildId: interaction.guild?.id,
+        },
       );
     }
   } finally {
@@ -229,27 +270,43 @@ const executeContextMenuCommand = async (
   const command = getContextMenuCommand(interaction.commandName);
 
   if (command === undefined) {
-    logger.warn(`Command for interaction ${interaction.commandName} not found`);
+    logger.warn(
+      `Command for interaction ${interaction.commandName} not found`,
+      {
+        guildId: interaction.guild?.id,
+      },
+    );
     await interaction.reply({
       content: commandErrors.commandError,
       flags: MessageFlags.Ephemeral,
     });
+
     return;
   }
 
-  const member = await getMemberFromGuild(
-    interaction.user.id,
-    interaction.guild,
-  );
+  const member =
+    interaction.guild === null
+      ? null
+      : await getMemberFromGuild(interaction.user.id, interaction.guild);
 
-  if (
-    member !== null &&
-    !hasCommandPermission(member, interaction.commandName)
-  ) {
+  if (member === null) {
+    if (commandRequiresPermissions(interaction.commandName)) {
+      logger.warn('Guild-only command used in DMs', {
+        guildId: interaction.guild?.id,
+      });
+      await interaction.reply({
+        content: commandErrors.commandGuildOnly,
+        flags: MessageFlags.Ephemeral,
+      });
+
+      return;
+    }
+  } else if (!(await hasCommandPermission(member, interaction.commandName))) {
     await interaction.reply({
       content: commandErrors.commandNoPermission,
       flags: MessageFlags.Ephemeral,
     });
+
     return;
   }
 
@@ -262,6 +319,9 @@ const executeContextMenuCommand = async (
   } catch (error) {
     logger.error(
       `Failed executing context menu command ${inlineCode(interaction.commandName)}\n${String(error)}`,
+      {
+        guildId: interaction.guild?.id,
+      },
     );
 
     const errorMessage = isMissingPermissionsError(error)

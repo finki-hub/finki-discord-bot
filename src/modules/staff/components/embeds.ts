@@ -1,13 +1,11 @@
 import { EmbedBuilder } from 'discord.js';
 
-import { getThemeColor } from '@/configuration/bot/index.js';
 import { labels } from '@/translations/labels.js';
 
 import { type Staff } from '../schemas/Staff.js';
 
 export const getStaffEmbed = (information: Staff) =>
   new EmbedBuilder()
-    .setColor(getThemeColor())
     .setTitle(information.name)
     .addFields(
       {

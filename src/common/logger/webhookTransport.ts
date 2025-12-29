@@ -1,14 +1,12 @@
 import type { LogEntry } from 'winston';
 
 import { WebhookClient } from 'discord.js';
-// eslint-disable-next-line n/no-extraneous-import
 import TransportStream from 'winston-transport';
 
 import { getConfigProperty } from '@/configuration/bot/index.js';
 
 export class WebhookTransport extends TransportStream {
-  private webhookClient: null | WebhookClient = null;
-  private webhookUrl: string | undefined = undefined;
+  private readonly webhookClients = new Map<string, WebhookClient>();
 
   constructor() {
     super({
@@ -23,7 +21,11 @@ export class WebhookTransport extends TransportStream {
 
     if (info.level === 'error' || info.level === 'warn') {
       const message = this.formatMessage(info);
-      void this.sendToWebhook(message).finally(() => {
+      const guildId =
+        'guildId' in info && typeof info['guildId'] === 'string'
+          ? info['guildId']
+          : null;
+      void this.sendToWebhook(message, guildId).finally(() => {
         callback();
       });
       return;
@@ -48,45 +50,60 @@ export class WebhookTransport extends TransportStream {
     return `${timestamp} - ${level}: ${stack ?? message}`;
   }
 
-  private initializeWebhook(): void {
-    const errorWebhookUrl = getConfigProperty('errorWebhook');
-
-    if (errorWebhookUrl === undefined) {
-      this.webhookClient = null;
-      this.webhookUrl = undefined;
-      return;
+  private async getWebhookClient(
+    guildId: null | string,
+  ): Promise<null | WebhookClient> {
+    if (guildId === null) {
+      return null;
     }
 
-    // Only recreate if URL changed
-    if (this.webhookUrl === errorWebhookUrl && this.webhookClient !== null) {
-      return;
+    const webhookUrl = await getConfigProperty('errorWebhook', guildId);
+
+    if (webhookUrl === undefined) {
+      return null;
+    }
+
+    if (this.webhookClients.has(webhookUrl)) {
+      return this.webhookClients.get(webhookUrl) ?? null;
     }
 
     try {
-      this.webhookClient = new WebhookClient({ url: errorWebhookUrl });
-      this.webhookUrl = errorWebhookUrl;
+      const webhookClient = new WebhookClient({ url: webhookUrl });
+      this.webhookClients.set(webhookUrl, webhookClient);
+      return webhookClient;
     } catch (error) {
       // eslint-disable-next-line no-console
-      console.error('Failed initializing error webhook:', error);
-      this.webhookClient = null;
-      this.webhookUrl = undefined;
+      console.error(
+        `Failed initializing error webhook for guild ${guildId}:`,
+        error,
+      );
+      return null;
     }
   }
 
-  private async sendToWebhook(message: string): Promise<void> {
-    this.initializeWebhook();
+  private async sendToWebhook(
+    message: string,
+    guildId: null | string,
+  ): Promise<void> {
+    const webhookClient = await this.getWebhookClient(guildId);
 
-    if (this.webhookClient === null) {
+    if (webhookClient === null) {
       return;
     }
 
     try {
-      await this.webhookClient.send({
+      await webhookClient.send({
         content: message,
       });
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Failed sending to error webhook:', error);
+      for (const [url, cachedClient] of this.webhookClients.entries()) {
+        if (cachedClient === webhookClient) {
+          this.webhookClients.delete(url);
+          break;
+        }
+      }
     }
   }
 }

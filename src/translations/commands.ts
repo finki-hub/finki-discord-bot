@@ -1,10 +1,7 @@
 import {
-  bold,
   codeBlock,
   type GuildPremiumTier,
-  inlineCode,
   italic,
-  roleMention,
   userMention,
 } from 'discord.js';
 
@@ -23,12 +20,7 @@ export const commandDescriptions = {
   'course participants': 'Преземи број на слушатели на предмет',
   'course prerequisite': 'Преземи предуслов за предмет',
   'course professors': 'Преземи наставен кадар на предмет',
-  'course role': 'Преземи број на корисници во канал на предмет',
-  'courses add': 'Земи улоги за многу предмети',
-  'courses prerequisite': 'Преземи предмети според предуслов',
-  'courses remove': 'Отстрани улоги за многу предмети',
   'course summary': 'Преземи информации за предмет',
-  'course toggle': 'Земи или отстрани улога за предмет',
   faq: 'Преземи најчесто поставувано прашање',
   help: 'Преземи листа од сите достапни команди',
   home: 'Преземи линк до изворниот код',
@@ -42,49 +34,20 @@ export const commandDescriptions = {
   room: 'Преземи информации за просторија',
   session: 'Преземи распоред за испитна сесија или колоквиумска недела',
   staff: 'Преземи информации за професор',
-  'statistics color': 'Прикажи статистика за улогите за бои',
-  'statistics course': 'Прикажи статистика за улогите за предмети',
-  'statistics notification': 'Прикажи статистика за улогите за нотификации',
-  'statistics program': 'Прикажи статистика за улогите за програми',
-  'statistics server': 'Прикажи статистика за серверот',
-  'statistics year': 'Прикажи статистика за улогите за години',
   'ticket close': 'Затвори тикет',
   'ticket list': 'Преземи листа од сите тикети',
 };
 
 export const commandResponses = {
-  allSemestersCoursesAdded: 'Ги земавте предметите од сите семестри.',
-  allSemestersCoursesRemoved: 'Ги отстранивте предметите од сите семестри.',
   configurationReloaded: 'Конфигурацијата е освежена.',
   configurationReloading: 'Се освежува конфигурацијата...',
   home: 'https://github.com/Delemangi/finki-discord-bot',
   scriptExecuted: 'Ја извршивте скриптата.',
-  statisticsNotAvailable: 'Статистики не се достапни.',
   ticketClosed: 'Тикетот е затворен.',
 };
 
 export const commandResponseFunctions = {
   commandFor: (userId: string) => italic(`за ${userMention(userId)}`),
-
-  courseAdded: (roleId: string) =>
-    `Го земавте предметот ${roleMention(roleId)}. ${bold(
-      'НАПОМЕНА',
-    )}: препорачано е да ги земате предметите од делот ${inlineCode(
-      'Channels & Roles',
-    )} најгоре во листата на каналите.`,
-
-  courseRemoved: (roleId: string) =>
-    `Го отстранивте предметот ${roleMention(roleId)}. ${bold(
-      'НАПОМЕНА',
-    )}: препорачано е да ги земате предметите од делот ${inlineCode(
-      'Channels & Roles',
-    )} најгоре во листата на каналите.`,
-
-  semesterCoursesAdded: (semester: number | string) =>
-    `Ги земавте предметите од семестар ${semester}.`,
-
-  semesterCoursesRemoved: (semester: number | string) =>
-    `Ги отстранивте предметите од семестар ${semester}.`,
 
   serverAnimatedEmojiStat: (emojiCount: number, maxCount: number) =>
     `Анимирани емоџиња: ${emojiCount} / ${maxCount}`,
@@ -127,7 +90,6 @@ export const commandErrors = {
   commandNotFound: 'Командата не постои.',
   configurationSavingFailed: 'Зачувувањето на конфигурацијата беше неуспешно.',
   courseNotFound: 'Предметот не постои.',
-  coursesNotFound: 'Предметите не постојат.',
   dataFetchFailed: 'Преземањето на податоците беше неуспешно.',
   faqNotFound: 'Прашањето не постои.',
   invalidChannel: 'Каналот е невалиден.',

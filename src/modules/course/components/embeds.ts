@@ -1,6 +1,5 @@
 import { EmbedBuilder, inlineCode } from 'discord.js';
 
-import { getThemeColor } from '@/configuration/bot/index.js';
 import {
   getInformation,
   getParticipants,
@@ -16,9 +15,10 @@ import { type CoursePrerequisites } from '../schemas/CoursePrerequisites.js';
 import { type CourseStaff } from '../schemas/CourseStaff.js';
 import { linkStaff } from './utils.js';
 
-export const getCourseParticipantsEmbed = (information: CourseParticipants) =>
+export const getCourseParticipantsEmbed = (
+  information: CourseParticipants,
+) =>
   new EmbedBuilder()
-    .setColor(getThemeColor())
     .setTitle(information.course)
     .setDescription(embedMessages.courseParticipantsInfo)
     .addFields(
@@ -34,7 +34,6 @@ export const getCourseParticipantsEmbed = (information: CourseParticipants) =>
 
 export const getCourseProfessorsEmbed = (information: CourseStaff) =>
   new EmbedBuilder()
-    .setColor(getThemeColor())
     .setTitle(information.course)
     .setDescription(embedMessages.courseStaffInfo)
     .addFields(
@@ -51,9 +50,10 @@ export const getCourseProfessorsEmbed = (information: CourseStaff) =>
     )
     .setTimestamp();
 
-export const getCoursePrerequisiteEmbed = (information: CoursePrerequisites) =>
+export const getCoursePrerequisiteEmbed = (
+  information: CoursePrerequisites,
+) =>
   new EmbedBuilder()
-    .setColor(getThemeColor())
     .setTitle(information.course)
     .addFields({
       inline: true,
@@ -67,7 +67,6 @@ export const getCoursePrerequisiteEmbed = (information: CoursePrerequisites) =>
 
 export const getCourseInfoEmbed = (information: CourseInformation) =>
   new EmbedBuilder()
-    .setColor(getThemeColor())
     .setTitle(information.course)
     .setDescription(embedMessages.courseInfo)
     .addFields(
@@ -105,11 +104,9 @@ export const getCourseSummaryEmbed = (course: string) => {
 
   return [
     new EmbedBuilder()
-      .setColor(getThemeColor())
       .setTitle(course)
       .setDescription(embedMessages.courseSummaryInfo),
     new EmbedBuilder()
-      .setColor(getThemeColor())
       .setDescription(embedMessages.courseInfo)
       .addFields(
         {
@@ -139,7 +136,6 @@ export const getCourseSummaryEmbed = (course: string) => {
         },
       ),
     new EmbedBuilder()
-      .setColor(getThemeColor())
       .setDescription(embedMessages.courseStaffInfo)
       .addFields(
         {
@@ -160,7 +156,6 @@ export const getCourseSummaryEmbed = (course: string) => {
         },
       ),
     new EmbedBuilder()
-      .setColor(getThemeColor())
       .setDescription(embedMessages.courseParticipantsInfo)
       .addFields(
         ...Object.entries(participants ?? {})
@@ -180,7 +175,6 @@ export const getCoursesPrerequisiteEmbed = (course: string) => {
   );
 
   return new EmbedBuilder()
-    .setColor(getThemeColor())
     .setTitle(`Предмети со предуслов ${course}`)
     .setDescription(
       courses.length === 0

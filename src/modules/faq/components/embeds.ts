@@ -7,7 +7,6 @@ import {
 } from 'discord.js';
 
 import { getCommandMention } from '@/common/commands/utils.js';
-import { getThemeColor } from '@/configuration/bot/index.js';
 import { embedMessageFunctions } from '@/translations/embeds.js';
 import { labels } from '@/translations/labels.js';
 
@@ -18,7 +17,6 @@ import { getNormalizedUrl } from '../utils/links.js';
 
 export const getQuestionEmbed = (question: Question) =>
   new EmbedBuilder()
-    .setColor(getThemeColor())
     .setTitle(question.name)
     .setDescription(question.content)
     .setTimestamp();
@@ -64,7 +62,6 @@ export const getQuestionComponents = (question: Question) => {
 
 export const getListQuestionsEmbed = (questions: Question[]) =>
   new EmbedBuilder()
-    .setColor(getThemeColor())
     .setTitle(labels.questions)
     .setDescription(
       `${embedMessageFunctions.allQuestions(
@@ -82,7 +79,6 @@ export const getListQuestionsEmbed = (questions: Question[]) =>
 
 export const getListLinksEmbed = (links: Link[]) =>
   new EmbedBuilder()
-    .setColor(getThemeColor())
     .setTitle(labels.links)
     .setDescription(
       `${embedMessageFunctions.allLinks(getCommandMention('link'))}\n\n${links

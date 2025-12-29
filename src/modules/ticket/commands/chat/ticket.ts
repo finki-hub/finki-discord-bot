@@ -1,4 +1,5 @@
 import {
+  type AnyThreadChannel,
   type ChatInputCommandInteraction,
   SlashCommandBuilder,
 } from 'discord.js';
@@ -38,7 +39,15 @@ export const data = new SlashCommandBuilder()
   );
 
 const handleTicketClose = async (interaction: ChatInputCommandInteraction) => {
-  const ticketsChannel = getChannelsProperty(Channel.Tickets);
+  if (interaction.guild === null) {
+    await interaction.editReply(commandErrors.commandGuildOnly);
+    return;
+  }
+
+  const ticketsChannel = await getChannelsProperty(
+    Channel.Tickets,
+    interaction.guild.id,
+  );
 
   if (
     !interaction.channel?.isThread() ||
@@ -56,7 +65,12 @@ const handleTicketClose = async (interaction: ChatInputCommandInteraction) => {
 };
 
 const handleTicketList = async (interaction: ChatInputCommandInteraction) => {
-  const ticketThreads = await getActiveTickets(interaction);
+  if (interaction.guild === null) {
+    await interaction.editReply(commandErrors.commandGuildOnly);
+    return;
+  }
+
+  const ticketThreads = await getActiveTickets(interaction.guild);
 
   if (ticketThreads === undefined || ticketThreads.size === 0) {
     await interaction.editReply(commandErrors.noTickets);
@@ -64,7 +78,7 @@ const handleTicketList = async (interaction: ChatInputCommandInteraction) => {
     return;
   }
 
-  ticketThreads.sort((a, b) => {
+  ticketThreads.sort((a: AnyThreadChannel, b: AnyThreadChannel) => {
     if (!a.createdTimestamp || !b.createdTimestamp) {
       return 0;
     }
@@ -82,7 +96,7 @@ const handleTicketList = async (interaction: ChatInputCommandInteraction) => {
 
   const threadLinks = ticketThreads
     .map(
-      (thread) =>
+      (thread: AnyThreadChannel) =>
         `- ${thread.url} (${thread.createdAt ? dateFormatter.format(thread.createdAt) : labels.none})`,
     )
     .join('\n');

@@ -94,8 +94,13 @@ const handleConfigGet = async (interaction: ChatInputCommandInteraction) => {
     return;
   }
 
+  if (interaction.guild === null) {
+    await interaction.editReply(commandErrors.commandGuildOnly);
+    return;
+  }
+
   const key = BotConfigKeysSchema.parse(rawKey);
-  const value = getConfigProperty(key);
+  const value = await getConfigProperty(key, interaction.guild.id);
 
   const config = JSON.stringify(
     {
@@ -149,7 +154,16 @@ const handleConfigSet = async (interaction: ChatInputCommandInteraction) => {
     return;
   }
 
-  const rawNewConfig = await setConfigProperty(key, parsedValue.data);
+  if (interaction.guild === null) {
+    await interaction.editReply(commandErrors.commandGuildOnly);
+    return;
+  }
+
+  const rawNewConfig = await setConfigProperty(
+    key,
+    parsedValue.data,
+    interaction.guild.id,
+  );
 
   if (rawNewConfig === null) {
     await interaction.editReply(commandErrors.configurationSavingFailed);
@@ -165,7 +179,7 @@ const handleConfigSet = async (interaction: ChatInputCommandInteraction) => {
     2,
   );
 
-  void refreshOnConfigChange(key);
+  void refreshOnConfigChange(key, interaction.guild.id);
 
   if (newProperty.length > 2_000) {
     await interaction.editReply({

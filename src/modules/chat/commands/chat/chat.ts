@@ -5,12 +5,14 @@ import {
   SlashCommandBuilder,
 } from 'discord.js';
 
+import { executeSubcommand } from '@/common/commands/subcommands.js';
 import { logger } from '@/common/logger/index.js';
 import { Role } from '@/common/schemas/Role.js';
 import {
   safeReplyToInteraction,
   safeStreamReplyToInteraction,
 } from '@/common/utils/messages.js';
+import { DEFAULT_CONFIGURATION } from '@/configuration/bot/defaults.js';
 import { getConfigProperty } from '@/configuration/bot/index.js';
 import {
   ClosestQuestionsOptionsSchema,
@@ -201,7 +203,10 @@ const handleChatClosest = async (interaction: ChatInputCommandInteraction) => {
     interaction.options.getNumber('threshold', false) ?? undefined;
   const limit = interaction.options.getNumber('limit', false) ?? undefined;
 
-  const models = getConfigProperty('models');
+  const models =
+    interaction.guild === null
+      ? DEFAULT_CONFIGURATION.models
+      : await getConfigProperty('models', interaction.guild.id);
 
   const options = ClosestQuestionsOptionsSchema.parse({
     embeddingsModel: embeddingsModel ?? models.embeddings ?? undefined,
@@ -258,7 +263,10 @@ const handleChatEmbed = async (interaction: ChatInputCommandInteraction) => {
     interaction.options.getBoolean('all-questions') ?? undefined;
   const allModels = interaction.options.getBoolean('all-models') ?? undefined;
 
-  const models = getConfigProperty('models');
+  const models =
+    interaction.guild === null
+      ? DEFAULT_CONFIGURATION.models
+      : await getConfigProperty('models', interaction.guild.id);
 
   const options = FillEmbeddingsOptionsSchema.parse({
     allModels,
@@ -270,7 +278,6 @@ const handleChatEmbed = async (interaction: ChatInputCommandInteraction) => {
   try {
     await safeStreamReplyToInteraction(interaction, async (onChunk) => {
       await fillEmbeddings(options, async (chunk) => {
-        // Not an object
         if (!chunk.includes('{')) {
           await onChunk(chunk);
           return;
@@ -314,7 +321,10 @@ const handleChatUnembedded = async (
   const embeddingsModel =
     interaction.options.getString('embeddings-model', false) ?? undefined;
 
-  const models = getConfigProperty('models');
+  const models =
+    interaction.guild === null
+      ? DEFAULT_CONFIGURATION.models
+      : await getConfigProperty('models', interaction.guild.id);
 
   const options = UnembeddedQuestionsOptionsSchema.parse({
     embeddingsModel: embeddingsModel ?? models.embeddings ?? undefined,
@@ -340,8 +350,6 @@ const handleChatUnembedded = async (
   const content = unembeddedQuestions.map(({ name }) => `- ${name}`).join('\n');
   await safeReplyToInteraction(interaction, content);
 };
-
-import { executeSubcommand } from '@/common/commands/subcommands.js';
 
 const chatHandlers = {
   closest: handleChatClosest,

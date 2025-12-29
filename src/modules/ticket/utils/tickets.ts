@@ -3,6 +3,8 @@ import {
   type ButtonInteraction,
   ChannelType,
   type ChatInputCommandInteraction,
+  type Collection,
+  type Guild,
   roleMention,
   ThreadAutoArchiveDuration,
 } from 'discord.js';
@@ -10,11 +12,8 @@ import {
 import { logger } from '@/common/logger/index.js';
 import { Channel } from '@/common/schemas/Channel.js';
 import { getChannel } from '@/common/services/channels.js';
-import { getGuild } from '@/common/utils/guild.js';
-import {
-  getChannelsProperty,
-  getTicketingProperty,
-} from '@/configuration/bot/index.js';
+import { getChannelsProperty } from '@/configuration/bot/index.js';
+import { client } from '@/core/client.js';
 import {
   ticketMessageFunctions,
   ticketMessages,
@@ -22,14 +21,18 @@ import {
 
 import { getTicketCloseComponents } from '../components/components.js';
 import { type Ticket } from '../schemas/Ticket.js';
+import { MAX_TICKET_INACTIVITY_MILLISECONDS } from './constants.js';
 
 export const getActiveTickets = async (
-  interaction?: ChatInputCommandInteraction,
-) => {
-  const guild = await getGuild(interaction);
-  const ticketsChannelId = getChannelsProperty(Channel.Tickets);
+  guild: Guild,
+): Promise<Collection<string, AnyThreadChannel> | undefined> => {
+  const ticketsChannelId = await getChannelsProperty(Channel.Tickets, guild.id);
 
-  const threads = guild?.channels.cache.filter(
+  if (ticketsChannelId === undefined) {
+    return undefined;
+  }
+
+  const threads = guild.channels.cache.filter(
     (channel): channel is AnyThreadChannel =>
       channel.isThread() &&
       channel.parentId === ticketsChannelId &&
@@ -43,8 +46,12 @@ export const getActiveTickets = async (
 export const createTicket = async (
   interaction: ButtonInteraction | ChatInputCommandInteraction,
   ticketMetadata: Ticket,
-) => {
-  const ticketsChannel = getChannel(Channel.Tickets);
+): Promise<void> => {
+  if (interaction.guild === null) {
+    return;
+  }
+
+  const ticketsChannel = getChannel(Channel.Tickets, interaction.guild.id);
 
   if (
     ticketsChannel === undefined ||
@@ -97,8 +104,8 @@ export const createTicket = async (
   });
 };
 
-export const closeTicket = async (ticketId: string) => {
-  const ticketsChannel = getChannel(Channel.Tickets);
+export const closeTicket = async (ticketId: string, guildId: string) => {
+  const ticketsChannel = getChannel(Channel.Tickets, guildId);
 
   if (
     ticketsChannel === undefined ||
@@ -120,31 +127,45 @@ export const closeTicket = async (ticketId: string) => {
 };
 
 export const closeInactiveTickets = async () => {
-  const allowedInactivityDays = getTicketingProperty('allowedInactivityDays');
+  await client.guilds.fetch();
 
-  const maxTicketInactivityMilliseconds = allowedInactivityDays * 86_400_000;
-
-  const ticketThreads = await getActiveTickets();
-
-  if (ticketThreads === undefined || ticketThreads.size === 0) {
-    return;
-  }
-
-  for (const thread of ticketThreads.values()) {
-    await thread.messages.fetch();
-    const lastMessage = thread.lastMessage;
-
-    if (lastMessage === null) {
+  for (const guild of client.guilds.cache.values()) {
+    const ticketsChannelId = await getChannelsProperty(
+      Channel.Tickets,
+      guild.id,
+    );
+    if (ticketsChannelId === undefined) {
       continue;
     }
 
-    const lastMessageDate = lastMessage.createdAt;
+    const ticketThreads = guild.channels.cache.filter(
+      (channel): channel is AnyThreadChannel =>
+        channel.isThread() &&
+        channel.parentId === ticketsChannelId &&
+        !channel.archived &&
+        !channel.locked,
+    );
 
-    if (
-      Date.now() - lastMessageDate.getTime() >
-      maxTicketInactivityMilliseconds
-    ) {
-      await closeTicket(thread.id);
+    if (ticketThreads.size === 0) {
+      continue;
+    }
+
+    for (const thread of ticketThreads.values()) {
+      await thread.messages.fetch();
+      const lastMessage = thread.lastMessage;
+
+      if (lastMessage === null) {
+        continue;
+      }
+
+      const lastMessageDate = lastMessage.createdAt;
+
+      if (
+        Date.now() - lastMessageDate.getTime() >
+        MAX_TICKET_INACTIVITY_MILLISECONDS
+      ) {
+        await closeTicket(thread.id, guild.id);
+      }
     }
   }
 };

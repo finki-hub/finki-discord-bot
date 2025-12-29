@@ -6,7 +6,6 @@ import { getSessions } from '@/configuration/data/index.js';
 export const getClosestSession = (session: string) => {
   const sessions = Object.keys(getSessions());
 
-  // Latin -> Cyrillic
   const transformedSessionNames = createTransliterationSearchMap(sessions);
 
   const fuse = new Fuse(Object.keys(transformedSessionNames), {

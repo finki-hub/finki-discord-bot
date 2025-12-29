@@ -1,10 +1,14 @@
 import { type ButtonInteraction, MessageFlags } from 'discord.js';
 
 import { getPaginationComponents } from '@/common/components/pagination.js';
-import { getGuild, getMemberFromGuild } from '@/common/utils/guild.js';
-import { getCommandsWithPermission } from '@/core/utils/permissions.js';
+import { getMemberFromGuild } from '@/common/utils/guild.js';
+import {
+  commandRequiresPermissions,
+  getCommandsWithPermission,
+} from '@/core/utils/permissions.js';
 import { getHelpEmbed } from '@/modules/help/components/embeds.js';
-import { commandErrors } from '@/translations/commands.js';
+import { COMMANDS_PER_PAGE } from '@/modules/help/utils/constants.js';
+import { commandDescriptions, commandErrors } from '@/translations/commands.js';
 
 export const name = 'help';
 
@@ -26,22 +30,28 @@ export const execute = async (
     return;
   }
 
-  const guild = await getGuild(interaction);
-  const member = guild
-    ? await getMemberFromGuild(interaction.user.id, guild)
-    : null;
+  let commands: string[];
+  if (interaction.guild === null) {
+    commands = Object.keys(commandDescriptions).filter(
+      (command) => !commandRequiresPermissions(command),
+    );
+  } else {
+    const member = await getMemberFromGuild(
+      interaction.user.id,
+      interaction.guild,
+    );
 
-  if (guild === null || member === null) {
-    await interaction.reply({
-      content: commandErrors.commandGuildOnly,
-      flags: MessageFlags.Ephemeral,
-    });
-    return;
+    if (member === null) {
+      await interaction.reply({
+        content: commandErrors.commandGuildOnly,
+        flags: MessageFlags.Ephemeral,
+      });
+      return;
+    }
+
+    commands = await getCommandsWithPermission(member);
   }
-
-  const commands = getCommandsWithPermission(member);
-  const commandsPerPage = 8;
-  const pages = Math.ceil(commands.length / commandsPerPage);
+  const pages = Math.ceil(commands.length / COMMANDS_PER_PAGE);
 
   const getCurrentPage = () =>
     Number(interaction.message.embeds[0]?.footer?.text.match(/\d+/gu)?.[0]) - 1;
@@ -73,7 +83,7 @@ export const execute = async (
 
   const buttons = getPaginationComponents('help', getPaginationPosition());
 
-  const embed = getHelpEmbed(commands, page, commandsPerPage);
+  const embed = getHelpEmbed(commands, page);
 
   try {
     await interaction.update({

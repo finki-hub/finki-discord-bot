@@ -17,6 +17,11 @@ export const execute = async (
     return;
   }
 
-  await closeTicket(ticketId);
+  if (interaction.guild === null) {
+    await interaction.reply(commandErrors.commandGuildOnly);
+    return;
+  }
+
+  await closeTicket(ticketId, interaction.guild.id);
   await interaction.deferUpdate();
 };

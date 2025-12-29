@@ -30,9 +30,10 @@ export const commandRequiresPermissions = (command: string): boolean => {
   );
 };
 
-const getCommandPermission = (
+const getCommandPermission = async (
   command: string,
-): [bigint[], Array<string | undefined>] => {
+  guildId: string,
+): Promise<[bigint[], Array<string | undefined>]> => {
   const parts = command.split(' ');
   const topCommand = parts[0];
   const subcommand = parts[1];
@@ -44,22 +45,24 @@ const getCommandPermission = (
 
   const permissions = commandObj.permissions;
 
-  // Check for subcommand-specific permissions first (e.g., "chat embed")
   if (subcommand && permissions.subcommands?.[subcommand]) {
     const subcommandPerms = permissions.subcommands[subcommand];
 
     const subcommandPermissions = subcommandPerms.permissions ?? [];
 
-    const subcommandRoles =
-      subcommandPerms.roles?.map((role) => getRolesProperty(role)) ?? [];
+    const subcommandRoles = await Promise.all(
+      (subcommandPerms.roles ?? []).map((role) =>
+        getRolesProperty(role, guildId),
+      ),
+    );
 
     return [subcommandPermissions, subcommandRoles];
   }
 
-  // Fall back to top-level command permissions (e.g., "chat")
   const commandPermissions = permissions.permissions ?? [];
-  const commandRoles =
-    permissions.roles?.map((role) => getRolesProperty(role)) ?? [];
+  const commandRoles = await Promise.all(
+    (permissions.roles ?? []).map((role) => getRolesProperty(role, guildId)),
+  );
 
   return [commandPermissions, commandRoles];
 };
@@ -67,24 +70,27 @@ const getCommandPermission = (
 const isMemberAdministrator = (member: GuildMember) =>
   member.permissions.has(PermissionsBitField.Flags.Administrator);
 
-// Check whether the member has all the command permissions, or any of the roles
-export const hasCommandPermission = (member: GuildMember, command: string) => {
+export const hasCommandPermission = async (
+  member: GuildMember,
+  command: string,
+) => {
   if (isMemberAdministrator(member)) {
     return true;
   }
 
-  const [permissions, roles] = getCommandPermission(command);
+  const [permissions, roles] = await getCommandPermission(
+    command,
+    member.guild.id,
+  );
 
   if (permissions.length === 0 && roles.length === 0) {
     return true;
   }
 
-  // If all roles are undefined, the command is restricted for safety
   if (roles.length > 0 && roles.every((role) => role === undefined)) {
     return false;
   }
 
-  // Check if the member has the required permissions or roles
   return (
     (permissions.length > 0 && member.permissions.has(permissions)) ||
     (roles.length > 0 &&
@@ -92,9 +98,11 @@ export const hasCommandPermission = (member: GuildMember, command: string) => {
   );
 };
 
-export const getCommandsWithPermission = (member: GuildMember) => {
-  const permittedCommands = Object.keys(commandDescriptions).map((command) =>
-    hasCommandPermission(member, command),
+export const getCommandsWithPermission = async (member: GuildMember) => {
+  const permittedCommands = await Promise.all(
+    Object.keys(commandDescriptions).map((command) =>
+      hasCommandPermission(member, command),
+    ),
   );
 
   return Object.keys(commandDescriptions).filter(

@@ -24,8 +24,6 @@ const getCommandImportPath = (dirent: Dirent) => {
     throw new Error(`Expected a file, but got a directory: ${dirent.name}`);
   }
 
-  // Convert dist path to import path
-  // dist/modules/<module>/commands/<type>/<file>.js -> ../../modules/<module>/commands/<type>/<file>
   const path = dirent.parentPath.replaceAll('\\', '/');
   return `${path.replace('dist', '../../')}/${dirent.name}`;
 };

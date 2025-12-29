@@ -1,15 +1,10 @@
 import {
   type ChatInputCommandInteraction,
   codeBlock,
-  type InteractionResponse,
-  type Message,
   type MessageContextMenuCommandInteraction,
   type UserContextMenuCommandInteraction,
 } from 'discord.js';
-import { setTimeout } from 'node:timers/promises';
 
-import { logger } from '@/common/logger/index.js';
-import { getIntervalsProperty } from '@/configuration/bot/index.js';
 import { labels } from '@/translations/labels.js';
 
 const splitMessage = function* (message: string) {
@@ -121,16 +116,13 @@ const smartSplit = (text: string, maxLength: number): [string, string] => {
 
   if (splitIdx === -1) {
     splitIdx = maxLength;
-    // For hard breaks, don't remove any characters
     return [text.slice(0, splitIdx), text.slice(splitIdx)];
   }
 
-  // If we split on a newline, include it in the first part and don't trim the second
   if (text[splitIdx] === '\n') {
     return [text.slice(0, splitIdx + 1), text.slice(splitIdx + 1)];
   }
 
-  // If we split on a space, remove only the space (not newlines)
   return [text.slice(0, splitIdx), text.slice(splitIdx + 1)];
 };
 
@@ -228,23 +220,7 @@ export const safeStreamReplyToInteraction = async (
 
   await onChunk(handleChunk);
 
-  // Final update to ensure all content is sent
   for (const [i, buffer] of buffers.entries()) {
     await sendOrEdit(i, buffer);
-  }
-};
-
-export const deleteResponse = async (
-  message: InteractionResponse | Message,
-  interval?: number,
-) => {
-  const ephemeralReplyInterval = getIntervalsProperty('ephemeralReply');
-
-  await setTimeout(interval ?? ephemeralReplyInterval);
-
-  try {
-    await message.delete();
-  } catch (error) {
-    logger.error(`Failed deleting message ${message.id}\n${String(error)}`);
   }
 };

@@ -1,17 +1,11 @@
 import {
   type ChatInputCommandInteraction,
-  type GuildMember,
-  roleMention,
   SlashCommandBuilder,
 } from 'discord.js';
 
 import { executeSubcommand } from '@/common/commands/subcommands.js';
-import { logger } from '@/common/logger/index.js';
-import { getCourseRoleByCourseName } from '@/common/services/roles.js';
-import { getGuild } from '@/common/utils/guild.js';
 import {
   getCourses,
-  getFromRoleConfig,
   getInformation,
   getParticipants,
   getPrerequisites,
@@ -24,10 +18,7 @@ import {
   getCourseProfessorsEmbed,
   getCourseSummaryEmbed,
 } from '@/modules/course/components/embeds.js';
-import {
-  getClosestCourse,
-  getClosestCourseRole,
-} from '@/modules/course/utils/search.js';
+import { getClosestCourse } from '@/modules/course/utils/search.js';
 import {
   commandDescriptions,
   commandErrors,
@@ -67,18 +58,6 @@ export const data = new SlashCommandBuilder()
       )
       .addUserOption((option) =>
         option.setName('user').setDescription('Корисник').setRequired(false),
-      ),
-  )
-  .addSubcommand((command) =>
-    command
-      .setName('role')
-      .setDescription(commandDescriptions['course role'])
-      .addStringOption((option) =>
-        option
-          .setName('courserole')
-          .setDescription('Предмет')
-          .setRequired(true)
-          .setAutocomplete(true),
       ),
   )
   .addSubcommand((command) =>
@@ -124,18 +103,6 @@ export const data = new SlashCommandBuilder()
       )
       .addUserOption((option) =>
         option.setName('user').setDescription('Корисник').setRequired(false),
-      ),
-  )
-  .addSubcommand((command) =>
-    command
-      .setName('toggle')
-      .setDescription(commandDescriptions['course toggle'])
-      .addStringOption((option) =>
-        option
-          .setName('courserole')
-          .setDescription('Предмет')
-          .setRequired(true)
-          .setAutocomplete(true),
       ),
   );
 
@@ -183,70 +150,6 @@ const handleCourseProfessors = async (
   await interaction.editReply({
     content: user ? commandResponseFunctions.commandFor(user.id) : null,
     embeds: [embed],
-  });
-};
-
-const handleCourseRole = async (
-  interaction: ChatInputCommandInteraction,
-  closestItem: string,
-) => {
-  const guild = await getGuild(interaction);
-  const courses = getFromRoleConfig('courses');
-
-  if (courses === undefined) {
-    await interaction.editReply(commandErrors.coursesNotFound);
-
-    return;
-  }
-
-  if (guild === null) {
-    await interaction.editReply(commandErrors.commandGuildOnly);
-
-    return;
-  }
-
-  const roleEntry = Object.entries(courses).find(
-    ([, course]) => course.toLowerCase() === closestItem.toLowerCase(),
-  );
-
-  if (roleEntry === undefined) {
-    await interaction.editReply(commandErrors.courseNotFound);
-
-    return;
-  }
-
-  const cachedRole = guild.roles.cache.find(
-    (ro) => ro.name.toLowerCase() === roleEntry[0].toLowerCase(),
-  );
-
-  if (cachedRole === undefined) {
-    await interaction.editReply(commandErrors.courseNotFound);
-
-    return;
-  }
-
-  let role = cachedRole;
-
-  try {
-    // Fetch role to ensure members are loaded
-    const fetchedRole = await guild.roles.fetch(cachedRole.id);
-    if (fetchedRole !== null) {
-      role = fetchedRole;
-    }
-  } catch (error) {
-    logger.error(
-      `Failed fetching role ${cachedRole.id} for course role command\n${String(error)}`,
-    );
-    await interaction.editReply(commandErrors.commandError);
-
-    return;
-  }
-
-  await interaction.editReply({
-    allowedMentions: {
-      parse: [],
-    },
-    content: `${roleMention(role.id)}: ${role.members.size}`,
   });
 };
 
@@ -316,73 +219,26 @@ const handleCourseSummary = async (
   });
 };
 
-const handleCourseToggle = async (
-  interaction: ChatInputCommandInteraction,
-  closestItem: string,
-) => {
-  const guild = await getGuild(interaction);
-
-  if (guild === null) {
-    await interaction.editReply(commandErrors.commandGuildOnly);
-
-    return;
-  }
-
-  const member = interaction.member as GuildMember;
-  const role = getCourseRoleByCourseName(guild, closestItem);
-
-  if (role === null) {
-    await interaction.editReply(commandErrors.courseNotFound);
-
-    return;
-  }
-
-  if (member.roles.cache.has(role.id)) {
-    await member.roles.remove(role);
-    await interaction.editReply({
-      allowedMentions: {
-        parse: [],
-      },
-      content: commandResponseFunctions.courseRemoved(role.id),
-    });
-
-    return;
-  }
-
-  await member.roles.add(role);
-  await interaction.editReply({
-    allowedMentions: {
-      parse: [],
-    },
-    content: commandResponseFunctions.courseAdded(role.id),
-  });
-};
-
 const courseHandlers = {
   info: handleCourseInfo,
   participants: handleCourseParticipants,
   prerequisite: handleCoursePrerequisite,
   professors: handleCourseProfessors,
-  role: handleCourseRole,
   summary: handleCourseSummary,
-  toggle: handleCourseToggle,
 };
 
 export const execute = async (interaction: ChatInputCommandInteraction) => {
   const course = interaction.options.getString('course');
-  const courseRole = interaction.options.getString('courserole');
 
-  let closestItem: null | string = null;
-
-  if (course !== null) {
-    closestItem = getClosestCourse(course);
-  } else if (courseRole !== null) {
-    closestItem = getClosestCourseRole(courseRole);
+  if (course === null) {
+    await interaction.editReply(commandErrors.courseNotFound);
+    return;
   }
+
+  const closestItem = getClosestCourse(course);
 
   if (closestItem === null) {
     await interaction.editReply(commandErrors.courseNotFound);
-
     return;
   }
 

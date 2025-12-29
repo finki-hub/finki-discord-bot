@@ -6,8 +6,18 @@ import { getCrosspostingProperty } from '@/configuration/bot/index.js';
 export const name = Events.MessageCreate;
 
 const crosspost = async (message: Message) => {
-  const crosspostingEnabled = getCrosspostingProperty('enabled');
-  const crosspostingChannels = getCrosspostingProperty('channels');
+  if (message.guild === null) {
+    return;
+  }
+
+  const crosspostingEnabled = await getCrosspostingProperty(
+    'enabled',
+    message.guild.id,
+  );
+  const crosspostingChannels = await getCrosspostingProperty(
+    'channels',
+    message.guild.id,
+  );
 
   if (
     !crosspostingEnabled ||

@@ -3,7 +3,6 @@ import { type ButtonInteraction, ChannelType } from 'discord.js';
 import { Channel } from '@/common/schemas/Channel.js';
 import { getChannel } from '@/common/services/channels.js';
 import { getMembersByRoleIds } from '@/common/services/roles.js';
-import { getGuild } from '@/common/utils/guild.js';
 import {
   getTicketingProperty,
   getTicketProperty,
@@ -17,10 +16,14 @@ export const execute = async (
   interaction: ButtonInteraction,
   args: string[],
 ) => {
-  const guild = await getGuild(interaction);
+  if (interaction.guild === null) {
+    await interaction.editReply(commandErrors.commandGuildOnly);
+    return;
+  }
+
   const ticketType = args[0];
 
-  const enabled = getTicketingProperty('enabled');
+  const enabled = await getTicketingProperty('enabled', interaction.guild.id);
 
   if (!enabled) {
     await interaction.editReply(commandErrors.ticketingDisabled);
@@ -32,7 +35,10 @@ export const execute = async (
     return;
   }
 
-  const ticketMetadata = getTicketProperty(ticketType);
+  const ticketMetadata = await getTicketProperty(
+    ticketType,
+    interaction.guild.id,
+  );
 
   if (ticketMetadata === undefined) {
     await interaction.editReply(commandErrors.invalidTicketType);
@@ -40,12 +46,7 @@ export const execute = async (
     return;
   }
 
-  if (guild === null) {
-    await interaction.editReply(commandErrors.commandGuildOnly);
-    return;
-  }
-
-  const ticketsChannel = getChannel(Channel.Tickets);
+  const ticketsChannel = getChannel(Channel.Tickets, interaction.guild.id);
 
   if (
     ticketsChannel === undefined ||
@@ -63,7 +64,7 @@ export const execute = async (
   }
 
   const ticketRoleMembers = await getMembersByRoleIds(
-    guild,
+    interaction.guild,
     ticketMetadata.roles,
   );
 

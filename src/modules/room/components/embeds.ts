@@ -1,13 +1,11 @@
 import { EmbedBuilder } from 'discord.js';
 
-import { getThemeColor } from '@/configuration/bot/index.js';
 import { labels } from '@/translations/labels.js';
 
 import { type Room } from '../schemas/Room.js';
 
 export const getRoomEmbed = (information: Room) =>
   new EmbedBuilder()
-    .setColor(getThemeColor())
     .setTitle(`${information.classroom.toString()} (${information.location})`)
     .addFields(
       {

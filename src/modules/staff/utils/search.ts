@@ -6,7 +6,6 @@ import { getStaff } from '@/configuration/data/index.js';
 export const getClosestStaff = (professor: string) => {
   const professors = getStaff();
 
-  // Latin -> Cyrillic
   const transformedProfessorNames = createTransliterationSearchMap(
     professors.map(({ name }) => name),
   );

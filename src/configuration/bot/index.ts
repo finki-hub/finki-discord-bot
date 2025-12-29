@@ -1,11 +1,10 @@
-import type { ColorResolvable } from 'discord.js';
-
 import { logger } from '@/common/logger/index.js';
 import {
   type BotConfig,
   type BotConfigKeys,
   BotConfigSchema,
   type FullyRequiredBotConfig,
+  type MultiGuildConfig,
 } from '@/modules/admin/schemas/BotConfig.js';
 import { configErrorFunctions } from '@/translations/errors.js';
 
@@ -17,81 +16,135 @@ import {
 
 type ConfigShape = NonNullable<BotConfig>;
 
-let config: ConfigShape | undefined;
+let multiGuildConfig: MultiGuildConfig | undefined;
+
+const getGuildConfig = async (guildId: string): Promise<ConfigShape> => {
+  if (multiGuildConfig === undefined) {
+    const loaded = await getConfigFile();
+    multiGuildConfig = loaded ?? {};
+  }
+
+  if (multiGuildConfig[guildId] === undefined) {
+    logger.info(`Initializing default configuration for guild ${guildId}`);
+    multiGuildConfig[guildId] = BotConfigSchema.parse(DEFAULT_CONFIGURATION);
+    await setConfigFile(multiGuildConfig);
+  }
+
+  return multiGuildConfig[guildId] ?? DEFAULT_CONFIGURATION;
+};
 
 export const reloadConfig = async () => {
   const currentConfig = await getConfigFile();
 
   try {
-    const parsedConfig = BotConfigSchema.parse(
-      currentConfig ?? DEFAULT_CONFIGURATION,
-    );
-    config = parsedConfig ?? DEFAULT_CONFIGURATION;
+    multiGuildConfig = currentConfig ?? {};
     logger.info('Configuration reloaded');
   } catch (error) {
-    const parsedConfig = BotConfigSchema.parse(DEFAULT_CONFIGURATION);
-    config = parsedConfig ?? DEFAULT_CONFIGURATION;
+    multiGuildConfig = {};
 
     logger.warn(configErrorFunctions.invalidConfiguration(error));
     logger.error(`Failed reloading configuration\n${String(error)}`);
   }
 };
 
-export const getConfigProperty = <T extends BotConfigKeys>(key: T) =>
-  config?.[key] ?? DEFAULT_CONFIGURATION[key];
+export const getConfigProperty = async <T extends BotConfigKeys>(
+  key: T,
+  guildId: string,
+) => {
+  const config = await getGuildConfig(guildId);
+  return config[key] ?? DEFAULT_CONFIGURATION[key];
+};
 
 export const setConfigProperty = async <T extends BotConfigKeys>(
   key: T,
   value: ConfigShape[T],
+  guildId: string,
 ) => {
-  if (config === undefined) {
-    return null;
+  if (multiGuildConfig === undefined) {
+    const loaded = await getConfigFile();
+    multiGuildConfig = loaded ?? {};
   }
 
-  config[key] = value;
-  const newValue = await setConfigFile(config);
+  const guildConfig = await getGuildConfig(guildId);
+  guildConfig[key] = value;
+  multiGuildConfig[guildId] = guildConfig;
 
-  return newValue ?? null;
+  const newValue = await setConfigFile(multiGuildConfig);
+
+  return newValue?.[guildId] ?? null;
+};
+
+export const getGuildConfigFull = async (
+  guildId: string,
+): Promise<BotConfig | null> => {
+  if (multiGuildConfig === undefined) {
+    const loaded = await getConfigFile();
+    multiGuildConfig = loaded ?? {};
+  }
+
+  return multiGuildConfig[guildId] ?? null;
+};
+
+export const setGuildConfigFull = async (
+  guildId: string,
+  config: BotConfig,
+): Promise<BotConfig | null> => {
+  if (multiGuildConfig === undefined) {
+    const loaded = await getConfigFile();
+    multiGuildConfig = loaded ?? {};
+  }
+
+  const validated = BotConfigSchema.parse(config);
+  multiGuildConfig[guildId] = validated;
+
+  const newValue = await setConfigFile(multiGuildConfig);
+
+  return newValue?.[guildId] ?? null;
 };
 
 export const getConfigKeys = (): readonly string[] =>
   Object.keys(DEFAULT_CONFIGURATION);
 
-export const getThemeColor = (): ColorResolvable =>
-  config?.themeColor ?? 'Random';
-
-export const getChannelsProperty = <
+export const getChannelsProperty = async <
   T extends keyof FullyRequiredBotConfig['channels'],
 >(
   key: T,
-) => config?.channels?.[key];
+  guildId: string,
+) => {
+  const config = await getGuildConfig(guildId);
+  return config.channels?.[key];
+};
 
-export const getCrosspostingProperty = <
+export const getCrosspostingProperty = async <
   T extends keyof FullyRequiredBotConfig['crossposting'],
 >(
   key: T,
-) => config?.crossposting?.[key];
+  guildId: string,
+) => {
+  const config = await getGuildConfig(guildId);
+  return config.crossposting?.[key];
+};
 
-export const getIntervalsProperty = <
-  T extends keyof FullyRequiredBotConfig['intervals'],
->(
-  key: T,
-) => config?.intervals?.[key] ?? DEFAULT_CONFIGURATION.intervals[key];
+export const getRolesProperty = async (
+  key: keyof FullyRequiredBotConfig['roles'],
+  guildId: string,
+): Promise<string | undefined> => {
+  const config = await getGuildConfig(guildId);
+  return config.roles?.[key];
+};
 
-export const getRolesProperty = <
-  T extends keyof FullyRequiredBotConfig['roles'],
->(
-  key: T,
-) => config?.roles?.[key];
-
-export const getTicketingProperty = <
+export const getTicketingProperty = async <
   T extends keyof FullyRequiredBotConfig['ticketing'],
 >(
   key: T,
-) => config?.ticketing?.[key] ?? DEFAULT_CONFIGURATION.ticketing[key];
+  guildId: string,
+) => {
+  const config = await getGuildConfig(guildId);
+  return config.ticketing?.[key] ?? DEFAULT_CONFIGURATION.ticketing[key];
+};
 
-export const getTicketProperty = (key: string) => {
-  const tickets = getTicketingProperty('tickets');
+export const getTicketProperty = async (key: string, guildId: string) => {
+  const tickets = await getTicketingProperty('tickets', guildId);
 
   return tickets?.find((ticket) => ticket.id === key);
 };

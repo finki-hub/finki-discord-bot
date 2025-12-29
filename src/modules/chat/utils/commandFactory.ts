@@ -5,6 +5,7 @@ import {
 } from 'discord.js';
 
 import { safeStreamReplyToInteraction } from '@/common/utils/messages.js';
+import { DEFAULT_CONFIGURATION } from '@/configuration/bot/defaults.js';
 import { getConfigProperty } from '@/configuration/bot/index.js';
 import { commandDescriptions, commandErrors } from '@/translations/commands.js';
 
@@ -37,7 +38,10 @@ export const getCommonCommand = (name: keyof typeof commandDescriptions) => ({
     const maxTokens = interaction.options.getNumber('max-tokens') ?? undefined;
     const useAgent = interaction.options.getBoolean('use-agent') ?? undefined;
 
-    const models = getConfigProperty('models');
+    const models =
+      interaction.guild === null
+        ? DEFAULT_CONFIGURATION.models
+        : await getConfigProperty('models', interaction.guild.id);
 
     const options = SendPromptOptionsSchema.parse({
       embeddingsModel: embeddingsModel ?? models.embeddings,
