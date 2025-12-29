@@ -15,9 +15,7 @@ import { type CoursePrerequisites } from '../schemas/CoursePrerequisites.js';
 import { type CourseStaff } from '../schemas/CourseStaff.js';
 import { linkStaff } from './utils.js';
 
-export const getCourseParticipantsEmbed = (
-  information: CourseParticipants,
-) =>
+export const getCourseParticipantsEmbed = (information: CourseParticipants) =>
   new EmbedBuilder()
     .setTitle(information.course)
     .setDescription(embedMessages.courseParticipantsInfo)
@@ -50,9 +48,7 @@ export const getCourseProfessorsEmbed = (information: CourseStaff) =>
     )
     .setTimestamp();
 
-export const getCoursePrerequisiteEmbed = (
-  information: CoursePrerequisites,
-) =>
+export const getCoursePrerequisiteEmbed = (information: CoursePrerequisites) =>
   new EmbedBuilder()
     .setTitle(information.course)
     .addFields({
@@ -106,55 +102,51 @@ export const getCourseSummaryEmbed = (course: string) => {
     new EmbedBuilder()
       .setTitle(course)
       .setDescription(embedMessages.courseSummaryInfo),
-    new EmbedBuilder()
-      .setDescription(embedMessages.courseInfo)
-      .addFields(
-        {
-          name: labels.prerequisites,
-          value:
-            prerequisite === undefined || prerequisite.prerequisite === ''
-              ? labels.none
-              : prerequisite.prerequisite,
-        },
-        {
-          inline: true,
-          name: labels.accreditation,
-          value:
-            info === undefined
-              ? labels.unknown
-              : `[${labels.link}](${info.link})`,
-        },
-        {
-          inline: true,
-          name: labels.code === '' ? labels.unknown : labels.code,
-          value: info === undefined ? labels.unknown : info.code,
-        },
-        {
-          inline: true,
-          name: labels.level === '' ? labels.unknown : labels.level,
-          value: info === undefined ? labels.unknown : info.level.toString(),
-        },
-      ),
-    new EmbedBuilder()
-      .setDescription(embedMessages.courseStaffInfo)
-      .addFields(
-        {
-          inline: true,
-          name: labels.professors,
-          value:
-            professors === undefined
-              ? labels.unknown
-              : linkStaff(professors.professors),
-        },
-        {
-          inline: true,
-          name: labels.assistants,
-          value:
-            professors === undefined
-              ? labels.unknown
-              : linkStaff(professors.assistants),
-        },
-      ),
+    new EmbedBuilder().setDescription(embedMessages.courseInfo).addFields(
+      {
+        name: labels.prerequisites,
+        value:
+          prerequisite === undefined || prerequisite.prerequisite === ''
+            ? labels.none
+            : prerequisite.prerequisite,
+      },
+      {
+        inline: true,
+        name: labels.accreditation,
+        value:
+          info === undefined
+            ? labels.unknown
+            : `[${labels.link}](${info.link})`,
+      },
+      {
+        inline: true,
+        name: labels.code === '' ? labels.unknown : labels.code,
+        value: info === undefined ? labels.unknown : info.code,
+      },
+      {
+        inline: true,
+        name: labels.level === '' ? labels.unknown : labels.level,
+        value: info === undefined ? labels.unknown : info.level.toString(),
+      },
+    ),
+    new EmbedBuilder().setDescription(embedMessages.courseStaffInfo).addFields(
+      {
+        inline: true,
+        name: labels.professors,
+        value:
+          professors === undefined
+            ? labels.unknown
+            : linkStaff(professors.professors),
+      },
+      {
+        inline: true,
+        name: labels.assistants,
+        value:
+          professors === undefined
+            ? labels.unknown
+            : linkStaff(professors.assistants),
+      },
+    ),
     new EmbedBuilder()
       .setDescription(embedMessages.courseParticipantsInfo)
       .addFields(

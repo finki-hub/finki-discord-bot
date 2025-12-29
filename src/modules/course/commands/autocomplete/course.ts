@@ -20,4 +20,3 @@ export const execute = async (interaction: AutocompleteInteraction) => {
     );
   }
 };
-
