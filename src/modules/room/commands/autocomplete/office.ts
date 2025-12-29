@@ -14,7 +14,7 @@ export const execute = async (interaction: AutocompleteInteraction) => {
   if (focused.name === 'room') {
     transformedRooms ??= Object.entries(
       createTransliterationSearchMap(
-        getRooms().map((room) => `${room.classroom} (${room.location})`),
+        getRooms().map((room) => `${room.name} (${room.location})`),
       ),
     );
     await interaction.respond(

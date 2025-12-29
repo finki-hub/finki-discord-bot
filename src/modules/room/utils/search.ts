@@ -4,7 +4,7 @@ import { createTransliterationSearchMap } from '@/common/utils/transliteration.j
 import { getRooms } from '@/configuration/data/index.js';
 
 export const getClosestRoom = (room: string) => {
-  const rooms = getRooms().map((c) => `${c.classroom} (${c.location})`);
+  const rooms = getRooms().map((c) => `${c.name} (${c.location})`);
 
   const transformedRoomNames = createTransliterationSearchMap(rooms);
 

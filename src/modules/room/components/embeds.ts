@@ -6,7 +6,7 @@ import { type Room } from '../schemas/Room.js';
 
 export const getRoomEmbed = (information: Room) =>
   new EmbedBuilder()
-    .setTitle(`${information.classroom.toString()} (${information.location})`)
+    .setTitle(`${information.name.toString()} (${information.location})`)
     .addFields(
       {
         inline: true,

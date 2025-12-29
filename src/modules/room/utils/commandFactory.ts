@@ -38,7 +38,7 @@ export const getCommonCommand = (name: keyof typeof commandDescriptions) => ({
     const roomName =
       charPos === -1 ? closestRoom : closestRoom.slice(0, charPos).trim();
     const rooms = getRooms().filter(
-      (cl) => cl.classroom.toString().toLowerCase() === roomName.toLowerCase(),
+      (cl) => cl.name.toString().toLowerCase() === roomName.toLowerCase(),
     );
 
     if (rooms.length === 0) {
