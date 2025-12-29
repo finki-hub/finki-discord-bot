@@ -11,6 +11,7 @@
     "eventsource-parser": "^3.0.6",
     "fuse.js": "^7.1.0",
     "winston": "^3.19.0",
+    "winston-transport": "^4.9.0",
     "zod": "^4.2.1"
   },
   "description": "FINKI Discord Bot",
