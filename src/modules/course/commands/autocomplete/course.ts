@@ -6,7 +6,7 @@ import { getCourses } from '@/configuration/data/index.js';
 
 let transformedCourses: Array<[string, string]> | null = null;
 
-export const name = 'courses';
+export const name = 'course';
 
 export const execute = async (interaction: AutocompleteInteraction) => {
   const focused = interaction.options.getFocused(true);
@@ -20,3 +20,4 @@ export const execute = async (interaction: AutocompleteInteraction) => {
     );
   }
 };
+
