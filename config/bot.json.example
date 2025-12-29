@@ -1,29 +1,19 @@
 {
-  "channels": null,
-  "crossposting": {
-    "channels": [],
-    "enabled": false
-  },
-  "errorWebhook": null,
-  "guild": null,
-  "intervals": {
-    "buttonIdle": 60000,
-    "ephemeralReply": 5000,
-    "ticketsCheck": 900000
-  },
-  "models": {
-    "embeddings": "BGE_M3",
-    "inference": "LLAMA_3_3_70B"
-  },
-  "reactions": {
-    "add": null,
-    "remove": null
-  },
-  "roles": null,
-  "themeColor": "#313183",
-  "ticketing": {
-    "allowedInactivityDays": 10,
-    "enabled": false,
-    "tickets": null
+  "GUILD_ID": {
+    "channels": null,
+    "crossposting": {
+      "channels": [],
+      "enabled": false
+    },
+    "errorWebhook": null,
+    "models": {
+      "embeddings": "BGE_M3",
+      "inference": "LLAMA_3_3_70B"
+    },
+    "roles": null,
+    "ticketing": {
+      "enabled": false,
+      "tickets": null
+    }
   }
 }

@@ -35,19 +35,40 @@ There is also a dev container available. To use it, just clone the repository, d
 
 The env. variables are stored in `.env.sample`. Only the `BOT_TOKEN` and `APPLICATION_ID` variables are required (for logging in to Discord).
 
-### Files
+### Bot Configuration
+
+The bot configuration is stored in `config/bot.json`. This file uses a multi-guild structure where each guild ID maps to its own configuration:
+
+```json
+{
+  "GUILD_ID_1": {
+    "channels": { ... },
+    "crossposting": { ... },
+    "errorWebhook": "https://...",
+    "models": { ... },
+    "roles": { ... },
+    "ticketing": { ... }
+  },
+  "GUILD_ID_2": { ... }
+}
+```
+
+When the bot joins a new guild, it automatically initializes a default configuration for that guild. You can use the `/config` commands to view and modify the configuration.
+
+See [`config/bot.json.example`](./config/bot.json.example) for an example configuration structure.
+
+### Data Files
 
 The data for the informational commands is stored in these files. It is not required to configure them. Here is a list of all files:
 
-1. `classrooms.json` - an array of all the classrooms
+1. `rooms.json` - an array of all the classrooms
 2. `courses.json` - an array of the names of all courses
 3. `information.json` - an array of all the course information
 4. `participants.json` - an array of all courses and their number of participants
 5. `prerequisites.json` - an array of course prerequisites
 6. `professors.json` - an array of all courses and their professors and assistants
-7. `roles.json` - roles for the scripts and for the embeds
-8. `sessions.json` - an object of all exam sessions
-9. `staff.json` - an array of the staff
+7. `sessions.json` - an object of all exam sessions
+8. `staff.json` - an array of the staff
 
 ### Sessions (Timetables)
 
