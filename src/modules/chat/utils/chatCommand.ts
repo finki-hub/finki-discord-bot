@@ -73,12 +73,15 @@ export const getCommonCommand = (name: keyof typeof commandDescriptions) => ({
           guildId: interaction.guild?.id,
         });
       } else {
-        logger.error(
-          `Failed executing chat query command\n${error.message}${error.stack ? `\n${error.stack}` : ''}`,
-          {
-            guildId: interaction.guild?.id,
-          },
-        );
+        const messageParts = [
+          'Failed executing chat query command',
+          error.message,
+          error.stack,
+        ].filter(Boolean);
+
+        logger.error(messageParts.join('\n'), {
+          guildId: interaction.guild?.id,
+        });
       }
 
       const errorMessage =

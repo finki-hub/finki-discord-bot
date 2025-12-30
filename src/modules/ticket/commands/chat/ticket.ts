@@ -156,8 +156,8 @@ const handleTicketSend = async (interaction: ChatInputCommandInteraction) => {
 
   const ticketList = tickets
     .map((ticket) => {
-      const description = ticket.description ?? '';
-      return `- ${ticket.name}${description ? `: ${description}` : ''}`;
+      const prefix = `- ${ticket.name}`;
+      return ticket.description ? `${prefix}: ${ticket.description}` : prefix;
     })
     .join('\n');
 
