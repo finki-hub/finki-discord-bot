@@ -1,4 +1,4 @@
-import { getCommonCommand } from '@/modules/room/utils/commandFactory.js';
+import { getCommonCommand } from '@/modules/room/utils/roomCommand.js';
 
 const { data, execute } = getCommonCommand('office');
 

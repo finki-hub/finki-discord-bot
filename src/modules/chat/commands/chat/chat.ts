@@ -25,7 +25,7 @@ import {
   EMBEDDING_MODELS,
   INFERENCE_MODELS,
 } from '@/modules/chat/schemas/Model.js';
-import { getCommonCommand } from '@/modules/chat/utils/commandFactory.js';
+import { getCommonCommand } from '@/modules/chat/utils/chatCommand.js';
 import {
   fillEmbeddings,
   getClosestQuestions,

@@ -1,4 +1,4 @@
-import { getCommonCommand } from '@/modules/faq/utils/commandFactory.js';
+import { getCommonCommand } from '@/modules/faq/utils/faqCommand.js';
 
 const { data, execute } = getCommonCommand('faq');
 
