@@ -2,6 +2,7 @@ import {
   type ChatInputCommandInteraction,
   inlineCode,
   MessageFlags,
+  PermissionFlagsBits,
   SlashCommandBuilder,
 } from 'discord.js';
 
@@ -40,6 +41,7 @@ export const name = 'chat';
 export const permissions = {
   subcommands: {
     embed: {
+      permissions: [PermissionFlagsBits.ManageGuild],
       roles: [Role.Administrators],
     },
   },

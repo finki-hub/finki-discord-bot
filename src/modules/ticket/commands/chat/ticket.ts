@@ -3,6 +3,7 @@ import {
   type AnyThreadChannel,
   type ChatInputCommandInteraction,
   EmbedBuilder,
+  PermissionFlagsBits,
   SlashCommandBuilder,
 } from 'discord.js';
 
@@ -27,6 +28,7 @@ import { ticketMessageFunctions } from '@/translations/tickets.js';
 export const name = 'ticket';
 
 export const permissions = {
+  permissions: [PermissionFlagsBits.ManageMessages],
   roles: [Role.Moderators],
 };
 const dateFormatter = new Intl.DateTimeFormat('mk-MK', {
@@ -56,7 +58,8 @@ export const data = new SlashCommandBuilder()
           .setRequired(false),
       ),
   )
-  .setContexts(InteractionContextType.Guild);
+  .setContexts(InteractionContextType.Guild)
+  .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages);
 
 const handleTicketClose = async (interaction: ChatInputCommandInteraction) => {
   if (interaction.guild === null) {

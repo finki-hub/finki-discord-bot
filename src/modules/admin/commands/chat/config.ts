@@ -34,9 +34,9 @@ import {
 } from '@/translations/commands.js';
 
 export const name = 'config';
-const permission = PermissionFlagsBits.ManageMessages;
 
 export const permissions = {
+  permissions: [PermissionFlagsBits.ManageGuild],
   roles: [Role.Administrators],
 };
 
@@ -87,7 +87,7 @@ export const data = new SlashCommandBuilder()
       ),
   )
   .setContexts(InteractionContextType.Guild)
-  .setDefaultMemberPermissions(permission);
+  .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild);
 
 const handleConfigGet = async (interaction: ChatInputCommandInteraction) => {
   if (interaction.guild === null) {
