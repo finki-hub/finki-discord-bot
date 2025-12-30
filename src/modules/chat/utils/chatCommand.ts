@@ -4,6 +4,7 @@ import {
   SlashCommandBuilder,
 } from 'discord.js';
 
+import { logger } from '@/common/logger/index.js';
 import { safeStreamReplyToInteraction } from '@/common/utils/messages.js';
 import { DEFAULT_CONFIGURATION } from '@/configuration/bot/defaults.js';
 import { getConfigProperty } from '@/configuration/bot/index.js';
@@ -63,6 +64,21 @@ export const getCommonCommand = (name: keyof typeof commandDescriptions) => ({
     } catch (error) {
       if (!Error.isError(error)) {
         throw error;
+      }
+
+      const isLLMUnavailable = error.message === 'LLM_UNAVAILABLE';
+
+      if (isLLMUnavailable) {
+        logger.warn('LLM unavailable when executing chat query command', {
+          guildId: interaction.guild?.id,
+        });
+      } else {
+        logger.error(
+          `Failed executing chat query command\n${error.message}${error.stack ? `\n${error.stack}` : ''}`,
+          {
+            guildId: interaction.guild?.id,
+          },
+        );
       }
 
       const errorMessage =

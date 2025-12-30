@@ -32,6 +32,9 @@ const crosspost = async (message: Message) => {
   } catch (error) {
     logger.error(
       `Failed crossposting message in channel ${message.channel.id}\n${String(error)}`,
+      {
+        guildId: message.guild.id,
+      },
     );
   }
 };

@@ -27,6 +27,8 @@ export const execute = async (...[interaction]: ClientEvents[typeof name]) => {
   } else if (interaction.isModalSubmit()) {
     await handleModalSubmit(interaction);
   } else {
-    logger.warn(`Unknown interaction from ${interaction.user.id}`);
+    logger.warn(`Unknown interaction from ${interaction.user.id}`, {
+      guildId: interaction.guild?.id,
+    });
   }
 };

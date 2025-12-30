@@ -30,13 +30,17 @@ export const initializeChannels = async (guildId: string) => {
     try {
       const channel = await client.channels.fetch(channelId);
       if (!channel?.isTextBased() || channel.isDMBased()) {
-        logger.warn(`Channel ${channelId} is not a guild text-based channel`);
+        logger.warn(`Channel ${channelId} is not a guild text-based channel`, {
+          guildId,
+        });
         continue;
       }
 
       guildChannels[Channel as Channel] = channel;
     } catch (error) {
-      logger.error(`Failed fetching channel ${channelId}\n${String(error)}`);
+      logger.error(`Failed fetching channel ${channelId}\n${String(error)}`, {
+        guildId,
+      });
     }
   }
 

@@ -359,6 +359,9 @@ export const handleModalSubmit = async (
   );
   logger.warn(
     `Received unhandled modal submit interaction: ${interaction.customId}`,
+    {
+      guildId: interaction.guild?.id,
+    },
   );
   await interaction.reply({
     content: commandErrors.commandError,

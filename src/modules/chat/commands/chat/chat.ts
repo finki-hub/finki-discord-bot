@@ -301,7 +301,9 @@ const handleChatEmbed = async (interaction: ChatInputCommandInteraction) => {
       Error.isError(error) && error.message === 'LLM_UNAVAILABLE';
 
     if (!isLLMUnavailable) {
-      logger.error(`Failed executing chat embed command\n${String(error)}`);
+      logger.error(`Failed executing chat embed command\n${String(error)}`, {
+        guildId: interaction.guild?.id,
+      });
     }
 
     const errorMessage = isLLMUnavailable
@@ -337,6 +339,9 @@ const handleChatUnembedded = async (
   if (unembeddedQuestions === null) {
     logger.error(
       `Failed getting unembedded questions for embeddings model: ${options.embeddings_model ?? 'default'}`,
+      {
+        guildId: interaction.guild?.id,
+      },
     );
     await interaction.editReply(commandErrors.dataFetchFailed);
 

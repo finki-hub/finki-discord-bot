@@ -149,7 +149,9 @@ const handleConfigSet = async (interaction: ChatInputCommandInteraction) => {
   try {
     jsonValue = JSON.parse(rawValue);
   } catch (error) {
-    logger.error(`Failed setting config\n${String(error)}`);
+    logger.error(`Failed setting config\n${String(error)}`, {
+      guildId: interaction.guild?.id,
+    });
     await interaction.editReply(
       commandErrorFunctions.invalidConfiguration(error),
     );
@@ -216,7 +218,9 @@ const handleConfigReload = async (interaction: ChatInputCommandInteraction) => {
     await reloadConfig();
     await interaction.editReply(commandResponses.configurationReloaded);
   } catch (error) {
-    logger.error(`Failed reloading configuration\n${String(error)}`);
+    logger.error(`Failed reloading configuration\n${String(error)}`, {
+      guildId: interaction.guild?.id,
+    });
     await interaction.editReply(commandErrors.configurationSavingFailed);
   }
 };
@@ -235,7 +239,9 @@ const handleConfigData = async (interaction: ChatInputCommandInteraction) => {
 
     await interaction.editReply(commandResponses.dataReloaded);
   } catch (error) {
-    logger.error(`Failed reloading data\n${String(error)}`);
+    logger.error(`Failed reloading data\n${String(error)}`, {
+      guildId: interaction.guild?.id,
+    });
     await interaction.editReply(commandErrors.dataReloadFailed);
   }
 };
