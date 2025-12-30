@@ -1,7 +1,7 @@
 import Fuse from 'fuse.js';
 
 import { createTransliterationSearchMap } from '@/common/utils/transliteration.js';
-import { getStaff } from '@/configuration/data/index.js';
+import { getStaff } from '@/modules/staff/utils/data.js';
 
 export const getClosestStaff = (professor: string) => {
   const professors = getStaff();

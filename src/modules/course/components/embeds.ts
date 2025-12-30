@@ -1,184 +1,108 @@
-import { EmbedBuilder, inlineCode } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 
-import {
-  getInformation,
-  getParticipants,
-  getPrerequisites,
-  getProfessors,
-} from '@/configuration/data/index.js';
 import { embedMessages } from '@/translations/embeds.js';
 import { labels } from '@/translations/labels.js';
 
-import { type CourseInformation } from '../schemas/CourseInformation.js';
-import { type CourseParticipants } from '../schemas/CourseParticipants.js';
-import { type CoursePrerequisites } from '../schemas/CoursePrerequisites.js';
-import { type CourseStaff } from '../schemas/CourseStaff.js';
-import { linkStaff } from './utils.js';
+import { type Course } from '../schemas/Course.js';
+import { extractParticipants, linkStaff } from './utils.js';
 
-export const getCourseParticipantsEmbed = (information: CourseParticipants) =>
-  new EmbedBuilder()
-    .setTitle(information.course)
-    .setDescription(embedMessages.courseParticipantsInfo)
-    .addFields(
-      ...Object.entries(information)
-        .filter(([year]) => year !== 'course')
-        .map(([year, participants]) => ({
+const addCurriculumField = (
+  embed: EmbedBuilder,
+  course: Course,
+  year: '2018' | '2023',
+) => {
+  const code = course[`${year}-code`] ?? labels.unknown;
+  const level = course[`${year}-level`] ?? labels.unknown;
+  const semester = course[`${year}-semester`] ?? labels.unknown;
+  const prerequisite = course[`${year}-prerequisite`] ?? '';
+
+  embed.addFields({
+    inline: true,
+    name: `${year} Учебна програма`,
+    value: `**Код:** ${code}\n**Ниво:** ${level}\n**Семестар:** ${semester}${
+      prerequisite ? `\n**Предуслов:** ${prerequisite}` : ''
+    }`,
+  });
+};
+
+const createParticipantEmbeds = (
+  participants: Array<{ count: number; year: string }>,
+): EmbedBuilder[] => {
+  if (participants.length === 0) {
+    return [];
+  }
+
+  const embeds: EmbedBuilder[] = [];
+  const maxFieldsPerEmbed = 25;
+
+  for (let i = 0; i < participants.length; i += maxFieldsPerEmbed) {
+    const chunk = participants.slice(i, i + maxFieldsPerEmbed);
+    const participantsEmbed = new EmbedBuilder()
+      .setDescription(
+        i === 0
+          ? embedMessages.courseParticipantsInfo
+          : `${embedMessages.courseParticipantsInfo} (продолжение)`,
+      )
+      .addFields(
+        ...chunk.map(({ count, year }) => ({
           inline: true,
           name: year,
-          value: participants.toString(),
+          value: count.toString(),
         })),
-    )
+      )
+      .setTimestamp();
+
+    embeds.push(participantsEmbed);
+  }
+
+  return embeds;
+};
+
+export const getCourseEmbed = (course: Course) => {
+  const embeds: EmbedBuilder[] = [];
+
+  // Main course information embed
+  const mainEmbed = new EmbedBuilder()
+    .setTitle(course.name)
+    .setDescription(embedMessages.courseSummaryInfo)
     .setTimestamp();
 
-export const getCourseProfessorsEmbed = (information: CourseStaff) =>
-  new EmbedBuilder()
-    .setTitle(information.course)
+  // Add curriculum information if available
+  if (course['2023-available']) {
+    addCurriculumField(mainEmbed, course, '2023');
+  }
+
+  if (course['2018-available']) {
+    addCurriculumField(mainEmbed, course, '2018');
+  }
+
+  embeds.push(mainEmbed);
+
+  // Staff information embed
+  const staffEmbed = new EmbedBuilder()
     .setDescription(embedMessages.courseStaffInfo)
     .addFields(
       {
         inline: true,
         name: labels.professors,
-        value: linkStaff(information.professors),
+        value: linkStaff(course.professors),
       },
       {
         inline: true,
         name: labels.assistants,
-        value: linkStaff(information.assistants),
+        value: linkStaff(course.assistants),
       },
     )
     .setTimestamp();
 
-export const getCoursePrerequisiteEmbed = (information: CoursePrerequisites) =>
-  new EmbedBuilder()
-    .setTitle(information.course)
-    .addFields({
-      inline: true,
-      name: labels.prerequisites,
-      value:
-        information.prerequisite === ''
-          ? labels.none
-          : information.prerequisite,
-    })
-    .setTimestamp();
+  embeds.push(staffEmbed);
 
-export const getCourseInfoEmbed = (information: CourseInformation) =>
-  new EmbedBuilder()
-    .setTitle(information.course)
-    .setDescription(embedMessages.courseInfo)
-    .addFields(
-      {
-        inline: true,
-        name: labels.accreditation,
-        value: `[${labels.link}](${information.link})`,
-      },
-      {
-        inline: true,
-        name: labels.code === '' ? labels.unknown : labels.code,
-        value: information.code,
-      },
-      {
-        inline: true,
-        name: labels.level === '' ? labels.unknown : labels.level,
-        value: information.level.toString(),
-      },
-    )
-    .setTimestamp();
+  // Participants embeds
 
-export const getCourseSummaryEmbed = (course: string) => {
-  const info = getInformation().find(
-    (item) => item.course.toLowerCase() === course.toLowerCase(),
-  );
-  const prerequisite = getPrerequisites().find(
-    (item) => item.course.toLowerCase() === course.toLowerCase(),
-  );
-  const professors = getProfessors().find(
-    (item) => item.course.toLowerCase() === course.toLowerCase(),
-  );
-  const participants = getParticipants().find(
-    (item) => item.course.toLowerCase() === course.toLowerCase(),
-  );
+  const participants = extractParticipants(course);
+  if (participants.length > 0) {
+    embeds.push(...createParticipantEmbeds(participants));
+  }
 
-  return [
-    new EmbedBuilder()
-      .setTitle(course)
-      .setDescription(embedMessages.courseSummaryInfo),
-    new EmbedBuilder().setDescription(embedMessages.courseInfo).addFields(
-      {
-        name: labels.prerequisites,
-        value:
-          prerequisite === undefined || prerequisite.prerequisite === ''
-            ? labels.none
-            : prerequisite.prerequisite,
-      },
-      {
-        inline: true,
-        name: labels.accreditation,
-        value:
-          info === undefined
-            ? labels.unknown
-            : `[${labels.link}](${info.link})`,
-      },
-      {
-        inline: true,
-        name: labels.code === '' ? labels.unknown : labels.code,
-        value: info === undefined ? labels.unknown : info.code,
-      },
-      {
-        inline: true,
-        name: labels.level === '' ? labels.unknown : labels.level,
-        value: info === undefined ? labels.unknown : info.level.toString(),
-      },
-    ),
-    new EmbedBuilder().setDescription(embedMessages.courseStaffInfo).addFields(
-      {
-        inline: true,
-        name: labels.professors,
-        value:
-          professors === undefined
-            ? labels.unknown
-            : linkStaff(professors.professors),
-      },
-      {
-        inline: true,
-        name: labels.assistants,
-        value:
-          professors === undefined
-            ? labels.unknown
-            : linkStaff(professors.assistants),
-      },
-    ),
-    new EmbedBuilder()
-      .setDescription(embedMessages.courseParticipantsInfo)
-      .addFields(
-        ...Object.entries(participants ?? {})
-          .filter(([year]) => year !== 'course')
-          .map(([year, part]) => ({
-            inline: true,
-            name: year,
-            value: part.toString(),
-          })),
-      ),
-  ];
-};
-
-export const getCoursesPrerequisiteEmbed = (course: string) => {
-  const courses = getPrerequisites().filter((prerequisite) =>
-    prerequisite.prerequisite.toLowerCase().includes(course.toLowerCase()),
-  );
-
-  return new EmbedBuilder()
-    .setTitle(`Предмети со предуслов ${course}`)
-    .setDescription(
-      courses.length === 0
-        ? labels.none
-        : courses
-            .map(
-              (prerequisite, index) =>
-                `${inlineCode((index + 1).toString().padStart(2, '0'))} ${
-                  prerequisite.course
-                }`,
-            )
-            .join('\n'),
-    )
-    .setTimestamp();
+  return embeds;
 };

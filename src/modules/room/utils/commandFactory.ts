@@ -3,7 +3,7 @@ import {
   SlashCommandBuilder,
 } from 'discord.js';
 
-import { getRooms } from '@/configuration/data/index.js';
+import { getRooms } from '@/modules/room/utils/data.js';
 import {
   commandDescriptions,
   commandErrors,

@@ -9,6 +9,7 @@ services:
       APPLICATION_ID: ${APPLICATION_ID}
       CHATBOT_URL: ${CHATBOT_URL}
       API_KEY: ${API_KEY}
+      DATA_STORAGE_URL: ${DATA_STORAGE_URL}
       TZ: ${TZ}
     image: finki-discord-bot-dev:latest
     networks:

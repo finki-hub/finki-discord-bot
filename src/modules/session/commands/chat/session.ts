@@ -2,9 +2,9 @@ import {
   type ChatInputCommandInteraction,
   SlashCommandBuilder,
 } from 'discord.js';
-import { access } from 'node:fs/promises';
 
-import { getSessions } from '@/configuration/data/index.js';
+import { getDataStorageUrl } from '@/configuration/environment.js';
+import { getSessions } from '@/modules/session/utils/data.js';
 import { getClosestSession } from '@/modules/session/utils/search.js';
 import {
   commandDescriptions,
@@ -44,18 +44,22 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     return;
   }
 
-  const path = `./sessions/${information[1]}`;
+  const baseUrl = getDataStorageUrl();
 
-  try {
-    await access(path);
-  } catch {
+  if (!baseUrl) {
     await interaction.editReply(commandErrors.sessionNotFound);
 
     return;
   }
 
+  const filename = information[1];
+  const fileUrl = `${baseUrl}/sessions/${filename}`;
+
+  const content = user
+    ? `${commandResponseFunctions.commandFor(user.id)}\n${fileUrl}`
+    : fileUrl;
+
   await interaction.editReply({
-    content: user ? commandResponseFunctions.commandFor(user.id) : null,
-    files: [path],
+    content,
   });
 };

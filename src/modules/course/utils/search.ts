@@ -1,7 +1,7 @@
 import Fuse from 'fuse.js';
 
 import { createTransliterationSearchMap } from '@/common/utils/transliteration.js';
-import { getCourses } from '@/configuration/data/index.js';
+import { getCourses } from '@/modules/course/utils/data.js';
 
 export const getClosestCourse = (course: string) => {
   const courses = getCourses();

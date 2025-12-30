@@ -3,8 +3,8 @@ import {
   SlashCommandBuilder,
 } from 'discord.js';
 
-import { getStaff } from '@/configuration/data/index.js';
 import { getStaffEmbed } from '@/modules/staff/components/embeds.js';
+import { getStaff } from '@/modules/staff/utils/data.js';
 import { getClosestStaff } from '@/modules/staff/utils/search.js';
 import {
   commandDescriptions,

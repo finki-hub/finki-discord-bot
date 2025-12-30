@@ -17,11 +17,14 @@ import {
   setConfigProperty,
 } from '@/configuration/bot/index.js';
 import { refreshOnConfigChange } from '@/configuration/bot/refresh.js';
-import { reloadData } from '@/configuration/data/index.js';
 import {
   BotConfigKeysSchema,
   RequiredBotConfigSchema,
 } from '@/modules/admin/schemas/BotConfig.js';
+import { reloadCourses } from '@/modules/course/utils/data.js';
+import { reloadRooms } from '@/modules/room/utils/data.js';
+import { reloadSessions } from '@/modules/session/utils/data.js';
+import { reloadStaff } from '@/modules/staff/utils/data.js';
 import {
   commandDescriptions,
   commandErrorFunctions,
@@ -73,6 +76,14 @@ export const data = new SlashCommandBuilder()
     subcommand
       .setName('reload')
       .setDescription(commandDescriptions['config reload']),
+  )
+  .addSubcommand((subcommand) =>
+    subcommand
+      .setName('data')
+      .setDescription(
+        (commandDescriptions['config data'] as string | undefined) ??
+          'Освежи ги податоците од складиштето',
+      ),
   )
   .setDefaultMemberPermissions(permission);
 
@@ -201,7 +212,7 @@ const handleConfigReload = async (interaction: ChatInputCommandInteraction) => {
   await interaction.editReply(commandResponses.configurationReloading);
 
   try {
-    await Promise.all([reloadConfig(), reloadData()]);
+    await reloadConfig();
     await interaction.editReply(commandResponses.configurationReloaded);
   } catch (error) {
     logger.error(`Failed reloading configuration\n${String(error)}`);
@@ -209,7 +220,26 @@ const handleConfigReload = async (interaction: ChatInputCommandInteraction) => {
   }
 };
 
+const handleConfigData = async (interaction: ChatInputCommandInteraction) => {
+  await interaction.editReply(commandResponses.dataReloading);
+
+  try {
+    await Promise.all([
+      reloadCourses(),
+      reloadRooms(),
+      reloadSessions(),
+      reloadStaff(),
+    ]);
+
+    await interaction.editReply(commandResponses.dataReloaded);
+  } catch (error) {
+    logger.error(`Failed reloading data\n${String(error)}`);
+    await interaction.editReply(commandErrors.dataReloadFailed);
+  }
+};
+
 const configHandlers = {
+  data: handleConfigData,
   get: handleConfigGet,
   reload: handleConfigReload,
   set: handleConfigSet,

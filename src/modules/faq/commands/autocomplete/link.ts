@@ -9,17 +9,18 @@ export const name = 'link';
 export const execute = async (interaction: AutocompleteInteraction) => {
   const focused = interaction.options.getFocused(true);
 
-  if (focused.name === 'link') {
-    const linkNames = await getLinkNames();
-    if (linkNames === null) {
-      await interaction.respond([]);
-      return;
-    }
-    await interaction.respond(
-      createAutocompleteOptions(
-        Object.entries(createTransliterationSearchMap(linkNames)),
-        focused.value,
-      ),
-    );
+  const linkNames = await getLinkNames();
+
+  if (linkNames === null) {
+    await interaction.respond([]);
+
+    return;
   }
+
+  await interaction.respond(
+    createAutocompleteOptions(
+      Object.entries(createTransliterationSearchMap(linkNames)),
+      focused.value,
+    ),
+  );
 };

@@ -1,7 +1,7 @@
 import Fuse from 'fuse.js';
 
 import { createTransliterationSearchMap } from '@/common/utils/transliteration.js';
-import { getRooms } from '@/configuration/data/index.js';
+import { getRooms } from '@/modules/room/utils/data.js';
 
 export const getClosestRoom = (room: string) => {
   const rooms = getRooms().map((c) => `${c.name} (${c.location})`);

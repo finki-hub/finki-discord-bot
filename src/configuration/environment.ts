@@ -39,3 +39,14 @@ export const getApiKey = () => {
     return null;
   }
 };
+
+export const getDataStorageUrl = () => {
+  try {
+    return z
+      .string()
+      .transform((url) => (url.endsWith('/') ? url.slice(0, -1) : url))
+      .parse(env['DATA_STORAGE_URL']);
+  } catch {
+    return null;
+  }
+};

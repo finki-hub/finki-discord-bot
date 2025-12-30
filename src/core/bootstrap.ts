@@ -2,7 +2,6 @@ import { config } from 'dotenv';
 
 import { logger } from '@/common/logger/index.js';
 import { reloadConfig } from '@/configuration/bot/index.js';
-import { reloadData } from '@/configuration/data/index.js';
 import { getToken } from '@/configuration/environment.js';
 
 import { client } from './client.js';
@@ -17,20 +16,18 @@ export const bootstrap = async () => {
   config();
   logger.debug('Environment variables loaded');
 
-  await Promise.all([reloadConfig(), reloadData()]);
-  logger.debug('Configuration and data files loaded');
-
   attachProcessListeners();
   logger.debug('Process listeners attached');
 
-  await initializeModules();
-  logger.debug('Modules initialized');
-
-  await registerCommands();
-  logger.debug('Commands registered');
-
-  await attachEventListeners();
-  logger.debug('Event listeners attached');
+  await Promise.all([
+    reloadConfig(),
+    initializeModules(),
+    registerCommands(),
+    attachEventListeners(),
+  ]);
+  logger.debug(
+    'Configuration loaded, modules initialized, commands registered, and event listeners attached',
+  );
 
   logger.info('Attempting to login to Discord...');
   try {

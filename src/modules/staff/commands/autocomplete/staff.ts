@@ -2,23 +2,30 @@ import { type AutocompleteInteraction } from 'discord.js';
 
 import { createAutocompleteOptions } from '@/common/commands/autocomplete.js';
 import { createTransliterationSearchMap } from '@/common/utils/transliteration.js';
-import { getStaff } from '@/configuration/data/index.js';
-
-let transformedProfessors: Array<[string, string]> | null = null;
+import {
+  getTransformedProfessors,
+  setTransformedProfessors,
+} from '@/modules/staff/utils/cache.js';
+import { getStaff } from '@/modules/staff/utils/data.js';
 
 export const name = 'staff';
 
 export const execute = async (interaction: AutocompleteInteraction) => {
   const focused = interaction.options.getFocused(true);
 
-  if (focused.name === 'professor') {
-    transformedProfessors ??= Object.entries(
+  let transformedProfessors = getTransformedProfessors();
+
+  if (transformedProfessors === null) {
+    transformedProfessors = Object.entries(
       createTransliterationSearchMap(
         getStaff().map((professor) => professor.name),
       ),
     );
-    await interaction.respond(
-      createAutocompleteOptions(transformedProfessors, focused.value),
-    );
+
+    setTransformedProfessors(transformedProfessors);
   }
+
+  await interaction.respond(
+    createAutocompleteOptions(transformedProfessors, focused.value),
+  );
 };

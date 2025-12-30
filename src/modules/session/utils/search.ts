@@ -1,7 +1,7 @@
 import Fuse from 'fuse.js';
 
 import { createTransliterationSearchMap } from '@/common/utils/transliteration.js';
-import { getSessions } from '@/configuration/data/index.js';
+import { getSessions } from '@/modules/session/utils/data.js';
 
 export const getClosestSession = (session: string) => {
   const sessions = Object.keys(getSessions());
