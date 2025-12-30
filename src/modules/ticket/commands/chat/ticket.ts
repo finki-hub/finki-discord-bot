@@ -1,3 +1,4 @@
+import { InteractionContextType } from 'discord-api-types/v10';
 import {
   type AnyThreadChannel,
   type ChatInputCommandInteraction,
@@ -36,11 +37,11 @@ export const data = new SlashCommandBuilder()
   )
   .addSubcommand((command) =>
     command.setName('list').setDescription(commandDescriptions['ticket list']),
-  );
+  )
+  .setContexts(InteractionContextType.Guild);
 
 const handleTicketClose = async (interaction: ChatInputCommandInteraction) => {
   if (interaction.guild === null) {
-    await interaction.editReply(commandErrors.commandGuildOnly);
     return;
   }
 
@@ -66,7 +67,6 @@ const handleTicketClose = async (interaction: ChatInputCommandInteraction) => {
 
 const handleTicketList = async (interaction: ChatInputCommandInteraction) => {
   if (interaction.guild === null) {
-    await interaction.editReply(commandErrors.commandGuildOnly);
     return;
   }
 

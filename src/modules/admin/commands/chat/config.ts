@@ -1,3 +1,4 @@
+import { InteractionContextType } from 'discord-api-types/v10';
 import {
   type ChatInputCommandInteraction,
   codeBlock,
@@ -85,6 +86,7 @@ export const data = new SlashCommandBuilder()
           'Освежи ги податоците од складиштето',
       ),
   )
+  .setContexts(InteractionContextType.Guild)
   .setDefaultMemberPermissions(permission);
 
 const handleConfigGet = async (interaction: ChatInputCommandInteraction) => {
@@ -106,7 +108,6 @@ const handleConfigGet = async (interaction: ChatInputCommandInteraction) => {
   }
 
   if (interaction.guild === null) {
-    await interaction.editReply(commandErrors.commandGuildOnly);
     return;
   }
 
@@ -166,7 +167,6 @@ const handleConfigSet = async (interaction: ChatInputCommandInteraction) => {
   }
 
   if (interaction.guild === null) {
-    await interaction.editReply(commandErrors.commandGuildOnly);
     return;
   }
 
