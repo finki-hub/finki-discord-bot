@@ -10,10 +10,10 @@ import { createChatCommandChoices } from '@/common/commands/chat.js';
 import { executeSubcommand } from '@/common/commands/subcommands.js';
 import { logger } from '@/common/logger/index.js';
 import { Role } from '@/common/schemas/Role.js';
-import { getConfig } from '@/configuration/bot/file.js';
 import {
   getConfigKeys,
   getConfigProperty,
+  getGuildConfigFull,
   reloadConfig,
   setConfigProperty,
 } from '@/configuration/bot/index.js';
@@ -90,24 +90,24 @@ export const data = new SlashCommandBuilder()
   .setDefaultMemberPermissions(permission);
 
 const handleConfigGet = async (interaction: ChatInputCommandInteraction) => {
+  if (interaction.guild === null) {
+    return;
+  }
+
   const rawKey = interaction.options.getString('key');
 
   if (rawKey === null) {
-    const fullConfig = await getConfig();
+    const guildConfig = await getGuildConfigFull(interaction.guild.id);
 
     await interaction.editReply({
       files: [
         {
-          attachment: Buffer.from(JSON.stringify(fullConfig ?? {}, null, 2)),
+          attachment: Buffer.from(JSON.stringify(guildConfig ?? {}, null, 2)),
           name: 'config.json',
         },
       ],
     });
 
-    return;
-  }
-
-  if (interaction.guild === null) {
     return;
   }
 
