@@ -1,11 +1,11 @@
 import { z } from 'zod';
 
 export const RoomSchema = z.object({
-  capacity: z.union([z.number(), z.string()]),
+  capacity: z.string(),
   description: z.string(),
-  floor: z.union([z.number(), z.string()]),
+  floor: z.string(),
   location: z.string(),
-  name: z.union([z.number(), z.string()]),
+  name: z.string(),
   type: z.string(),
 });
 
