@@ -1,28 +1,11 @@
 import { Cron } from 'croner';
 
 import { logger } from '@/common/logger/index.js';
+import { fetchJsonFromUrl, parseContent } from '@/common/utils/data.js';
 import { getDataStorageUrl } from '@/configuration/environment.js';
 
 import { type Staff, StaffSchema } from '../schemas/Staff.js';
 import { clearTransformedProfessors } from './cache.js';
-
-const parseContent = (content: string, fallback: unknown = []): unknown => {
-  if (content.length === 0) {
-    return fallback;
-  }
-
-  return JSON.parse(content);
-};
-
-const fetchJsonFromUrl = async (url: string): Promise<string> => {
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(
-      `Failed to fetch ${url}: ${response.status} ${response.statusText}`,
-    );
-  }
-  return response.text();
-};
 
 let staff: Staff[] = [];
 let reloadCron: Cron | null = null;
