@@ -53,10 +53,7 @@ export const createTicket = async (
 
   const ticketsChannel = getChannel(Channel.Tickets, interaction.guild.id);
 
-  if (
-    ticketsChannel === undefined ||
-    ticketsChannel.type !== ChannelType.GuildText
-  ) {
+  if (ticketsChannel?.type !== ChannelType.GuildText) {
     return;
   }
 
@@ -107,10 +104,7 @@ export const createTicket = async (
 export const closeTicket = async (ticketId: string, guildId: string) => {
   const ticketsChannel = getChannel(Channel.Tickets, guildId);
 
-  if (
-    ticketsChannel === undefined ||
-    ticketsChannel.type !== ChannelType.GuildText
-  ) {
+  if (ticketsChannel?.type !== ChannelType.GuildText) {
     return;
   }
 

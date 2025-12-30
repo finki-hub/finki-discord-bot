@@ -49,10 +49,7 @@ export const execute = async (
 
   const ticketsChannel = getChannel(Channel.Tickets, interaction.guild.id);
 
-  if (
-    ticketsChannel === undefined ||
-    ticketsChannel.type !== ChannelType.GuildText
-  ) {
+  if (ticketsChannel?.type !== ChannelType.GuildText) {
     await interaction.editReply(commandErrors.invalidChannel);
 
     return;
