@@ -1,47 +1,46 @@
+import { z } from 'zod';
+
 import { getStaff } from '@/modules/staff/utils/data.js';
 import { labels } from '@/translations/labels.js';
 
 import { type Course } from '../schemas/Course.js';
 
-export const linkStaff = (professors: string) => {
-  if (professors === '') {
+const findStaffProfile = (name: string): string | undefined =>
+  getStaff().find((staff) => name.includes(staff.name))?.profile;
+
+const formatStaffMember = (name: string, profileUrl?: string): string =>
+  profileUrl ? `[${name}](${profileUrl})` : name;
+
+export const linkStaff = (names: string[]): string => {
+  if (names.length === 0) {
     return labels.none;
   }
 
-  const allStaff = professors
-    .split('\n')
-    .map((professor) => [
-      professor,
-      getStaff().find((staff) => professor.includes(staff.name))?.profile,
-    ]);
+  const staffWithProfiles = names.map((name) => ({
+    name,
+    profile: findStaffProfile(name),
+  }));
 
-  const linkedStaff = allStaff
-    .map(([professor, finki]) =>
-      finki ? `[${professor}](${finki})` : professor,
-    )
+  const linkedStaff = staffWithProfiles
+    .map(({ name, profile }) => formatStaffMember(name, profile))
     .join('\n');
 
   if (linkedStaff.length < 1_000) {
     return linkedStaff;
   }
 
-  return allStaff.map(([professor]) => professor).join('\n');
+  return names.join('\n');
 };
 
-export const extractParticipants = (
-  course: Course,
-): Array<{ count: number; year: string }> => {
-  const participants: Array<{ count: number; year: string }> = [];
-  const courseRecord = course as Record<string, number | string>;
+const ParticipantSchema = z
+  .tuple([z.string().regex(/^\d{4}\/\d{4}$/u), z.coerce.number().nonnegative()])
+  .transform(([year, count]) => ({ count, year }));
 
-  for (const [key, value] of Object.entries(courseRecord)) {
-    if (
-      /^\d{4}\/\d{4}$/u.test(key) &&
-      typeof value === 'number' &&
-      value >= 0
-    ) {
-      participants.push({ count: value, year: key });
-    }
-  }
-  return participants.sort((a, b) => b.year.localeCompare(a.year));
-};
+type Participant = z.infer<typeof ParticipantSchema>;
+
+export const extractParticipants = (course: Course): Participant[] =>
+  Object.entries(course)
+    .map((entry) => ParticipantSchema.safeParse(entry))
+    .filter((result) => result.success)
+    .map((result) => result.data)
+    .sort((a, b) => b.year.localeCompare(a.year));

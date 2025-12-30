@@ -21,12 +21,12 @@ export const getRoomEmbed = (information: Room) =>
       {
         inline: true,
         name: labels.floor,
-        value: information.floor,
+        value: String(information.floor),
       },
       {
         inline: true,
         name: labels.capacity,
-        value: information.capacity,
+        value: String(information.capacity),
       },
       {
         name: labels.description,
