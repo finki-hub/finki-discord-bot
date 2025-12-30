@@ -7,6 +7,7 @@ import {
 
 export const commandDescriptions = {
   about: 'За Discord ботот',
+  anto: 'Преземи случајна Анто цитата',
   ask: 'Преземи најчесто поставувано прашање',
   'chat closest': 'Преземи најблиски прашања',
   'chat embed': 'Ембедирај ги документите',

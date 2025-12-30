@@ -65,6 +65,7 @@ The data for the informational commands is loaded from data storage (if `DATA_ST
 2. `rooms.json` - an array of all the classrooms
 3. `sessions.json` - an object of all exam sessions
 4. `staff.json` - an array of the staff
+5. `anto.json` - an array of strings containing Anto quotes
 
 If `DATA_STORAGE_URL` is not configured, these features will be disabled and the bot will run without data loading functionality.
 
@@ -86,6 +87,7 @@ The bot can load data files from a data storage service. Set the `DATA_STORAGE_U
 - `rooms.json` - Classroom information
 - `sessions.json` - Exam session mappings (maps session names to filenames)
 - `staff.json` - Staff member information
+- `anto.json` - Array of Anto quotes (strings)
 
 Session timetable files should be placed in the `sessions` folder in your data storage bucket. The filenames must match the values in `sessions.json`.
 

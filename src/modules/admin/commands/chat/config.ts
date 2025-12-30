@@ -23,6 +23,7 @@ import {
   RequiredBotConfigSchema,
 } from '@/modules/admin/schemas/BotConfig.js';
 import { reloadCourses } from '@/modules/course/utils/data.js';
+import { reloadQuotes } from '@/modules/misc/utils/data.js';
 import { reloadRooms } from '@/modules/room/utils/data.js';
 import { reloadSessions } from '@/modules/session/utils/data.js';
 import { reloadStaff } from '@/modules/staff/utils/data.js';
@@ -226,6 +227,7 @@ const handleConfigData = async (interaction: ChatInputCommandInteraction) => {
   try {
     await Promise.all([
       reloadCourses(),
+      reloadQuotes(),
       reloadRooms(),
       reloadSessions(),
       reloadStaff(),
