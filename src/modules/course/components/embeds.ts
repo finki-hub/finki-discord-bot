@@ -11,10 +11,10 @@ const addCurriculumField = (
   course: Course,
   year: '2018' | '2023',
 ) => {
-  const code = course[`${year}-code`] ?? labels.unknown;
-  const level = course[`${year}-level`] ?? labels.unknown;
-  const semester = course[`${year}-semester`] ?? labels.unknown;
-  const prerequisite = course[`${year}-prerequisite`] ?? '';
+  const code = course[`${year}-code`];
+  const level = course[`${year}-level`];
+  const semester = course[`${year}-semester`];
+  const prerequisite = course[`${year}-prerequisite`];
 
   embed.addFields({
     inline: true,

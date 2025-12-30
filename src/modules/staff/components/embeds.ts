@@ -21,10 +21,7 @@ export const getStaffEmbed = (information: Staff) =>
       {
         inline: true,
         name: labels.cabinet,
-        value:
-          information.cabinet === ''
-            ? labels.none
-            : information.cabinet.toString(),
+        value: information.cabinet === '' ? labels.none : information.cabinet,
       },
       {
         name: labels.email,
