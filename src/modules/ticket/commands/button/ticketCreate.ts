@@ -27,6 +27,7 @@ export const execute = async (
 
   if (!enabled) {
     await interaction.editReply(commandErrors.ticketingDisabled);
+    return;
   }
 
   if (ticketType === undefined) {
