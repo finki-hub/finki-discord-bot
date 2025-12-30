@@ -2,13 +2,19 @@ import { InteractionContextType } from 'discord-api-types/v10';
 import {
   type AnyThreadChannel,
   type ChatInputCommandInteraction,
+  EmbedBuilder,
   SlashCommandBuilder,
 } from 'discord.js';
 
+import { executeSubcommand } from '@/common/commands/subcommands.js';
 import { Channel } from '@/common/schemas/Channel.js';
 import { Role } from '@/common/schemas/Role.js';
 import { safeReplyToInteraction } from '@/common/utils/messages.js';
-import { getChannelsProperty } from '@/configuration/bot/index.js';
+import {
+  getChannelsProperty,
+  getTicketingProperty,
+} from '@/configuration/bot/index.js';
+import { getTicketCreateComponents } from '@/modules/ticket/components/components.js';
 import { getActiveTickets } from '@/modules/ticket/utils/tickets.js';
 import {
   commandDescriptions,
@@ -16,6 +22,7 @@ import {
   commandResponses,
 } from '@/translations/commands.js';
 import { labels } from '@/translations/labels.js';
+import { ticketMessageFunctions } from '@/translations/tickets.js';
 
 export const name = 'ticket';
 
@@ -37,6 +44,17 @@ export const data = new SlashCommandBuilder()
   )
   .addSubcommand((command) =>
     command.setName('list').setDescription(commandDescriptions['ticket list']),
+  )
+  .addSubcommand((command) =>
+    command
+      .setName('send')
+      .setDescription(commandDescriptions['ticket send'])
+      .addChannelOption((option) =>
+        option
+          .setName('channel')
+          .setDescription('Канал во кој да се испрати пораката')
+          .setRequired(false),
+      ),
   )
   .setContexts(InteractionContextType.Guild);
 
@@ -104,11 +122,61 @@ const handleTicketList = async (interaction: ChatInputCommandInteraction) => {
   await safeReplyToInteraction(interaction, threadLinks);
 };
 
-import { executeSubcommand } from '@/common/commands/subcommands.js';
+const handleTicketSend = async (interaction: ChatInputCommandInteraction) => {
+  if (interaction.guild === null) {
+    return;
+  }
+
+  const channelOption = interaction.options.getChannel('channel');
+  const targetChannel =
+    channelOption === null
+      ? interaction.channel
+      : await interaction.guild.channels.fetch(channelOption.id);
+
+  if (
+    targetChannel === null ||
+    !targetChannel.isTextBased() ||
+    targetChannel.isDMBased()
+  ) {
+    await interaction.editReply(commandErrors.invalidChannel);
+
+    return;
+  }
+
+  const tickets = await getTicketingProperty('tickets', interaction.guild.id);
+
+  if (tickets === undefined || tickets.length === 0) {
+    await interaction.editReply(commandErrors.noTickets);
+
+    return;
+  }
+
+  const ticketList = tickets
+    .map((ticket) => {
+      const description = ticket.description ?? '';
+      return `- ${ticket.name}${description ? `: ${description}` : ''}`;
+    })
+    .join('\n');
+
+  const embed = new EmbedBuilder()
+    .setTitle('Тикети')
+    .setDescription(ticketMessageFunctions.ticketSendMessage(ticketList))
+    .setTimestamp();
+
+  const components = getTicketCreateComponents(tickets);
+
+  await targetChannel.send({
+    components,
+    embeds: [embed],
+  });
+
+  await interaction.editReply(commandResponses.ticketMessageSent);
+};
 
 const ticketHandlers = {
   close: handleTicketClose,
   list: handleTicketList,
+  send: handleTicketSend,
 };
 
 export const execute = async (interaction: ChatInputCommandInteraction) => {

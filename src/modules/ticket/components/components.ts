@@ -21,7 +21,7 @@ export const getTicketCreateComponents = (ticketTypes: Ticket[]) => {
 
       const button = new ButtonBuilder()
         .setCustomId(`ticketCreate:${ticketType.id}`)
-        .setLabel(ticketType.name)
+        .setLabel(`${index2 + 1} ${ticketType.name}`)
         .setStyle(ButtonStyle.Success)
         .setEmoji(emojis[(index2 + 1).toString()] ?? '🔒');
 

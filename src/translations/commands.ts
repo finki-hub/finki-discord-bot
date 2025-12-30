@@ -33,6 +33,7 @@ export const commandDescriptions = {
   staff: 'Преземи информации за професор',
   'ticket close': 'Затвори тикет',
   'ticket list': 'Преземи листа од сите тикети',
+  'ticket send': 'Испрати порака за креирање тикети',
 };
 
 export const commandResponses = {
@@ -43,6 +44,7 @@ export const commandResponses = {
   home: 'https://github.com/Delemangi/finki-discord-bot',
   scriptExecuted: 'Ја извршивте скриптата.',
   ticketClosed: 'Тикетот е затворен.',
+  ticketMessageSent: 'Пораката за тикети е испратена.',
 };
 
 export const commandResponseFunctions = {
