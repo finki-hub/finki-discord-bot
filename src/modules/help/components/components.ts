@@ -1,4 +1,7 @@
 import {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
   ContainerBuilder,
   heading,
   HeadingLevel,
@@ -14,7 +17,11 @@ import { paginationStringFunctions } from '@/translations/pagination.js';
 
 import { COMMANDS_PER_PAGE } from '../utils/constants.js';
 
-export const getHelpComponent = (commands: string[], page: number) => {
+export const getHelpComponent = (
+  commands: string[],
+  page: number,
+  totalPages: number,
+) => {
   const containerBuilder = new ContainerBuilder();
 
   containerBuilder
@@ -46,19 +53,41 @@ export const getHelpComponent = (commands: string[], page: number) => {
       );
     }
 
-    containerBuilder
-      .addSeparatorComponents((separator) =>
-        separator.setSpacing(SeparatorSpacingSize.Large),
-      )
-      .addTextDisplayComponents((textDisplay) =>
-        textDisplay.setContent(
-          paginationStringFunctions.commandPage(
-            page + 1,
-            Math.max(1, Math.ceil(commands.length / COMMANDS_PER_PAGE)),
-            commands.length,
-          ),
-        ),
+    containerBuilder.addSeparatorComponents((separator) =>
+      separator.setSpacing(SeparatorSpacingSize.Large),
+    );
+
+    if (totalPages > 1) {
+      for (let i = 0; i < totalPages; i += 5) {
+        const actionRow = new ActionRowBuilder<ButtonBuilder>();
+
+        for (let j = i; j < Math.min(i + 5, totalPages); j++) {
+          const button = new ButtonBuilder()
+            .setCustomId(`help:page:${j}`)
+            .setLabel(`${j + 1}`)
+            .setStyle(j === page ? ButtonStyle.Primary : ButtonStyle.Secondary)
+            .setDisabled(j === page);
+
+          actionRow.addComponents(button);
+        }
+
+        containerBuilder.addActionRowComponents(actionRow);
+      }
+
+      containerBuilder.addSeparatorComponents((separator) =>
+        separator.setDivider(false),
       );
+    }
+
+    containerBuilder.addTextDisplayComponents((textDisplay) =>
+      textDisplay.setContent(
+        paginationStringFunctions.commandPage(
+          page + 1,
+          Math.max(1, totalPages),
+          commands.length,
+        ),
+      ),
+    );
   }
 
   return containerBuilder;

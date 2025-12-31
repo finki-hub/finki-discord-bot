@@ -4,7 +4,6 @@ import {
   SlashCommandBuilder,
 } from 'discord.js';
 
-import { getPaginationComponents } from '@/common/components/pagination.js';
 import { getMemberFromGuild } from '@/common/utils/guild.js';
 import { client } from '@/core/client.js';
 import {
@@ -47,13 +46,9 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   }
 
   const pages = Math.ceil(commands.length / COMMANDS_PER_PAGE);
-  const paginationComponents =
-    pages === 0 || pages === 1
-      ? getPaginationComponents('help')
-      : getPaginationComponents('help', 'start');
 
   await interaction.reply({
-    components: [getHelpComponent(commands, 0), paginationComponents],
+    components: [getHelpComponent(commands, 0, pages)],
     flags: MessageFlags.IsComponentsV2,
   });
 };
