@@ -1,3 +1,4 @@
+import { hyperlink } from 'discord.js';
 import { z } from 'zod';
 
 import { getStaff } from '@/modules/staff/utils/data.js';
@@ -9,7 +10,7 @@ const findStaffProfile = (name: string): string | undefined =>
   getStaff().find((staff) => name.includes(staff.name))?.profile;
 
 const formatStaffMember = (name: string, profileUrl?: string): string =>
-  profileUrl ? `[${name}](${profileUrl})` : name;
+  profileUrl ? hyperlink(name, profileUrl) : name;
 
 export const linkStaff = (names: string[]): string => {
   if (names.length === 0) {

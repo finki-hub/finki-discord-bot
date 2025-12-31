@@ -24,10 +24,12 @@ export const CourseSchema = z
     '2018-available': data['2018-available'] === 'TRUE',
     '2023-available': data['2023-available'] === 'TRUE',
     assistants: (data.assistants ?? '')
-      .split(String.raw`\n`)
+      .split(/\r?\n|\\n/u)
+      .map((s) => s.trim())
       .filter((name) => name.length > 0),
     professors: data.professors
-      .split(String.raw`\n`)
+      .split(/\r?\n|\\n/u)
+      .map((s) => s.trim())
       .filter((name) => name.length > 0),
   }));
 
