@@ -1,16 +1,14 @@
 import {
   type ChatInputCommandInteraction,
+  MessageFlags,
   SlashCommandBuilder,
 } from 'discord.js';
 
+import { getMentionComponent } from '@/common/components/mention.js';
 import { getRooms } from '@/modules/room/utils/data.js';
-import {
-  commandDescriptions,
-  commandErrors,
-  commandResponseFunctions,
-} from '@/translations/commands.js';
+import { commandDescriptions, commandErrors } from '@/translations/commands.js';
 
-import { getRoomEmbed } from '../components/embeds.js';
+import { getRoomComponent } from '../components/components.js';
 import { getClosestRoom } from './search.js';
 
 export const getCommonCommand = (name: keyof typeof commandDescriptions) => ({
@@ -49,10 +47,12 @@ export const getCommonCommand = (name: keyof typeof commandDescriptions) => ({
       return;
     }
 
-    const embeds = rooms.map((cl) => getRoomEmbed(cl));
     await interaction.editReply({
-      content: user ? commandResponseFunctions.commandFor(user.id) : null,
-      embeds,
+      components: [
+        ...(user ? [getMentionComponent(user)] : []),
+        ...rooms.map(getRoomComponent),
+      ],
+      flags: MessageFlags.IsComponentsV2,
     });
   },
 });

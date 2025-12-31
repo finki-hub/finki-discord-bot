@@ -1,18 +1,13 @@
 import {
   type ChatInputCommandInteraction,
+  MessageFlags,
   SlashCommandBuilder,
 } from 'discord.js';
 
-import {
-  commandDescriptions,
-  commandErrors,
-  commandResponseFunctions,
-} from '@/translations/commands.js';
+import { getMentionComponent } from '@/common/components/mention.js';
+import { commandDescriptions, commandErrors } from '@/translations/commands.js';
 
-import {
-  getQuestionComponents,
-  getQuestionEmbed,
-} from '../components/embeds.js';
+import { getQuestionComponent } from '../components/components.js';
 import { getClosestQuestion } from './search.js';
 
 export const getCommonCommand = (name: keyof typeof commandDescriptions) => ({
@@ -42,12 +37,12 @@ export const getCommonCommand = (name: keyof typeof commandDescriptions) => ({
       return;
     }
 
-    const embed = getQuestionEmbed(question);
-    const components = getQuestionComponents(question);
     await interaction.editReply({
-      components,
-      content: user ? commandResponseFunctions.commandFor(user.id) : null,
-      embeds: [embed],
+      components: [
+        ...(user ? [getMentionComponent(user)] : []),
+        getQuestionComponent(question),
+      ],
+      flags: MessageFlags.IsComponentsV2,
     });
   },
 });

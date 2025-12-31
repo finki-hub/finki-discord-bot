@@ -11,7 +11,7 @@ import {
   commandRequiresPermissions,
   getCommandsWithPermission,
 } from '@/core/utils/permissions.js';
-import { getHelpEmbed } from '@/modules/help/components/embeds.js';
+import { getHelpComponent } from '@/modules/help/components/components.js';
 import { COMMANDS_PER_PAGE } from '@/modules/help/utils/constants.js';
 import { commandDescriptions, commandErrors } from '@/translations/commands.js';
 
@@ -47,15 +47,13 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   }
 
   const pages = Math.ceil(commands.length / COMMANDS_PER_PAGE);
-  const embed = getHelpEmbed(commands, 0);
-  const components = [
+  const paginationComponents =
     pages === 0 || pages === 1
       ? getPaginationComponents('help')
-      : getPaginationComponents('help', 'start'),
-  ];
+      : getPaginationComponents('help', 'start');
 
   await interaction.reply({
-    components,
-    embeds: [embed],
+    components: [getHelpComponent(commands, 0), paginationComponents],
+    flags: MessageFlags.IsComponentsV2,
   });
 };

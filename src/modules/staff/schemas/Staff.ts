@@ -3,13 +3,13 @@ import { z } from 'zod';
 export const StaffSchema = z
   .object({
     active: z.string(),
-    cabinet: z.string(),
-    consultations: z.string(),
-    courses: z.string(),
-    email: z.string(),
+    cabinet: z.string().optional(),
+    consultations: z.url().optional(),
+    courses: z.url().optional(),
+    email: z.email(),
     name: z.string(),
     position: z.string(),
-    profile: z.string(),
+    profile: z.url().optional(),
     title: z.string(),
   })
   .transform((data) => ({

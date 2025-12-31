@@ -1,16 +1,14 @@
 import {
   type ChatInputCommandInteraction,
+  MessageFlags,
   SlashCommandBuilder,
 } from 'discord.js';
 
-import { getCourseEmbed } from '@/modules/course/components/embeds.js';
+import { getMentionComponent } from '@/common/components/mention.js';
+import { getCourseComponent } from '@/modules/course/components/components.js';
 import { getCourse } from '@/modules/course/utils/data.js';
 import { getClosestCourse } from '@/modules/course/utils/search.js';
-import {
-  commandDescriptions,
-  commandErrors,
-  commandResponseFunctions,
-} from '@/translations/commands.js';
+import { commandDescriptions, commandErrors } from '@/translations/commands.js';
 
 export const name = 'course';
 
@@ -51,10 +49,12 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   }
 
   const user = interaction.options.getUser('user');
-  const embeds = getCourseEmbed(course);
 
   await interaction.editReply({
-    content: user ? commandResponseFunctions.commandFor(user.id) : null,
-    embeds,
+    components: [
+      ...(user ? [getMentionComponent(user)] : []),
+      getCourseComponent(course),
+    ],
+    flags: MessageFlags.IsComponentsV2,
   });
 };
