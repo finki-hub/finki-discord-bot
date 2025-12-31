@@ -338,7 +338,7 @@ const handleChatUnembedded = async (
 
   if (unembeddedQuestions === null) {
     logger.error(
-      `Failed getting unembedded questions for embeddings model: ${options.embeddings_model ?? 'default'}`,
+      `Failed getting unembedded questions for embeddings model: ${options.model ?? 'default'}`,
       {
         guildId: interaction.guild?.id,
       },

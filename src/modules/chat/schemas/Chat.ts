@@ -78,7 +78,7 @@ export const UnembeddedQuestionsOptionsSchema = z
     embeddingsModel: z.string().optional(),
   })
   .transform((data) => ({
-    embeddings_model: data.embeddingsModel,
+    model: data.embeddingsModel,
   }));
 
 export type UnembeddedQuestionsOptions = z.infer<
