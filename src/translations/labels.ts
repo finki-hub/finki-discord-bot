@@ -16,6 +16,7 @@ export const labels = {
   link: 'Линк',
   links: 'Линкови',
   location: 'Локација',
+  mrbs: 'MRBS',
   none: 'Нема',
   position: 'Позиција',
   prerequisite: 'Предуслов',

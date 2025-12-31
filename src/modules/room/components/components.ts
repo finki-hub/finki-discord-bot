@@ -7,6 +7,8 @@ import {
   SeparatorSpacingSize,
 } from 'discord.js';
 
+import { labels } from '@/translations/labels.js';
+
 import { type Room } from '../schemas/Room.js';
 
 export const getRoomComponent = (information: Room) => {
@@ -25,16 +27,20 @@ export const getRoomComponent = (information: Room) => {
       separator.setSpacing(SeparatorSpacingSize.Large),
     )
     .addTextDisplayComponents((textDisplay) =>
-      textDisplay.setContent(`**Тип:** ${information.type}`),
+      textDisplay.setContent(`**${labels.type}** ${information.type}`),
     )
     .addTextDisplayComponents((textDisplay) =>
-      textDisplay.setContent(`**Локација:** ${information.location}`),
+      textDisplay.setContent(`**${labels.location}:** ${information.location}`),
     )
     .addTextDisplayComponents((textDisplay) =>
-      textDisplay.setContent(`**Кат:** ${information.floor ?? '-'}`),
+      textDisplay.setContent(
+        `**${labels.floor}:** ${information.floor ?? '-'}`,
+      ),
     )
     .addTextDisplayComponents((textDisplay) =>
-      textDisplay.setContent(`**Капацитет:** ${information.capacity ?? '-'}`),
+      textDisplay.setContent(
+        `**${labels.capacity}:** ${information.capacity ?? '-'}`,
+      ),
     )
     .addSeparatorComponents((separator) =>
       separator.setDivider(false).setSpacing(SeparatorSpacingSize.Small),
@@ -42,7 +48,9 @@ export const getRoomComponent = (information: Room) => {
 
   if (information.description !== undefined) {
     containerBuilder.addTextDisplayComponents((textDisplay) =>
-      textDisplay.setContent(`**Опис:**\n${information.description}`),
+      textDisplay.setContent(
+        `**${labels.description}:**\n${information.description}`,
+      ),
     );
   }
 
@@ -56,7 +64,7 @@ export const getRoomComponent = (information: Room) => {
       .addActionRowComponents((actionRow) =>
         actionRow.addComponents(
           new ButtonBuilder()
-            .setLabel('MRBS')
+            .setLabel(labels.mrbs)
             .setURL(mrbsUrl)
             .setStyle(ButtonStyle.Link),
         ),
