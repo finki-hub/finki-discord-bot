@@ -9,6 +9,8 @@ import {
   SeparatorSpacingSize,
 } from 'discord.js';
 
+import { labels } from '@/translations/labels.js';
+
 import { type Staff } from '../schemas/Staff.js';
 
 export const getStaffComponent = (information: Staff) => {
@@ -22,20 +24,22 @@ export const getStaffComponent = (information: Staff) => {
       separator.setSpacing(SeparatorSpacingSize.Large),
     )
     .addTextDisplayComponents((textDisplay) =>
-      textDisplay.setContent(`**Звање:** ${information.title}`),
+      textDisplay.setContent(`**${labels.title}:** ${information.title}`),
     )
     .addTextDisplayComponents((textDisplay) =>
-      textDisplay.setContent(`**Позиција:** ${information.position}`),
+      textDisplay.setContent(`**${labels.position}:** ${information.position}`),
     )
     .addTextDisplayComponents((textDisplay) =>
-      textDisplay.setContent(`**Кабинет:** ${information.cabinet ?? '-'}`),
+      textDisplay.setContent(
+        `**${labels.cabinet}:** ${information.cabinet ?? '-'}`,
+      ),
     )
     .addSeparatorComponents((separator) =>
       separator.setDivider(false).setSpacing(SeparatorSpacingSize.Small),
     )
     .addTextDisplayComponents((textDisplay) =>
       textDisplay.setContent(
-        `**Електронска пошта:**\n${hyperlink(information.email, `mailto:${information.email}`)}`,
+        `**${labels.email}:**\n${hyperlink(information.email, `mailto:${information.email}`)}`,
       ),
     );
 
@@ -44,7 +48,7 @@ export const getStaffComponent = (information: Staff) => {
   if (information.profile !== undefined) {
     actionRow.addComponents(
       new ButtonBuilder()
-        .setLabel('Профил')
+        .setLabel(labels.profile)
         .setURL(information.profile)
         .setStyle(ButtonStyle.Link),
     );
@@ -53,7 +57,7 @@ export const getStaffComponent = (information: Staff) => {
   if (information.courses !== undefined) {
     actionRow.addComponents(
       new ButtonBuilder()
-        .setLabel('Предмети')
+        .setLabel(labels.courses)
         .setURL(information.courses)
         .setStyle(ButtonStyle.Link),
     );
@@ -62,7 +66,7 @@ export const getStaffComponent = (information: Staff) => {
   if (information.consultations !== undefined) {
     actionRow.addComponents(
       new ButtonBuilder()
-        .setLabel('Консултации')
+        .setLabel(labels.consultations)
         .setURL(information.consultations)
         .setStyle(ButtonStyle.Link),
     );
