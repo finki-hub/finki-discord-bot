@@ -1,16 +1,14 @@
 import {
   type ChatInputCommandInteraction,
+  MessageFlags,
   SlashCommandBuilder,
 } from 'discord.js';
 
-import { getStaffEmbed } from '@/modules/staff/components/embeds.js';
+import { getMentionComponent } from '@/common/components/mention.js';
+import { getStaffComponent } from '@/modules/staff/components/components.js';
 import { getStaff } from '@/modules/staff/utils/data.js';
 import { getClosestStaff } from '@/modules/staff/utils/search.js';
-import {
-  commandDescriptions,
-  commandErrors,
-  commandResponseFunctions,
-} from '@/translations/commands.js';
+import { commandDescriptions, commandErrors } from '@/translations/commands.js';
 
 export const name = 'staff';
 
@@ -44,9 +42,11 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     return;
   }
 
-  const embed = getStaffEmbed(information);
   await interaction.editReply({
-    content: user ? commandResponseFunctions.commandFor(user.id) : null,
-    embeds: [embed],
+    components: [
+      ...(user ? [getMentionComponent(user)] : []),
+      getStaffComponent(information),
+    ],
+    flags: MessageFlags.IsComponentsV2,
   });
 };

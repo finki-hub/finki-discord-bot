@@ -1,4 +1,8 @@
-import { type ButtonInteraction, MessageFlags } from 'discord.js';
+import {
+  type ButtonInteraction,
+  ComponentType,
+  MessageFlags,
+} from 'discord.js';
 
 import { getPaginationComponents } from '@/common/components/pagination.js';
 import { getMemberFromGuild } from '@/common/utils/guild.js';
@@ -6,7 +10,7 @@ import {
   commandRequiresPermissions,
   getCommandsWithPermission,
 } from '@/core/utils/permissions.js';
-import { getHelpEmbed } from '@/modules/help/components/embeds.js';
+import { getHelpComponent } from '@/modules/help/components/components.js';
 import { COMMANDS_PER_PAGE } from '@/modules/help/utils/constants.js';
 import { commandDescriptions, commandErrors } from '@/translations/commands.js';
 
@@ -53,8 +57,35 @@ export const execute = async (
   }
   const pages = Math.ceil(commands.length / COMMANDS_PER_PAGE);
 
-  const getCurrentPage = () =>
-    Number(interaction.message.embeds[0]?.footer?.text.match(/\d+/gu)?.[0]) - 1;
+  const getCurrentPage = () => {
+    const containerComponent = interaction.message.components.find(
+      (comp) => comp.type === ComponentType.Container,
+    );
+
+    if (containerComponent?.type !== ComponentType.Container) {
+      return 0;
+    }
+
+    const textDisplays = containerComponent.components.filter(
+      (comp) => comp.type === ComponentType.TextDisplay,
+    );
+
+    const lastTextDisplay = textDisplays.at(-1);
+
+    if (lastTextDisplay?.type !== ComponentType.TextDisplay) {
+      return 0;
+    }
+
+    const content = lastTextDisplay.content;
+    if (!content) return 0;
+
+    const match = /\d+/u.exec(content);
+    if (match?.[0]) {
+      return Number(match[0]) - 1;
+    }
+
+    return 0;
+  };
 
   let page = 0;
   switch (action) {
@@ -81,14 +112,16 @@ export const execute = async (
     return 'middle';
   };
 
-  const buttons = getPaginationComponents('help', getPaginationPosition());
-
-  const embed = getHelpEmbed(commands, page);
+  const paginationComponents = getPaginationComponents(
+    'help',
+    getPaginationPosition(),
+  );
+  const helpComponent = getHelpComponent(commands, page);
 
   try {
     await interaction.update({
-      components: [buttons],
-      embeds: [embed],
+      components: [helpComponent, paginationComponents],
+      flags: MessageFlags.IsComponentsV2,
     });
   } catch (error) {
     const errorMessage = Error.isError(error) ? error.message : String(error);

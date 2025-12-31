@@ -1,9 +1,10 @@
 import {
   type ChatInputCommandInteraction,
+  MessageFlags,
   SlashCommandBuilder,
 } from 'discord.js';
 
-import { getAboutEmbed } from '@/modules/help/components/embeds.js';
+import { getAboutComponent } from '@/modules/help/components/components.js';
 import { commandDescriptions } from '@/translations/commands.js';
 
 export const name = 'about';
@@ -13,8 +14,9 @@ export const data = new SlashCommandBuilder()
   .setDescription(commandDescriptions[name]);
 
 export const execute = async (interaction: ChatInputCommandInteraction) => {
-  const embed = getAboutEmbed();
+  const component = getAboutComponent();
   await interaction.editReply({
-    embeds: [embed],
+    components: [component],
+    flags: MessageFlags.IsComponentsV2,
   });
 };
