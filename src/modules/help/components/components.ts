@@ -9,6 +9,7 @@ import { getCommandMention } from '@/common/commands/utils.js';
 import { aboutMessage, botName } from '@/translations/about.js';
 import { commandDescriptions } from '@/translations/commands.js';
 import { componentMessages } from '@/translations/components.js';
+import { labels } from '@/translations/labels.js';
 import { paginationStringFunctions } from '@/translations/pagination.js';
 
 import { COMMANDS_PER_PAGE } from '../utils/constants.js';
@@ -18,7 +19,7 @@ export const getHelpComponent = (commands: string[], page: number) => {
 
   containerBuilder
     .addTextDisplayComponents((textDisplay) =>
-      textDisplay.setContent(heading('Commands', HeadingLevel.Two)),
+      textDisplay.setContent(heading(labels.commands, HeadingLevel.Two)),
     )
     .addSeparatorComponents((separator) =>
       separator.setSpacing(SeparatorSpacingSize.Large),
