@@ -3,14 +3,15 @@ name: Docker
 on:
   push:
     paths:
+      - ".github/workflows/docker.yaml"
       - "src/**"
-      - "eslint.config.js"
       - "package.json"
       - "package-lock.json"
       - "tsconfig.json"
-      - ".dockerignore"
-      - "Dockerfile"
       - "esbuild.config.js"
+      - "eslint.config.js"
+      - "Dockerfile"
+      - ".dockerignore"
   workflow_dispatch:
 
 permissions:
