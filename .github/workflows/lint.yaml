@@ -2,8 +2,6 @@ name: Linters
 
 on:
   push:
-    branches:
-      - "main"
     paths:
       - "src/**"
       - "eslint.config.js"
@@ -11,8 +9,6 @@ on:
       - "package-lock.json"
       - "tsconfig.json"
   pull_request:
-    branches:
-      - "main"
     paths:
       - "src/**"
       - "eslint.config.js"

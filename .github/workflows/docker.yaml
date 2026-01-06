@@ -2,9 +2,6 @@ name: Docker
 
 on:
   push:
-    branches:
-      - "main"
-      - "dev"
     paths:
       - "src/**"
       - "eslint.config.js"
@@ -45,4 +42,6 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: |
-            ghcr.io/finki-hub/finki-discord-bot:${{ github.ref == 'refs/heads/main' && 'latest' || 'dev' }}
+            ghcr.io/finki-hub/finki-discord-bot:${{ github.sha }}
+            ghcr.io/finki-hub/finki-discord-bot:${{ github.ref_name }}
+            ${{ github.ref == 'refs/heads/main' && 'ghcr.io/finki-hub/finki-discord-bot:latest' || '' }}
