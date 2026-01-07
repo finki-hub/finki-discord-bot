@@ -11,6 +11,10 @@ permissions:
   contents: read
 
 jobs:
+  tsc:
+    uses: finki-hub/.github/.github/workflows/tsc.yaml@main
+    secrets: inherit
+
   eslint:
     uses: finki-hub/.github/.github/workflows/eslint.yaml@main
     secrets: inherit
