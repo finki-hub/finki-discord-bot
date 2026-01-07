@@ -37,6 +37,7 @@
   },
   "scripts": {
     "build": "npm run clean && node esbuild.config.js && tsc-alias",
+    "check": "tsc --noEmit",
     "clean": "rimraf dist",
     "dev": "tsx src/index.ts",
     "format": "eslint . --cache --fix",
