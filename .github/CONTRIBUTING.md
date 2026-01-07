@@ -19,12 +19,11 @@ We'd also love PRs. If you're thinking of a large PR, we advise opening up an is
 
 1. [Fork][fork] and clone the repository.
 2. Configure and install the dependencies: `npm i`.
-3. Install the Git pre-commit hooks: `npm run prepare`.
-4. Create a new branch: `git checkout -b <name>`.
-5. Make your changes.
-6. Format your code and check for issues: `npm run format`.
-7. Push to your fork and [submit a pull request][pr].
-8. Pat your self on the back and wait for your pull request to be reviewed and merged.
+3. Create a new branch: `git checkout -b <name>`.
+4. Make your changes.
+5. Format and lint your code: `npm run format && npm run lint`.
+6. Push to your fork and [submit a pull request][pr].
+7. Pat your self on the back and wait for your pull request to be reviewed and merged.
 
 Here are a few things you can do that will increase the likelihood of your pull request being accepted:
 
