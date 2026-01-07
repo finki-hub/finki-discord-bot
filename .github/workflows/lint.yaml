@@ -2,13 +2,9 @@ name: Linter
 
 on:
   push:
-    paths:
-      - ".github/workflows/lint.yaml"
-      - "src/**"
-      - "package.json"
-      - "package-lock.json"
-      - "tsconfig.json"
-      - "eslint.config.js"
+    branches: [main, dev]
+  pull_request:
+    types: [opened, synchronize, reopened]
   workflow_dispatch:
 
 permissions:

@@ -2,16 +2,6 @@ name: Docker
 
 on:
   push:
-    paths:
-      - ".github/workflows/docker.yaml"
-      - "src/**"
-      - "package.json"
-      - "package-lock.json"
-      - "tsconfig.json"
-      - "esbuild.config.js"
-      - "eslint.config.js"
-      - "Dockerfile"
-      - ".dockerignore"
   workflow_dispatch:
 
 permissions:
