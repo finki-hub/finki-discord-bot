@@ -12,20 +12,5 @@ permissions:
 
 jobs:
   eslint:
-    name: TypeScript & ESLint
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
-
-      - name: Install Dependencies
-        run: npm i
-
-      - name: Run ESLint
-        run: npm run lint
+    uses: finki-hub/.github/.github/workflows/eslint.yaml@main
+    secrets: inherit
