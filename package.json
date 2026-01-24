@@ -1,7 +1,7 @@
 {
   "author": "Delemangi",
   "bugs": {
-    "url": "https://github.com/Delemangi/finki-discord-bot/issues"
+    "url": "https://github.com/finki-hub/finki-discord-bot/issues"
   },
   "dependencies": {
     "croner": "^9.1.0",
@@ -27,13 +27,13 @@
   "engines": {
     "node": "^24"
   },
-  "homepage": "https://github.com/Delemangi/finki-discord-bot",
+  "homepage": "https://github.com/finki-hub/finki-discord-bot",
   "license": "MIT",
   "main": "src/index.ts",
   "name": "finki-discord-bot",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Delemangi/finki-discord-bot.git"
+    "url": "git+https://github.com/finki-hub/finki-discord-bot.git"
   },
   "scripts": {
     "build": "npm run clean && node esbuild.config.js && tsc-alias",
