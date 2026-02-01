@@ -17,7 +17,6 @@ services:
     restart: unless-stopped
     volumes:
       - ./config:/app/config
-      - ./sessions:/app/sessions
       - ./logs:/app/logs
 
 networks:
