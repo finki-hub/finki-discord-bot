@@ -16,7 +16,7 @@
   },
   "description": "FINKI Discord Bot",
   "devDependencies": {
-    "esbuild": "^0.27.2",
+    "esbuild": "^0.27.3",
     "eslint": "^9.39.2",
     "eslint-config-imperium": "^3.2.0",
     "rimraf": "^6.1.2",
