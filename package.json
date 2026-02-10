@@ -18,7 +18,7 @@
   "devDependencies": {
     "esbuild": "^0.27.3",
     "eslint": "^9.39.2",
-    "eslint-config-imperium": "^3.2.0",
+    "eslint-config-imperium": "^3.4.0",
     "rimraf": "^6.1.2",
     "tsc-alias": "^1.8.16",
     "tsx": "^4.21.0",
