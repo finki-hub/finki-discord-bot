@@ -11,7 +11,6 @@ import {
   getCommandsWithPermission,
 } from '@/core/utils/permissions.js';
 import { getHelpComponent } from '@/modules/help/components/components.js';
-import { COMMANDS_PER_PAGE } from '@/modules/help/utils/constants.js';
 import { commandDescriptions, commandErrors } from '@/translations/commands.js';
 
 export const name = 'help';
@@ -45,10 +44,8 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
     commands = await getCommandsWithPermission(member);
   }
 
-  const pages = Math.ceil(commands.length / COMMANDS_PER_PAGE);
-
   await interaction.reply({
-    components: [getHelpComponent(commands, 0, pages)],
+    components: [getHelpComponent(commands, 0)],
     flags: MessageFlags.IsComponentsV2,
   });
 };
