@@ -6,7 +6,6 @@ import {
   getCommandsWithPermission,
 } from '@/core/utils/permissions.js';
 import { getHelpComponent } from '@/modules/help/components/components.js';
-import { COMMANDS_PER_PAGE } from '@/modules/help/utils/constants.js';
 import { commandDescriptions, commandErrors } from '@/translations/commands.js';
 
 export const name = 'help';
@@ -51,12 +50,11 @@ export const execute = async (
     commands = await getCommandsWithPermission(member);
   }
 
-  const pages = Math.ceil(commands.length / COMMANDS_PER_PAGE);
   const page = action === 'page' && pageStr ? Number.parseInt(pageStr) : 0;
 
   try {
     await interaction.update({
-      components: [getHelpComponent(commands, page, pages)],
+      components: [getHelpComponent(commands, page)],
       flags: MessageFlags.IsComponentsV2,
     });
   } catch (error) {
