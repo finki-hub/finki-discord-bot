@@ -125,7 +125,14 @@ export const createTicket = async (
       return;
     }
 
-    await ticketChannel.delete();
+    try {
+      await ticketChannel.delete();
+    } catch (error: unknown) {
+      logger.error(
+        `Failed deleting ticket channel ${ticketChannel.id}\n${String(error)}`,
+        { guildId: interaction.guild?.id },
+      );
+    }
   });
 };
 
