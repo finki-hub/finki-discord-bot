@@ -35,14 +35,14 @@ There is also a dev container available. To use it, just clone the repository, d
 
 The env. variables are stored in `.env.sample`. The following variables are available:
 
-| Variable           | Required | Description                                                                         |
-| ------------------ | -------- | ----------------------------------------------------------------------------------- |
-| `TOKEN`            | Yes      | Discord bot token                                                                   |
-| `APPLICATION_ID`   | Yes      | Discord application ID                                                              |
-| `CHATBOT_URL`      | No       | URL of the [`finki-chat-bot`](https://github.com/finki-hub/finki-chat-bot) instance |
-| `API_KEY`          | No       | API key for authenticated chat bot endpoints (e.g. embeddings)                      |
-| `DATA_STORAGE_URL` | No       | Base URL for data storage (without trailing slash)                                  |
-| `TZ`               | No       | Timezone (e.g. `Europe/Berlin`)                                                     |
+| Variable           | Required | Description                                                                       |
+| ------------------ | -------- | --------------------------------------------------------------------------------- |
+| `TOKEN`            | Yes      | Discord bot token                                                                 |
+| `APPLICATION_ID`   | Yes      | Discord application ID                                                            |
+| `CHATBOT_URL`      | No       | URL of the [`finki-hub/chat-bot`](https://github.com/finki-hub/chat-bot) instance |
+| `API_KEY`          | No       | API key for authenticated chat bot endpoints (e.g. embeddings)                    |
+| `DATA_STORAGE_URL` | No       | Base URL for data storage (without trailing slash)                                |
+| `TZ`               | No       | Timezone (e.g. `Europe/Berlin`)                                                   |
 
 If `DATA_STORAGE_URL` is not set, data loading features will be disabled. If `CHATBOT_URL` is not set, FAQ, links, and chat features will be disabled.
 
@@ -86,7 +86,7 @@ All the session schedule files should be placed in the `sessions` folder in your
 
 ## Integration With `finki-hub/chat-bot`
 
-This project features integration with [`finki-chat-bot`](https://github.com/finki-hub/chat-bot) for enabling FAQ, links, and LLM chat functionality. The Discord bot communicates with the chat bot using REST endpoints. If they are deployed in Docker, they should be on the same network to be able to communicate.
+This project features integration with [`finki-hub/chat-bot`](https://github.com/finki-hub/chat-bot) for enabling FAQ, links, and LLM chat functionality. The Discord bot communicates with the chat bot using REST endpoints. If they are deployed in Docker, they should be on the same network to be able to communicate.
 
 Set the `CHATBOT_URL` env. variable to the URL of the chat bot, and optionally `API_KEY` for authenticated endpoints (such as filling embeddings).
 
