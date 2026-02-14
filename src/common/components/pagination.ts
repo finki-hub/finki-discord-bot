@@ -21,6 +21,9 @@ export const getPaginationComponent = ({
   pageSize,
   title,
 }: PaginationComponentData) => {
+  const totalPages = Math.ceil(entries.length / pageSize);
+  const currentPage = Math.max(0, Math.min(page, totalPages - 1));
+
   const containerBuilder = new ContainerBuilder();
 
   containerBuilder
@@ -31,16 +34,20 @@ export const getPaginationComponent = ({
       separator.setSpacing(SeparatorSpacingSize.Large),
     );
 
-  if (description !== undefined) {
+  const paginatedEntries = entries.slice(
+    pageSize * currentPage,
+    pageSize * (currentPage + 1),
+  );
+
+  if (paginatedEntries.length === 0) {
+    containerBuilder.addTextDisplayComponents((textDisplay) =>
+      textDisplay.setContent(paginationStringFunctions.noEntries(entriesLabel)),
+    );
+  } else if (description !== undefined) {
     containerBuilder.addTextDisplayComponents((textDisplay) =>
       textDisplay.setContent(description),
     );
   }
-
-  const paginatedEntries = entries.slice(
-    pageSize * page,
-    pageSize * (page + 1),
-  );
 
   if (paginatedEntries.length > 0) {
     containerBuilder.addSeparatorComponents((separator) =>
@@ -57,8 +64,6 @@ export const getPaginationComponent = ({
       separator.setSpacing(SeparatorSpacingSize.Large),
     );
 
-    const totalPages = Math.ceil(entries.length / pageSize);
-
     if (totalPages > 1) {
       for (let i = 0; i < totalPages; i += 5) {
         const actionRow = new ActionRowBuilder<ButtonBuilder>();
@@ -67,8 +72,10 @@ export const getPaginationComponent = ({
           const button = new ButtonBuilder()
             .setCustomId(`${buttonId}:page:${j}`)
             .setLabel(`${j + 1}`)
-            .setStyle(j === page ? ButtonStyle.Primary : ButtonStyle.Secondary)
-            .setDisabled(j === page);
+            .setStyle(
+              j === currentPage ? ButtonStyle.Primary : ButtonStyle.Secondary,
+            )
+            .setDisabled(j === currentPage);
 
           actionRow.addComponents(button);
         }
@@ -83,12 +90,12 @@ export const getPaginationComponent = ({
 
     containerBuilder.addTextDisplayComponents((textDisplay) =>
       textDisplay.setContent(
-        paginationStringFunctions.footer(
-          page + 1,
-          Math.max(1, totalPages),
-          entriesLabel,
-          entries.length,
-        ),
+        paginationStringFunctions.footer({
+          label: entriesLabel,
+          page: currentPage + 1,
+          pages: Math.max(1, totalPages),
+          total: entries.length,
+        }),
       ),
     );
   }

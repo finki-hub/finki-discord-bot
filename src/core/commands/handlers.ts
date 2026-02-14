@@ -13,6 +13,13 @@ import {
 import { getFullCommandName } from '@/common/commands/utils.js';
 import { logger } from '@/common/logger/index.js';
 import { getMemberFromGuild } from '@/common/utils/guild.js';
+import { name as helpCommandId } from '@/modules/help/commands/chat/help.js';
+import { name as listCommandsButtonId } from '@/modules/list/commands/button/listCommands.js';
+import { name as listLinksButtonId } from '@/modules/list/commands/button/listLinks.js';
+import { name as listQuestionsButtonId } from '@/modules/list/commands/button/listQuestions.js';
+import { name as listCommandId } from '@/modules/list/commands/chat/list.js';
+import { name as ticketListButtonId } from '@/modules/ticket/commands/button/ticketList.js';
+import { name as ticketCommandId } from '@/modules/ticket/commands/chat/ticket.js';
 import { commandErrors } from '@/translations/commands.js';
 
 import {
@@ -26,7 +33,15 @@ import {
   getContextMenuCommand,
 } from './modules.js';
 
-const nonDeferredCommands = new Set<string>(['help']);
+const nonDeferredCommands = new Set<string>([
+  `${ticketCommandId} list`,
+  helpCommandId,
+  listCommandId,
+  listCommandsButtonId,
+  listLinksButtonId,
+  listQuestionsButtonId,
+  ticketListButtonId,
+]);
 
 const isExpectedAutocompleteError = (error: unknown): boolean => {
   const message = Error.isError(error) ? error.message : String(error);
@@ -95,7 +110,10 @@ export const handleChatInputCommand = async (
     return;
   }
 
-  if (!nonDeferredCommands.has(interaction.commandName)) {
+  if (
+    !nonDeferredCommands.has(commandWithSubcommand) &&
+    !nonDeferredCommands.has(interaction.commandName)
+  ) {
     try {
       await interaction.deferReply();
     } catch (error) {

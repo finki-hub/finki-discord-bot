@@ -1,9 +1,23 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
+import {
+  ActionRowBuilder,
+  type AnyThreadChannel,
+  ButtonBuilder,
+  ButtonStyle,
+} from 'discord.js';
 
+import { getPaginationComponent } from '@/common/components/pagination.js';
+import { name as ticketListButtonId } from '@/modules/ticket/commands/button/ticketList.js';
+import { TICKETS_PER_PAGE } from '@/modules/ticket/utils/constants.js';
+import { componentMessages } from '@/translations/components.js';
 import { emojis } from '@/translations/emojis.js';
 import { labels } from '@/translations/labels.js';
 
 import { type Ticket } from '../schemas/Ticket.js';
+
+const dateFormatter = new Intl.DateTimeFormat('mk-MK', {
+  dateStyle: 'long',
+  timeStyle: 'short',
+});
 
 export const getTicketCreateComponents = (ticketTypes: Ticket[]) => {
   const components = [];
@@ -47,3 +61,20 @@ export const getTicketCloseComponents = (ticketId: string) => {
 
   return [row];
 };
+
+export const getTicketListComponent = (
+  ticketThreads: AnyThreadChannel[],
+  page: number,
+) =>
+  getPaginationComponent({
+    buttonId: ticketListButtonId,
+    description: componentMessages.allTickets,
+    entries: ticketThreads.map(
+      (thread) =>
+        `${thread.url} (${thread.createdAt === null ? labels.none : dateFormatter.format(thread.createdAt)})`,
+    ),
+    entriesLabel: labels.tickets,
+    page,
+    pageSize: TICKETS_PER_PAGE,
+    title: labels.tickets,
+  });
