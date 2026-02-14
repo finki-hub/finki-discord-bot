@@ -1,6 +1,6 @@
 # FINKI Hub Discord Bot
 
-Discord bot for the [`FINKI Hub`](https://discord.gg/finki-studenti-810997107376914444) Discord server, powered by [discord.js](https://github.com/discordjs/discord.js) 14. Requires Node.js. It is recommended to use the latest LTS version.
+Discord bot for the [`FINKI Hub`](https://discord.gg/finki-studenti-810997107376914444) Discord server, powered by [discord.js](https://github.com/discordjs/discord.js) 14. Requires Node.js 24+.
 
 ## Quick Setup (Production)
 
@@ -15,7 +15,7 @@ This Docker image is available as [ghcr.io/finki-hub/discord-bot](https://github
 
 1. Clone the repository: `git clone https://github.com/finki-hub/discord-bot.git`
 2. Install dependencies: `npm i`
-3. Prepare env. variables by copying `env.sample` to `.env` - minimum setup requires `TOKEN` and `APPLICATION_ID`
+3. Prepare env. variables by copying `.env.sample` to `.env` - minimum setup requires `TOKEN` and `APPLICATION_ID`
 4. Build the project in Docker: `docker compose build`
 5. Run it: `docker compose up -d`
 
@@ -25,7 +25,7 @@ There is also a dev container available. To use it, just clone the repository, d
 
 1. Clone the repository: `git clone https://github.com/finki-hub/discord-bot.git`
 2. Install dependencies: `npm i`
-3. Prepare env. variables by copying `env.sample` to `.env` - minimum setup requires `TOKEN` and `APPLICATION_ID`
+3. Prepare env. variables by copying `.env.sample` to `.env` - minimum setup requires `TOKEN` and `APPLICATION_ID`
 4. Build the project: `npm run build`
 5. Run it: `npm run start:env` or `npm run dev` (for hot reloading)
 
@@ -33,7 +33,18 @@ There is also a dev container available. To use it, just clone the repository, d
 
 ### Environment
 
-The env. variables are stored in `.env.sample`. Only the `TOKEN` and `APPLICATION_ID` variables are required (for logging in to Discord). The `DATA_STORAGE_URL` variable is optional - if not set, data loading features will be disabled.
+The env. variables are stored in `.env.sample`. The following variables are available:
+
+| Variable           | Required | Description                                                                         |
+| ------------------ | -------- | ----------------------------------------------------------------------------------- |
+| `TOKEN`            | Yes      | Discord bot token                                                                   |
+| `APPLICATION_ID`   | Yes      | Discord application ID                                                              |
+| `CHATBOT_URL`      | No       | URL of the [`finki-chat-bot`](https://github.com/finki-hub/finki-chat-bot) instance |
+| `API_KEY`          | No       | API key for authenticated chat bot endpoints (e.g. embeddings)                      |
+| `DATA_STORAGE_URL` | No       | Base URL for data storage (without trailing slash)                                  |
+| `TZ`               | No       | Timezone (e.g. `Europe/Berlin`)                                                     |
+
+If `DATA_STORAGE_URL` is not set, data loading features will be disabled. If `CHATBOT_URL` is not set, FAQ, links, and chat features will be disabled.
 
 ### Bot Configuration
 
@@ -59,45 +70,29 @@ See [`config/bot.json.example`](./config/bot.json.example) for an example config
 
 ### Data Files
 
-The data for the informational commands is loaded from data storage (if `DATA_STORAGE_URL` is configured). The following files are expected to be available at the data storage base URL:
+The data for the informational commands is loaded from data storage (if `DATA_STORAGE_URL` is configured). The bot automatically fetches and periodically reloads the following files from the data storage base URL:
 
 1. `courses.json` - a consolidated array of all courses with their information, participants, prerequisites, and staff
 2. `rooms.json` - an array of all the classrooms
-3. `sessions.json` - an object of all exam sessions
+3. `sessions.json` - an object mapping session names to filenames
 4. `staff.json` - an array of the staff
 5. `anto.json` - an array of strings containing Anto quotes
 
-If `DATA_STORAGE_URL` is not configured, these features will be disabled and the bot will run without data loading functionality.
+If `DATA_STORAGE_URL` is not configured, these features will be disabled and the bot will run without data loading functionality. You can manually trigger a data reload using the `/config data` command.
 
 ### Sessions (Timetables)
 
 All the session schedule files should be placed in the `sessions` folder in your data storage bucket. The names of the files should match the respective names in `sessions.json`. When users request a session via the `/session` command, the bot will provide a direct link to the file in the data storage bucket.
 
-## Integration With `finki-chat-bot`
+## Integration With `finki-hub/chat-bot`
 
-This project features integration with [`finki-chat-bot`](https://github.com/finki-hub/finki-chat-bot) for enabling the FAQ and links functionality. The Discord bot fetches and mutates data from the chat bot using REST endpoints. If they are deployed in Docker, they should be on the same network to be able to communicate.
+This project features integration with [`finki-chat-bot`](https://github.com/finki-hub/chat-bot) for enabling FAQ, links, and LLM chat functionality. The Discord bot communicates with the chat bot using REST endpoints. If they are deployed in Docker, they should be on the same network to be able to communicate.
 
-Please set the `CHATBOT_URL` env. variable to the URL of the chat bot.
-
-### Data Storage Integration
-
-The bot can load data files from a data storage service. Set the `DATA_STORAGE_URL` environment variable to the base URL of your data storage (without trailing slash). The bot will automatically fetch and periodically reload the following files:
-
-- `courses.json` - Course information, participants, prerequisites, and staff
-- `rooms.json` - Classroom information
-- `sessions.json` - Exam session mappings (maps session names to filenames)
-- `staff.json` - Staff member information
-- `anto.json` - Array of Anto quotes (strings)
-
-Session timetable files should be placed in the `sessions` folder in your data storage bucket. The filenames must match the values in `sessions.json`.
-
-If `DATA_STORAGE_URL` is not set, the bot will start successfully but data-dependent features will be disabled. You can manually trigger a data reload using the `/config data` command.
+Set the `CHATBOT_URL` env. variable to the URL of the chat bot, and optionally `API_KEY` for authenticated endpoints (such as filling embeddings).
 
 ## Frequently Asked Questions
 
-1. The hot reloading is too slow
-   - This is a Discord limitation because the bot has to relogin each time
-2. How do I create a Discord bot?
+1. How do I create a Discord bot?
    - Refer to <https://discord.com/developers/applications>
 
 ## Frequently Encountered Errors
