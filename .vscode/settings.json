@@ -15,7 +15,7 @@
   "files.eol": "\n",
   "sonarlint.connectedMode.project": {
     "connectionId": "finki-hub",
-    "projectKey": "finki-discord-bot"
+    "projectKey": "finki-hub-discord-bot"
   },
   "typescript.format.insertSpaceAfterTypeAssertion": true,
   "typescript.suggest.autoImports": true,

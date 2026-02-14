@@ -37,8 +37,7 @@ export const commandResponses = {
   configurationReloading: 'Се освежува конфигурацијата...',
   dataReloaded: 'Податоците се освежени.',
   dataReloading: 'Се освежуваат податоците...',
-  home: 'https://github.com/Delemangi/finki-discord-bot',
-  scriptExecuted: 'Ја извршивте скриптата.',
+  home: 'https://github.com/finki-hub/discord-bot',
   ticketClosed: 'Тикетот е затворен.',
   ticketMessageSent: 'Пораката за тикети е испратена.',
 };

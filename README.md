@@ -1,6 +1,6 @@
-# FINKI Discord Bot
+# FINKI Hub Discord Bot
 
-Discord bot for the [`FCSE Students`](https://discord.gg/finki-studenti-810997107376914444) Discord server, powered by [discord.js](https://github.com/discordjs/discord.js) 14. Requires Node.js. It is recommended to use the latest LTS version.
+Discord bot for the [`FINKI Hub`](https://discord.gg/finki-studenti-810997107376914444) Discord server, powered by [discord.js](https://github.com/discordjs/discord.js) 14. Requires Node.js. It is recommended to use the latest LTS version.
 
 ## Quick Setup (Production)
 
@@ -9,11 +9,11 @@ If you would like to just run the bot:
 1. Download [`compose.prod.yaml`](./compose.prod.yaml)
 2. Run `docker compose -f compose.prod.yaml up -d`
 
-This Docker image is available as [ghcr.io/finki-hub/finki-discord-bot](https://github.com/finki-hub/finki-discord-bot/pkgs/container/finki-discord-bot).
+This Docker image is available as [ghcr.io/finki-hub/discord-bot](https://github.com/finki-hub/discord-bot/pkgs/container/discord-bot).
 
 ## Quick Setup (Development)
 
-1. Clone the repository: `git clone https://github.com/finki-hub/finki-discord-bot.git`
+1. Clone the repository: `git clone https://github.com/finki-hub/discord-bot.git`
 2. Install dependencies: `npm i`
 3. Prepare env. variables by copying `env.sample` to `.env` - minimum setup requires `TOKEN` and `APPLICATION_ID`
 4. Build the project in Docker: `docker compose build`
@@ -23,7 +23,7 @@ There is also a dev container available. To use it, just clone the repository, d
 
 ## Setup Without Docker
 
-1. Clone the repository: `git clone https://github.com/finki-hub/finki-discord-bot.git`
+1. Clone the repository: `git clone https://github.com/finki-hub/discord-bot.git`
 2. Install dependencies: `npm i`
 3. Prepare env. variables by copying `env.sample` to `.env` - minimum setup requires `TOKEN` and `APPLICATION_ID`
 4. Build the project: `npm run build`

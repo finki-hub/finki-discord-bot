@@ -1,4 +1,4 @@
-name: finki-discord-bot-dev
+name: finki-hub-discord-bot-dev
 
 services:
   bot:
@@ -11,7 +11,7 @@ services:
       API_KEY: ${API_KEY}
       DATA_STORAGE_URL: ${DATA_STORAGE_URL}
       TZ: ${TZ}
-    image: finki-discord-bot-dev:latest
+    image: finki-hub/discord-bot:latest
     networks:
       - finki_stack_dev
     restart: unless-stopped

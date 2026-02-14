@@ -1,6 +1,6 @@
 {
   "dockerComposeFile": "./compose.yaml",
-  "name": "finki-discord-bot",
+  "name": "finki-hub-discord-bot",
   "service": "container",
   "shutdownAction": "stopCompose",
   "workspaceFolder": "/app",
