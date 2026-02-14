@@ -26,6 +26,7 @@ export const labels = {
   questions: 'Прашања',
   semester: 'Семестар',
   staff: 'Кадар',
+  tickets: 'Тикети',
   title: 'Звање',
   type: 'Тип',
   unknown: '?',

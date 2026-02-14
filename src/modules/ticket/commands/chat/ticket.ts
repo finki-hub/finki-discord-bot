@@ -1,8 +1,8 @@
 import { InteractionContextType } from 'discord-api-types/v10';
 import {
-  type AnyThreadChannel,
   type ChatInputCommandInteraction,
   EmbedBuilder,
+  MessageFlags,
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from 'discord.js';
@@ -10,19 +10,20 @@ import {
 import { executeSubcommand } from '@/common/commands/subcommands.js';
 import { Channel } from '@/common/schemas/Channel.js';
 import { Role } from '@/common/schemas/Role.js';
-import { safeReplyToInteraction } from '@/common/utils/messages.js';
 import {
   getChannelsProperty,
   getTicketingProperty,
 } from '@/configuration/bot/index.js';
-import { getTicketCreateComponents } from '@/modules/ticket/components/components.js';
-import { getActiveTickets } from '@/modules/ticket/utils/tickets.js';
+import {
+  getTicketCreateComponents,
+  getTicketListComponent,
+} from '@/modules/ticket/components/components.js';
+import { getActiveTicketsSorted } from '@/modules/ticket/utils/tickets.js';
 import {
   commandDescriptions,
   commandErrors,
   commandResponses,
 } from '@/translations/commands.js';
-import { labels } from '@/translations/labels.js';
 import { ticketMessageFunctions } from '@/translations/tickets.js';
 
 export const name = 'ticket';
@@ -31,10 +32,6 @@ export const permissions = {
   permissions: [PermissionFlagsBits.ManageMessages],
   roles: [Role.Moderators],
 };
-const dateFormatter = new Intl.DateTimeFormat('mk-MK', {
-  dateStyle: 'long',
-  timeStyle: 'short',
-});
 
 export const data = new SlashCommandBuilder()
   .setName(name)
@@ -91,38 +88,12 @@ const handleTicketList = async (interaction: ChatInputCommandInteraction) => {
     return;
   }
 
-  const ticketThreads = await getActiveTickets(interaction.guild);
+  const ticketThreads = await getActiveTicketsSorted(interaction.guild);
 
-  if (ticketThreads === undefined || ticketThreads.size === 0) {
-    await interaction.editReply(commandErrors.noTickets);
-
-    return;
-  }
-
-  ticketThreads.sort((a: AnyThreadChannel, b: AnyThreadChannel) => {
-    if (!a.createdTimestamp || !b.createdTimestamp) {
-      return 0;
-    }
-
-    if (a.createdTimestamp < b.createdTimestamp) {
-      return -1;
-    }
-
-    if (a.createdTimestamp > b.createdTimestamp) {
-      return 1;
-    }
-
-    return 0;
+  await interaction.reply({
+    components: [getTicketListComponent(ticketThreads, 0)],
+    flags: MessageFlags.IsComponentsV2,
   });
-
-  const threadLinks = ticketThreads
-    .map(
-      (thread: AnyThreadChannel) =>
-        `- ${thread.url} (${thread.createdAt ? dateFormatter.format(thread.createdAt) : labels.none})`,
-    )
-    .join('\n');
-
-  await safeReplyToInteraction(interaction, threadLinks);
 };
 
 const handleTicketSend = async (interaction: ChatInputCommandInteraction) => {

@@ -43,6 +43,34 @@ export const getActiveTickets = async (
   return threads;
 };
 
+export const getActiveTicketsSorted = async (
+  guild: Guild,
+): Promise<AnyThreadChannel[]> => {
+  const ticketThreadsCollection = await getActiveTickets(guild);
+  const ticketThreads =
+    ticketThreadsCollection === undefined
+      ? []
+      : [...ticketThreadsCollection.values()];
+
+  ticketThreads.sort((a: AnyThreadChannel, b: AnyThreadChannel) => {
+    if (!a.createdTimestamp || !b.createdTimestamp) {
+      return 0;
+    }
+
+    if (a.createdTimestamp < b.createdTimestamp) {
+      return -1;
+    }
+
+    if (a.createdTimestamp > b.createdTimestamp) {
+      return 1;
+    }
+
+    return 0;
+  });
+
+  return ticketThreads;
+};
+
 export const createTicket = async (
   interaction: ButtonInteraction | ChatInputCommandInteraction,
   ticketMetadata: Ticket,

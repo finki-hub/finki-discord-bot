@@ -1,4 +1,14 @@
 export const paginationStringFunctions = {
-  footer: (page: number, pages: number, label: string, total: number) =>
-    `Страна: ${page} / ${pages}  •  ${label}: ${total}`,
+  footer: ({
+    label,
+    page,
+    pages,
+    total,
+  }: {
+    label: string;
+    page: number;
+    pages: number;
+    total: number;
+  }) => `Страна: ${page} / ${pages}  •  ${label}: ${total}`,
+  noEntries: (label: string) => `Нема ${label.toLowerCase()}.`,
 };
