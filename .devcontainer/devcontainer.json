@@ -1,8 +1,5 @@
 {
-  "dockerComposeFile": "./compose.yaml",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:24",
   "name": "finki-hub-discord-bot",
-  "service": "container",
-  "shutdownAction": "stopCompose",
-  "workspaceFolder": "/app",
   "postCreateCommand": "npm i"
 }
