@@ -19,7 +19,6 @@ services:
     image: ghcr.io/finki-hub/discord-bot:latest
     networks:
       - finki_stack
-    pull_policy: missing
     restart: unless-stopped
     volumes:
       - ./config:/app/config
