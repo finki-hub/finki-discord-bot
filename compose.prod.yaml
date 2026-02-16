@@ -1,25 +1,26 @@
 name: finki-hub-discord-bot
 
+networks:
+  finki_stack:
+    driver: bridge
+    name: finki_stack
+    # Set external to true to use an existing network
+    # external: true
+
 services:
   bot:
     environment:
-      TOKEN: ${TOKEN}
+      API_KEY: ${API_KEY}
       APPLICATION_ID: ${APPLICATION_ID}
       CHATBOT_URL: ${CHATBOT_URL}
-      API_KEY: ${API_KEY}
       DATA_STORAGE_URL: ${DATA_STORAGE_URL}
+      TOKEN: ${TOKEN}
       TZ: ${TZ}
     image: ghcr.io/finki-hub/discord-bot:latest
     networks:
       - finki_stack
+    pull_policy: missing
     restart: unless-stopped
     volumes:
       - ./config:/app/config
       - ./logs:/app/logs
-
-networks:
-  finki_stack:
-    name: finki_stack
-    driver: bridge
-    # Set external to true to use an existing network
-    # external: true
