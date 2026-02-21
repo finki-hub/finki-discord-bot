@@ -6,6 +6,7 @@ export enum Model {
   DEEPSEEK_R1_70B = 'deepseek-r1:70b',
   DOMESTIC_YAK_8B_INSTRUCT_GGUF = 'hf.co/LVSTCK/domestic-yak-8B-instruct-GGUF:Q8_0',
   GEMINI_2_5_FLASH_PREVIEW_05_20 = 'gemini-2.5-flash-preview-05-20',
+  GEMINI_EMBEDDING_001 = 'gemini-embedding-001',
   GPT_4_1_MINI = 'gpt-4.1-mini',
   GPT_4_1_NANO = 'gpt-4.1-nano',
   GPT_4O_MINI = 'gpt-4o-mini',
@@ -18,7 +19,6 @@ export enum Model {
   QWEN2_1_5_B_INSTRUCT = 'Qwen/Qwen2-1.5B-Instruct',
   QWEN2_5_72B = 'qwen2.5:72b',
   TEXT_EMBEDDING_3_LARGE = 'text-embedding-3-large',
-  TEXT_EMBEDDING_004 = 'models/text-embedding-004',
   VEZILKALLM_GGUF = 'hf.co/mradermacher/VezilkaLLM-GGUF:Q8_0',
 }
 
@@ -29,7 +29,7 @@ export const EMBEDDING_MODELS = [
   Model.BGE_M3_GPU_API,
   Model.LLAMA_3_3_70B,
   Model.TEXT_EMBEDDING_3_LARGE,
-  Model.TEXT_EMBEDDING_004,
+  Model.GEMINI_EMBEDDING_001,
   Model.MULTILINGUAL_E5_LARGE,
 ] as const;
 
