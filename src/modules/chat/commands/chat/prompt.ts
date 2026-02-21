@@ -1,6 +1,6 @@
 import { getCommonCommand } from '@/modules/chat/utils/chatCommand.js';
 
-const { data, execute } = getCommonCommand('ask');
+const { data, execute } = getCommonCommand('prompt');
 
 export { data, execute };
-export const name = 'ask';
+export const name = 'prompt';
