@@ -44,6 +44,10 @@ export const permissions = {
       permissions: [PermissionFlagsBits.ManageGuild],
       roles: [Role.Administrators],
     },
+    query: {
+      permissions: [PermissionFlagsBits.ManageMessages],
+      roles: [Role.Moderators],
+    },
   },
 };
 
