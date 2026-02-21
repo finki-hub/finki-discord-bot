@@ -48,8 +48,11 @@ export const sendPrompt = async (
     throw new Error('LLM_UNAVAILABLE');
   }
 
+  let receivedEvents = 0;
+
   const parser = createParser({
     onEvent: (event) => {
+      receivedEvents++;
       const restoredChunk = event.data.replaceAll(String.raw`\n`, '\n');
       onChunk(restoredChunk);
     },
@@ -65,6 +68,10 @@ export const sendPrompt = async (
     }
     const decoded = decoder.decode(value, { stream: true });
     parser.feed(decoded);
+  }
+
+  if (receivedEvents === 0) {
+    throw new Error('LLM_UNAVAILABLE');
   }
 
   logger.info(`Prompt answered: ${options.prompt}`);
