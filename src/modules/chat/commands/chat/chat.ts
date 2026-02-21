@@ -251,7 +251,7 @@ const handleChatModels = async (interaction: ChatInputCommandInteraction) => {
     return;
   }
 
-  const content = models.map((model) => `- ${model}`).join('\n');
+  const content = models.map((model) => `- ${inlineCode(model)}`).join('\n');
   await safeReplyToInteraction(interaction, content);
 };
 
