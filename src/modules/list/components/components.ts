@@ -59,7 +59,7 @@ export const getListQuestionsComponent = (
   getPaginationComponent({
     buttonId: listQuestionsButtonId,
     description: componentMessageFunctions.allQuestions(
-      getCommandMention('ask'),
+      getCommandMention('faq'),
     ),
     entries: questions.map((question) =>
       heading(question.name, HeadingLevel.Three),
