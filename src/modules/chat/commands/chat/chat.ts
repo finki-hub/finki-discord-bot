@@ -230,7 +230,17 @@ const handleChatClosest = async (interaction: ChatInputCommandInteraction) => {
   }
 
   const content = closestQuestions
-    .map(({ distance, name }) => `- ${name} (${distance ?? labels.none})`)
+    .slice()
+    .sort((a, b) => {
+      if (!a.distance && !b.distance) return 0;
+      if (!a.distance) return 1;
+      if (!b.distance) return -1;
+      return a.distance - b.distance;
+    })
+    .map(
+      ({ distance, name }, index) =>
+        `${index + 1}. ${inlineCode(name)} (${distance === undefined ? labels.none : distance.toFixed(3)})`,
+    )
     .join('\n');
 
   await safeReplyToInteraction(interaction, content);
