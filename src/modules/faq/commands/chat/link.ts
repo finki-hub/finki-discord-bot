@@ -1,5 +1,7 @@
 import {
+  bold,
   type ChatInputCommandInteraction,
+  MessageFlags,
   SlashCommandBuilder,
 } from 'discord.js';
 
@@ -10,6 +12,7 @@ import {
   commandErrors,
   commandResponseFunctions,
 } from '@/translations/commands.js';
+import { labels } from '@/translations/labels.js';
 
 export const name = 'link';
 
@@ -45,10 +48,15 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   }
 
   const normalizedUrl = getNormalizedUrl(link.url);
+  const note =
+    link.description === null
+      ? ''
+      : `\n${bold(`${labels.note}:`)} ${link.description}`;
 
-  await interaction.editReply(
-    user
-      ? `${commandResponseFunctions.commandFor(user.id)}\n${normalizedUrl}`
-      : normalizedUrl,
-  );
+  await interaction.editReply({
+    content: user
+      ? `${commandResponseFunctions.commandFor(user.id)}\n${normalizedUrl}${note}`
+      : `${normalizedUrl}${note}`,
+    flags: MessageFlags.SuppressEmbeds,
+  });
 };

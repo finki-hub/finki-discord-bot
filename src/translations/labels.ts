@@ -18,6 +18,7 @@ export const labels = {
   location: 'Локација',
   mrbs: 'MRBS',
   none: 'Нема',
+  note: 'НАПОМЕНА',
   position: 'Позиција',
   prerequisite: 'Предуслов',
   professors: 'Професори',
