@@ -54,24 +54,27 @@ type CommandType = 'autocomplete' | 'button' | 'chat' | 'context';
 const getCommandType = (parentPath: string): CommandType | null => {
   const normalizedPath = parentPath.replaceAll('\\', '/');
 
-  if (normalizedPath.endsWith('/chat') || normalizedPath.includes('/chat/')) {
+  if (
+    normalizedPath.endsWith('/commands/chat') ||
+    normalizedPath.includes('/commands/chat/')
+  ) {
     return 'chat';
   }
   if (
-    normalizedPath.endsWith('/button') ||
-    normalizedPath.includes('/button/')
+    normalizedPath.endsWith('/commands/button') ||
+    normalizedPath.includes('/commands/button/')
   ) {
     return 'button';
   }
   if (
-    normalizedPath.endsWith('/autocomplete') ||
-    normalizedPath.includes('/autocomplete/')
+    normalizedPath.endsWith('/commands/autocomplete') ||
+    normalizedPath.includes('/commands/autocomplete/')
   ) {
     return 'autocomplete';
   }
   if (
-    normalizedPath.endsWith('/context') ||
-    normalizedPath.includes('/context/')
+    normalizedPath.endsWith('/commands/context') ||
+    normalizedPath.includes('/commands/context/')
   ) {
     return 'context';
   }
