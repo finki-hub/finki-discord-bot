@@ -29,7 +29,12 @@ export const getCommonCommand = (name: keyof typeof commandDescriptions) => ({
     const keyword = interaction.options.getString('question', true);
     const user = interaction.options.getUser('user');
 
-    const question = await getClosestQuestion(keyword);
+    const parsedKeyword = Number(keyword);
+    const question = await getClosestQuestion(
+      Number.isInteger(parsedKeyword) && parsedKeyword > 0
+        ? parsedKeyword
+        : keyword,
+    );
 
     if (question === null) {
       await interaction.editReply(commandErrors.faqNotFound);

@@ -31,7 +31,12 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
   const keyword = interaction.options.getString('link', true);
   const user = interaction.options.getUser('user');
 
-  const link = await getClosestLink(keyword);
+  const parsedKeyword = Number(keyword);
+  const link = await getClosestLink(
+    Number.isInteger(parsedKeyword) && parsedKeyword > 0
+      ? parsedKeyword
+      : keyword,
+  );
 
   if (link === null) {
     await interaction.editReply(commandErrors.linkNotFound);
